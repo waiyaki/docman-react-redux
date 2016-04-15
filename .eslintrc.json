@@ -1,0 +1,12 @@
+{
+  "extends": "standard",
+  "plugins": [
+    "standard"
+  ],
+  "rules": {
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}
