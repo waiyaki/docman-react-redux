@@ -9,8 +9,10 @@ var app = express();
 // Connect to the db.
 require('./server/config/db');
 
-// Log all requests to the console.
-app.use(logger('dev'));
+// Log all requests to the console when not testing.
+if (process.env.NODE_ENV !== 'testing') {
+  app.use(logger('dev'));
+}
 
 // Grab post data from the request.
 app.use(bodyParser.json());

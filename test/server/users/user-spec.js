@@ -2,8 +2,10 @@
   'use strict';
 
   process.env.NODE_ENV = 'testing';
+
   var app = require('../../../app');
   var request = require('supertest')(app);
+  var expect = require('chai').expect;
   var User = require('../../../server/models/users');
 
   describe('User Test Suite:', function () {
@@ -13,19 +15,19 @@
       email: 'test@email.com'
     };
 
-    beforeAll(function (done) {
+    before(function (done) {
       User.remove({}, done);
     });
 
     describe('Test creates unique users', function () {
-      beforeAll(function (done) {
+      before(function (done) {
         request
           .post('/users')
           .send(testData)
           .end(done);
       });
 
-      afterAll(function (done) {
+      after(function (done) {
         User.remove({}, done);
       });
 
@@ -34,11 +36,10 @@
           .post('/users')
           .send(testData)
           .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.status).toBe(400);
+            expect(err).to.be.null;
+            expect(res.status).to.equal(400);
             expect(res.body.message)
-              .toEqual(jasmine.stringMatching(
-                /A user with this username|email already exists/));
+              .to.match(/A user with this username|email already exists/);
             done();
           });
       });
@@ -55,13 +56,11 @@
           .send(testData)
           .accept('application/json')
           .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.status).toBe(201);
-            expect(res.body).toBeDefined();
-            expect(res.body).toEqual(jasmine.objectContaining({
-              username: testData.username,
-              email: testData.email
-            }));
+            expect(err).to.be.null;
+            expect(res.status).to.equal(201);
+            expect(res.body).to.be.defined;
+            expect(res.body).to.have.property('username', testData.username);
+            expect(res.body).to.have.property('email', testData.email);
             done();
           });
       });
@@ -72,9 +71,9 @@
           .send(testData)
           .accept('application/json')
           .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.status).toBe(201);
-            expect(res.body.token).toBeDefined();
+            expect(err).to.be.null;
+            expect(res.status).to.equal(201);
+            expect(res.body.token).to.be.defined;
             done();
           });
       });
@@ -88,9 +87,9 @@
           })
           .accept('application/json')
           .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.status).toBe(400);
-            expect(res.body).toEqual({
+            expect(err).to.be.null;
+            expect(res.status).to.equal(400);
+            expect(res.body).to.eql({
               username: 'This field is required.'
             });
             done();
@@ -106,9 +105,9 @@
           })
           .accept('application/json')
           .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.status).toBe(400);
-            expect(res.body).toEqual({
+            expect(err).to.be.null;
+            expect(res.status).to.equal(400);
+            expect(res.body).to.eql({
               email: 'This field is required.'
             });
             done();
@@ -124,9 +123,9 @@
           })
           .accept('application/json')
           .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.status).toBe(400);
-            expect(res.body).toEqual({
+            expect(err).to.be.null;
+            expect(res.status).to.equal(400);
+            expect(res.body).to.eql({
               password: 'This field is required.'
             });
             done();
@@ -145,13 +144,13 @@
             .send(tData)
             .accept('application/json')
             .end(function (err, res) {
-              expect(err).toBeNull();
-              expect(res.status).toBe(201);
-              expect(res.body.name).toBeDefined();
-              expect(res.body.name).toEqual({
-                first_name: tData.first_name,
-                last_name: tData.last_name
-              });
+              expect(err).to.be.null;
+              expect(res.status).to.equal(201);
+              expect(res.body.name).to.be.defined;
+              expect(res.body.name)
+                .to.have.property('first_name', tData.first_name);
+              expect(res.body.name)
+                .to.have.property('last_name', tData.last_name);
               done();
             });
         });
