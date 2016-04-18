@@ -154,6 +154,20 @@
               done();
             });
         });
+
+      it('should create a user with a role defined', function (done) {
+        request
+          .post('/users')
+          .send(testData)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(201);
+            expect(res.body.role).to.be.defined;
+            expect(res.body.role).to.have.all.keys(['_id', 'title']);
+            done();
+          });
+      });
     });
   });
 })();

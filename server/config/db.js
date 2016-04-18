@@ -1,5 +1,5 @@
-/* eslint-disable no-console */
 (function () {
+  /* eslint-disable no-console */
   'use strict';
 
   var app_config = require('./config');
@@ -19,4 +19,8 @@
   mongoose.connection.on('disconnected', function () {
     console.log('Mongoose disconnected');
   });
+
+  // Register the models.
+  require('../models/roles');
+  require('../models/users');
 })();
