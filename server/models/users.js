@@ -15,7 +15,8 @@
     username: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      trim: true
     },
     password: {
       type: String,
@@ -25,6 +26,10 @@
     name: {
       first_name: String,
       last_name: String
+    },
+    role: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Role'
     }
   });
 

@@ -2,6 +2,7 @@
   'use strict';
 
   var User = require('../models/users');
+  var Role = require('../models/roles');
 
   var usersController = {
     /**
@@ -14,6 +15,7 @@
         username: req.body.username,
         email: req.body.email,
         password: req.body.password,
+        role: 'user', // Always default to 'user' role for a new user.
         name: {}
       };
 
@@ -24,19 +26,53 @@
         data.name.last_name = req.body.last_name;
       }
 
-      User.create(data, function (err, user) {
-        if (err) {
-          return resolveError(err, res);
-        }
-        return res.status(201).send({
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-          full_name: user.name.full_name,
-          name: user.name,
-          token: user.generateJwt()
+      Role
+        .findOne({ title: data.role })
+        .exec(function (err, role) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          if (!role) {
+            Role.create({
+              title: data.role
+            }, function (err, role) {
+              if (err) {
+                return resolveError(err, res);
+              }
+              data.role = role._id;
+              return createUser(data);
+            });
+          } else {
+            data.role = role._id;
+            return createUser(data);
+          }
         });
-      });
+
+      function createUser (data) {
+        User.create(data, function (err, user) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          User
+            .findOne({ _id: user._id }, '-__v')
+            .populate('role', '_id title')
+            .exec(function (err, user) {
+              if (err) {
+                return resolveError(err, res);
+              }
+
+              return res.status(201).send({
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                full_name: user.name.full_name,
+                name: user.name,
+                role: user.role,
+                token: user.generateJwt()
+              });
+            });
+        });
+      }
     }
   };
 
@@ -44,7 +80,8 @@
    * Give users helpful error messages.
    */
   function resolveError (err, res) {
-    try {
+    if (err.name === 'MongoError') {
+      // Handle Mongo Errors.
       err = err.toJSON();
       var errmsg = err.errmsg;
       var data = {
@@ -69,7 +106,15 @@
       return res.status(400).send({
         message: errmsg
       });
-    } catch (err) {
+    } else {
+      // Check for validation errors from Mongoose.
+      var validationErrors = ['ValidationError'];
+      if (validationErrors.indexOf(err.name) !== -1) {
+        return res.status(400).send({
+          error: err.name,
+          message: err.message
+        });
+      }
       return res.status(500).send(err);
     }
   }
