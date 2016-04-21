@@ -22,5 +22,11 @@
         required_fields: ['username', 'email', 'password']
       });
     }, usersController.create);
+
+    /**
+     * Beyond this point, only authenticated users should access the API.
+     * Unauthenticated users can only either login or register.
+     */
+    app.use(customMiddleware.authenticate);
   };
 })();

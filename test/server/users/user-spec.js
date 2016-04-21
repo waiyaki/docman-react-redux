@@ -166,12 +166,16 @@
       });
     });
 
-    describe('Test user login functionality', function () {
+    describe('Test user authentication functionality', function () {
+      var token;
       before(function (done) {
         request
           .post('/users')
           .send(testData)
-          .end(done);
+          .end(function (err, res) { // eslint-disable-line
+            token = res.body.token;
+            done();
+          });
       });
 
       after(function (done) {
@@ -231,6 +235,45 @@
             expect(res.body).to.eql({
               password: 'This field is required.'
             });
+            done();
+          });
+      });
+
+      it('should restrict access to the API if no token is not provided',
+        function (done) {
+          request
+            .get('/users/some/non-existent/route')
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(401);
+              expect(res.body.message).to.eql('No access token provided.');
+              done();
+            });
+        });
+
+      it('should disallow requests with invalid tokens', function (done) {
+        request
+          .get('/users/some/non-existent/route')
+          .accept('application/json')
+          .set('x-access-token', 'somerandomthing')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(401);
+            expect(res.body.message).to.eql('Failed to authenticate token.');
+            done();
+          });
+      });
+
+      it('should allow access to requests with valid tokens', function (done) {
+        request
+          .get('/some/non-existent/route')
+          .set('x-access-token', token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(404);
+            expect(res.body.message).to.eql('Not Found.');
             done();
           });
       });
