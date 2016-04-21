@@ -3,8 +3,10 @@
 
   process.env.NODE_ENV = 'testing';
 
+  // Configure the app with this new env.
+  require('../../../app');
   var expect = require('chai').expect;
-  var Role = require('../../../server/models/roles');
+  var Role = require('../../../server/models').Role;
 
   describe('Role Test Suite', function () {
     it('should create a new default user role', function () {

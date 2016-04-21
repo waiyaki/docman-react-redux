@@ -21,6 +21,5 @@
   });
 
   // Register the models.
-  require('../models/roles');
-  require('../models/users');
+  require('../models');
 })();

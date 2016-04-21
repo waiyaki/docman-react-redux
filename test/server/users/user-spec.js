@@ -6,7 +6,7 @@
   var app = require('../../../app');
   var request = require('supertest')(app);
   var expect = require('chai').expect;
-  var User = require('../../../server/models/users');
+  var User = require('../../../server/models').User;
 
   describe('User Test Suite:', function () {
     var testData = {

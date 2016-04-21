@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "NODE_ENV=production node ./bin/www",
+    "start:dev": "NODE_ENV=development nodemon ./bin/www",
     "test": "NODE_ENV=testing ./node_modules/.bin/mocha"
   },
   "dependencies": {

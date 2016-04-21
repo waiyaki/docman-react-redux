@@ -1,24 +1,31 @@
-var express = require('express');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var dotenv = require('dotenv');
-dotenv.load();
+(function () {
+  'use strict';
 
-var app = express();
+  var express = require('express');
+  var logger = require('morgan');
+  var bodyParser = require('body-parser');
+  var dotenv = require('dotenv');
 
-// Connect to the db.
-require('./server/config/db');
+  var env = process.env.NODE_ENV;
+  if (env === 'testing' || env === 'development') {
+    dotenv.load();
+  }
+  var app = express();
 
-// Log all requests to the console when not testing.
-if (process.env.NODE_ENV !== 'testing') {
-  app.use(logger('dev'));
-}
+  // Connect to the db.
+  require('./server/config/db');
 
-// Grab post data from the request.
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+  // Log all requests to the console when not testing.
+  if (process.env.NODE_ENV !== 'testing') {
+    app.use(logger('dev'));
+  }
 
-// Routes
-require('./server/routes')(app);
+  // Grab post data from the request.
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
 
-module.exports = app;
+  // Routes
+  require('./server/routes')(app);
+
+  module.exports = app;
+})();

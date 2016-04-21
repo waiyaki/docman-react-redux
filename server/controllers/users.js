@@ -1,8 +1,8 @@
 (function () {
   'use strict';
 
-  var User = require('../models/users');
-  var Role = require('../models/roles');
+  var User = require('../models').User;
+  var Role = require('../models').Role;
 
   var usersController = {
     /**
@@ -32,20 +32,8 @@
           if (err) {
             return resolveError(err, res);
           }
-          if (!role) {
-            Role.create({
-              title: data.role
-            }, function (err, role) {
-              if (err) {
-                return resolveError(err, res);
-              }
-              data.role = role._id;
-              return createUser(data);
-            });
-          } else {
-            data.role = role._id;
-            return createUser(data);
-          }
+          data.role = role._id;
+          return createUser(data);
         });
 
       function createUser (data) {
