@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var customGenericMiddleware = {
+  var customMiddleware = {
     /**
      * Validate POST request data.
      */
@@ -19,5 +19,5 @@
     }
   };
 
-  module.exports = customGenericMiddleware;
+  module.exports = customMiddleware;
 })();

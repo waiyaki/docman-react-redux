@@ -61,6 +61,37 @@
             });
         });
       }
+    },
+
+    /**
+     * Login a user with username and a password.
+     */
+    login: function (req, res) {
+      return User
+        .findOne({
+          username: req.body.username
+        })
+        .select('_id email username password')
+        .exec(function (err, user) {
+          if (err) {
+            return resolveError(err);
+          }
+
+          if (!user) {
+            return res.status(400).send({
+              message: 'Authentication failed. User not found.'
+            });
+          } else if (!user.validatePassword(req.body.password)) {
+            return res.status(400).send({
+              message: 'Incorrect username/password combination'
+            });
+          }
+
+          return res.status(200).send({
+            message: 'Authentication successful',
+            token: user.generateJwt()
+          });
+        });
     }
   };
 

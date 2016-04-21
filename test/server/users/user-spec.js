@@ -15,10 +15,6 @@
       email: 'test@email.com'
     };
 
-    before(function (done) {
-      User.remove({}, done);
-    });
-
     describe('Test creates unique users', function () {
       before(function (done) {
         request
@@ -45,7 +41,7 @@
       });
     });
 
-    describe('Test user functionality', function () {
+    describe('Test create user functionality', function () {
       afterEach(function (done) {
         User.remove({}, done);
       });
@@ -165,6 +161,76 @@
             expect(res.status).to.equal(201);
             expect(res.body.role).to.be.defined;
             expect(res.body.role).to.have.all.keys(['_id', 'title']);
+            done();
+          });
+      });
+    });
+
+    describe('Test user login functionality', function () {
+      before(function (done) {
+        request
+          .post('/users')
+          .send(testData)
+          .end(done);
+      });
+
+      after(function (done) {
+        User.remove({}, done);
+      });
+
+      it('should login a user with a username/password and return a token',
+        function (done) {
+          request
+            .post('/users/login')
+            .send({
+              username: testData.username,
+              password: testData.password
+            })
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body.message).to.match(
+                /Authentication successful/);
+              expect(res.body.token).to.be.defined;
+              done();
+            });
+        });
+
+      it('should require a username to perform login', function (done) {
+        var badData = {
+          password: testData.password
+        };
+
+        request
+          .post('/users/login')
+          .send(badData)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(400);
+            expect(res.body).to.eql({
+              username: 'This field is required.'
+            });
+            done();
+          });
+      });
+
+      it('should require a username to perform login', function (done) {
+        var badData = {
+          username: testData.username
+        };
+
+        request
+          .post('/users/login')
+          .send(badData)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(400);
+            expect(res.body).to.eql({
+              password: 'This field is required.'
+            });
             done();
           });
       });
