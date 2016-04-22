@@ -7,8 +7,6 @@
   var usersController = {
     /**
      * Create a user and authenticate them.
-     *
-     * @returns {Object} User object with an authentication token.
      */
     create: function (req, res) {
       var data = {
@@ -61,6 +59,23 @@
             });
         });
       }
+    },
+
+    /**
+     * List all Users.
+     * This is an admin only functionality.
+     */
+    list: function (req, res) {
+      return User
+        .find({})
+        .select('-__v')
+        .populate('role', '_id title')
+        .exec(function (err, users) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          return res.status(200).send(users);
+        });
     },
 
     /**
@@ -134,7 +149,9 @@
           message: err.message
         });
       }
-      return res.status(500).send(err);
+      return res.status(500).send({
+        message: 'Server encountered an error.'
+      });
     }
   }
 

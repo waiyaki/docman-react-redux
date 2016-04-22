@@ -7,6 +7,7 @@
   var request = require('supertest')(app);
   var expect = require('chai').expect;
   var User = require('../../../server/models').User;
+  var Role = require('../../../server/models').Role;
 
   describe('User Test Suite:', function () {
     var testData = {
@@ -220,7 +221,7 @@
           });
       });
 
-      it('should require a username to perform login', function (done) {
+      it('should require a password to perform login', function (done) {
         var badData = {
           username: testData.username
         };
@@ -275,6 +276,62 @@
             expect(res.status).to.equal(404);
             expect(res.body.message).to.eql('Not Found.');
             done();
+          });
+      });
+    });
+
+    describe('Test get all users functionality', function () {
+      var token;
+      var userId;
+      var role;
+      before(function (done) {
+        Role.findOne({title: 'admin'}).exec(function (err, _role) {
+          if (err) throw err;
+          role = _role;
+        });
+        request
+          .post('/users')
+          .send(testData)
+          .accept('application/json')
+          .end(function (err, res) { // eslint-disable-line
+            token = res.body.token;
+            userId = res.body._id;
+            done();
+          });
+      });
+
+      after(function (done) {
+        User.remove({}, done);
+      });
+
+      it('should forbid access to non-admins', function (done) {
+        request
+          .get('/users')
+          .set('x-access-token', token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(403);
+            expect(res.body.message).to.eql('Admin access level required.');
+            done();
+          });
+      });
+
+      it('should allow access to admins', function (done) {
+        User
+          .findOneAndUpdate({_id: userId}, {$set: {role: role._id}})
+          .exec(function (err, user) { // eslint-disable-line
+            request
+              .get('/users')
+              .set('x-access-token', token)
+              .accept('application/json')
+              .end(function (err, res) {
+                expect(err).to.be.null;
+                expect(res.status).to.equal(200);
+                expect(res.body).to.be.instanceOf(Array)
+                  .and.to.have.lengthOf(1);
+                done();
+              });
           });
       });
     });

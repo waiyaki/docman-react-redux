@@ -3,6 +3,7 @@
 
   var jwt = require('jsonwebtoken');
   var app_config = require('../config/config');
+  var User = require('../models').User;
 
   var customMiddleware = {
     /**
@@ -43,6 +44,34 @@
         req.decoded = decoded;
         next();
       });
+    },
+
+    /**
+     * Allow only admins to interact with the upcoming endpoint.
+     * Has to be used after the `authenticate` middleware.
+     */
+    isAdmin: function (req, res, next) {
+      User
+        .findOne({_id: req.decoded._id})
+        .populate('role', 'title')
+        .exec(function (err, user) {
+          if (err) {
+            return next(err);
+          }
+
+          if (!user) {
+            // Maybe we have an invalid token? User deleted? :thinking_face:
+            return res.status(401).send({
+              message: 'Token validation error. Please try logging in again.'
+            });
+          }
+          if (user.role.title === 'admin') {
+            return next();
+          }
+          return res.status(403).send({
+            message: 'Admin access level required.'
+          });
+        });
     }
   };
 
