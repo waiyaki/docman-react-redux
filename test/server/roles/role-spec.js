@@ -9,14 +9,6 @@
   var Role = require('../../../server/models').Role;
 
   describe('Role Test Suite', function () {
-    it('should create a new default user role', function () {
-      Role.create({}, function (err, role) {
-        expect(err).to.be.null;
-        expect(role._id).to.be.defined;
-        expect(role.title).to.equal('user');
-      });
-    });
-
     it('should create all predefined roles when initialized', function (done) {
       var defaults = Role.schema.paths.title.enumValues;
       Role

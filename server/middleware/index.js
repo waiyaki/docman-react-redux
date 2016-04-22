@@ -69,7 +69,7 @@
               message: 'Token validation error. Please try logging in again.'
             });
           }
-          if (user.role.title === 'admin') {
+          if (user.role && user.role.title === 'admin') {
             return next();
           }
           return res.status(403).send({
