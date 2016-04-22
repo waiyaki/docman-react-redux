@@ -75,59 +75,26 @@
           });
       });
 
-      it('should require username to create a user', function (done) {
-        request
-          .post('/users')
-          .send({
-            email: testData.email,
-            password: testData.password
-          })
-          .accept('application/json')
-          .end(function (err, res) {
-            expect(err).to.be.null;
-            expect(res.status).to.equal(400);
-            expect(res.body).to.eql({
-              username: 'This field is required.'
-            });
-            done();
-          });
-      });
+      it('should require a password, username and email to create a user',
+        function (done) {
+          request
+            .post('/users')
+            .send({})
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(400);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(3);
 
-      it('should require email to create a user', function (done) {
-        request
-          .post('/users')
-          .send({
-            username: testData.username,
-            password: testData.password
-          })
-          .accept('application/json')
-          .end(function (err, res) {
-            expect(err).to.be.null;
-            expect(res.status).to.equal(400);
-            expect(res.body).to.eql({
-              email: 'This field is required.'
+              res.body.forEach(function (errorObj) {
+                var key = Object.keys(errorObj)[0];
+                var msg = errorObj[key];
+                expect(key).to.match(/username|email|password/);
+                expect(msg).to.eql('This field is required.');
+              });
+              done();
             });
-            done();
-          });
-      });
-
-      it('should require password to create a user', function (done) {
-        request
-          .post('/users')
-          .send({
-            email: testData.email,
-            username: testData.username
-          })
-          .accept('application/json')
-          .end(function (err, res) {
-            expect(err).to.be.null;
-            expect(res.status).to.equal(400);
-            expect(res.body).to.eql({
-              password: 'This field is required.'
-            });
-            done();
-          });
-      });
+        });
 
       it('should create a user with first and last names when provided',
         function (done) {
@@ -202,39 +169,21 @@
             });
         });
 
-      it('should require a username to perform login', function (done) {
-        var badData = {
-          password: testData.password
-        };
-
+      it('should require a password and username to login', function (done) {
         request
           .post('/users/login')
-          .send(badData)
+          .send({})
           .accept('application/json')
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.status).to.equal(400);
-            expect(res.body).to.eql({
-              username: 'This field is required.'
-            });
-            done();
-          });
-      });
+            expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
 
-      it('should require a password to perform login', function (done) {
-        var badData = {
-          username: testData.username
-        };
-
-        request
-          .post('/users/login')
-          .send(badData)
-          .accept('application/json')
-          .end(function (err, res) {
-            expect(err).to.be.null;
-            expect(res.status).to.equal(400);
-            expect(res.body).to.eql({
-              password: 'This field is required.'
+            res.body.forEach(function (errorObj) {
+              var key = Object.keys(errorObj)[0];
+              var msg = errorObj[key];
+              expect(key).to.match(/username|password/);
+              expect(msg).to.eql('This field is required.');
             });
             done();
           });
@@ -285,7 +234,7 @@
       var userId;
       var role;
       before(function (done) {
-        Role.findOne({title: 'admin'}).exec(function (err, _role) {
+        Role.findOne({ title: 'admin' }).exec(function (err, _role) {
           if (err) throw err;
           role = _role;
         });
@@ -319,7 +268,7 @@
 
       it('should allow access to admins', function (done) {
         User
-          .findOneAndUpdate({_id: userId}, {$set: {role: role._id}})
+          .findOneAndUpdate({ _id: userId }, { $set: { role: role._id } })
           .exec(function (err, user) { // eslint-disable-line
             request
               .get('/users')

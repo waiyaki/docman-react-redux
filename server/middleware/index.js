@@ -11,13 +11,17 @@
      */
     validatePost: function (req, res, next, options) {
       var required_fields = options.required_fields;
+      var errors = [];
       for (var i = 0; i < required_fields.length; i++) {
         var field = required_fields[i];
         if (!req.body[field]) {
-          return res.status(400).send({
+          errors.push({
             [field]: 'This field is required.'
           });
         }
+      }
+      if (errors.length) {
+        return res.status(400).send(errors);
       }
       next();
     },
