@@ -79,6 +79,77 @@
     },
 
     /**
+     * Get the logged in user's profile.
+     */
+    retrieve: function (req, res) {
+      return User
+        .findOne({_id: req.decoded._id}, '-__v')
+        .populate('role', '_id title')
+        .exec(function (err, user) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          return res.status(200).send(user);
+        });
+    },
+
+    /**
+     * Update the logged in user's details.
+     */
+    update: function (req, res) {
+      return User
+        .findOne({_id: req.decoded._id})
+        .exec(function (err, user) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          if (!user) {
+            // Probably using a saved token while it's associated user has been
+            // deleted.
+            return res.status(404).send({
+              message: 'User not found.'
+            });
+          }
+
+          if (req.body.username) user.username = req.body.username;
+          if (req.body.password) user.password = req.body.password;
+          if (req.body.email) user.email = req.body.email;
+          if (req.body.full_name) {
+            user.name.full_name = req.body.full_name;
+          } else if (req.body.first_name || req.body.last_name) {
+            user.name.first_name = req.body.first_name || user.name.first_name;
+            user.name.last_name = req.body.last_name || user.name.last_name;
+          }
+
+          user.save(function (err, user) {
+            if (err) {
+              return resolveError(err, res);
+            }
+            return User.findOne({_id: user._id}, '-__v')
+              .populate('role', '_id title')
+              .exec(function (err, user) {
+                if (err) {
+                  resolveError(err, res);
+                }
+                return res.status(200).send(user);
+              });
+          });
+        });
+    },
+
+    /**
+     * Delete a user's account.
+     */
+    delete: function (req, res) {
+      return User.findOneAndRemove({_id: req.decoded._id}, function (err) {
+        if (err) {
+          return resolveError(err, res);
+        }
+        return res.status(204).send();
+      });
+    },
+
+    /**
      * Login a user with username and a password.
      */
     login: function (req, res) {
@@ -89,7 +160,7 @@
         .select('_id email username password')
         .exec(function (err, user) {
           if (err) {
-            return resolveError(err);
+            return resolveError(err, res);
           }
 
           if (!user) {
@@ -115,25 +186,17 @@
    */
   function resolveError (err, res) {
     if (err.name === 'MongoError') {
-      // Handle Mongo Errors.
-      err = err.toJSON();
       var errmsg = err.errmsg;
-      var data = {
-        username: err.op.username,
-        email: err.op.email
-      };
 
       // Handle unique constraint violation.
       if (err.code === 11000) {
         if (/email/.test(errmsg)) {
           return res.status(400).send({
-            message: 'A user with this email already exists',
-            data: data
+            message: 'A user with this email already exists'
           });
         } else if (/username/.test(errmsg)) {
           return res.status(400).send({
-            message: 'A user with this username already exists',
-            data: data
+            message: 'A user with this username already exists'
           });
         }
       }

@@ -261,5 +261,97 @@
           });
       });
     });
+
+    describe('Test user profile functionality', function () {
+      var token;
+      beforeEach(function (done) {
+        testUtils.createUserByPost(testUtils.testUserData)
+          .then(function (res) {
+            token = res.body.token;
+            done();
+          })
+          .catch(done);
+      });
+
+      afterEach(function (done) {
+        testUtils.destroyTestUsers()
+          .then(function () {
+            done();
+          })
+          .catch(done);
+      });
+
+      it("should fetch the logged in user's profile", function (done) {
+        request
+          .get('/users/profile')
+          .set('x-access-token', token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.body).to.be.defined;
+
+            var expected = ['username', 'email', '_id', 'role'];
+            expect(res.body).to.have.all.keys(expected);
+            done();
+          });
+      });
+
+      it("should update a user's profile", function (done) {
+        request
+          .put('/users/profile')
+          .set('x-access-token', token)
+          .send({
+            username: 'changedUsername',
+            email: 'changedemail@email.com',
+            first_name: 'Test',
+            last_name: 'User'
+          })
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body.username).to.eql('changedUsername');
+            expect(res.body.name.first_name).to.eql('Test');
+            expect(res.body.name.last_name).to.eql('User');
+            expect(res.body.email).to.eql('changedemail@email.com');
+            done();
+          });
+      });
+
+      it('should preserve fields uniqueness during update', function (done) {
+        testUtils.createUserByPost({
+          username: 'someone',
+          password: 'test',
+          email: 'someone@somewhere.com'
+        }).then(function (res) {
+          request
+            .put('/users/profile')
+            .send({
+              username: testUtils.testUserData.username // Already created in beforeEach
+            })
+            .set('x-access-token', res.body.token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(400);
+              expect(res.body).to.eql({
+                message: 'A user with this username already exists'
+              });
+              done();
+            });
+        }).catch(done);
+      });
+
+      it("should delete the logged in user's profile", function (done) {
+        request
+          .delete('/users/profile')
+          .set('x-access-token', token)
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(204);
+            done();
+          });
+      });
+    });
   });
 })();
