@@ -111,9 +111,11 @@
           .then(function (res) {
             expect(res.status).to.equal(201);
             expect(res.body.role).to.be.defined;
-            expect(res.body.role).to.have.all.keys(['_id', 'title']);
+            expect(res.body.role).to.have.all.keys([
+              '_id', 'title', 'accessLevel']);
             done();
-          });
+          })
+          .catch(done);
       });
     });
 

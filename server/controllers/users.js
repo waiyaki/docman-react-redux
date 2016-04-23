@@ -3,6 +3,7 @@
 
   var User = require('../models').User;
   var Role = require('../models').Role;
+  var resolveError = require('../utils');
 
   var usersController = {
     /**
@@ -41,7 +42,6 @@
           }
           User
             .findOne({ _id: user._id }, '-__v')
-            .populate('role', '_id title')
             .exec(function (err, user) {
               if (err) {
                 return resolveError(err, res);
@@ -67,9 +67,7 @@
      */
     list: function (req, res) {
       return User
-        .find({})
-        .select('-__v')
-        .populate('role', '_id title')
+        .find({}, '-__v')
         .exec(function (err, users) {
           if (err) {
             return resolveError(err, res);
@@ -84,7 +82,6 @@
     retrieve: function (req, res) {
       return User
         .findOne({_id: req.decoded._id}, '-__v')
-        .populate('role', '_id title')
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -125,14 +122,7 @@
             if (err) {
               return resolveError(err, res);
             }
-            return User.findOne({_id: user._id}, '-__v')
-              .populate('role', '_id title')
-              .exec(function (err, user) {
-                if (err) {
-                  resolveError(err, res);
-                }
-                return res.status(200).send(user);
-              });
+            return res.status(200).send(user);
           });
         });
     },
@@ -180,43 +170,6 @@
         });
     }
   };
-
-  /**
-   * Give users helpful error messages.
-   */
-  function resolveError (err, res) {
-    if (err.name === 'MongoError') {
-      var errmsg = err.errmsg;
-
-      // Handle unique constraint violation.
-      if (err.code === 11000) {
-        if (/email/.test(errmsg)) {
-          return res.status(400).send({
-            message: 'A user with this email already exists'
-          });
-        } else if (/username/.test(errmsg)) {
-          return res.status(400).send({
-            message: 'A user with this username already exists'
-          });
-        }
-      }
-      return res.status(400).send({
-        message: errmsg
-      });
-    } else {
-      // Check for validation errors from Mongoose.
-      var validationErrors = ['ValidationError'];
-      if (validationErrors.indexOf(err.name) !== -1) {
-        return res.status(400).send({
-          error: err.name,
-          message: err.message
-        });
-      }
-      return res.status(500).send({
-        message: 'Server encountered an error.'
-      });
-    }
-  }
 
   module.exports = usersController;
 })();

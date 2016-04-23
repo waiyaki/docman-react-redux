@@ -34,6 +34,19 @@
   });
 
   /**
+   * Autopopulate role and owner when calling the hooked method.
+   */
+  var autopopulateFields = function (next) {
+    this.populate('role', '-__v');
+    next();
+  };
+
+  UserSchema
+    .pre('find', autopopulateFields)
+    .pre('findOne', autopopulateFields)
+    .pre('findById', autopopulateFields);
+
+  /**
    * Get a virtual full name.
    */
   UserSchema.virtual('name.full_name').get(function () {

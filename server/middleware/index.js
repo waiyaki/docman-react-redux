@@ -45,8 +45,21 @@
           });
         }
 
-        req.decoded = decoded;
-        next();
+        User
+          .findById({_id: decoded._id})
+          .exec(function (err, user) {
+            if (err) {
+              next(err);
+            }
+            if (!user) {
+              // Probably using a token whose user's been deleted.
+              return res.status(401).send({
+                message: 'Invalid token. Please try loggin in again.'
+              });
+            }
+            req.decoded = user;
+            next();
+          });
       });
     },
 
