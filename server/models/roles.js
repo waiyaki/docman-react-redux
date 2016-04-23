@@ -9,7 +9,26 @@
       default: 'user',
       unique: true,
       enum: ['user', 'owner', 'admin', 'public']
+    },
+    accessLevel: {
+      type: Number,
+      default: 0
     }
+  });
+
+  /**
+   * Associate the role with it's correct access level before saving it.
+   */
+  RoleSchema.pre('save', function (next) {
+    var accessLevelsMap = {
+      'admin': 4,
+      'owner': 3,
+      'user': 2,
+      'public': 1
+    };
+
+    this.accessLevel = accessLevelsMap[this.title];
+    next();
   });
 
   /**
