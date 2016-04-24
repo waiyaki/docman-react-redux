@@ -2,8 +2,10 @@
   'use strict';
 
   var usersController = require('./users');
+  var documentsController = require('./documents');
 
   module.exports = {
-    usersController: usersController
+    usersController: usersController,
+    documentsController: documentsController
   };
 })();

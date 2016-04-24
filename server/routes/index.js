@@ -32,5 +32,8 @@
 
     // Users Routes.
     require('./users/users')(app);
+
+    // Documents Routes
+    require('./documents/documents')(app);
   };
 })();

@@ -9,8 +9,13 @@
   var request = require('supertest')(app);
   var User = require('../../server/models').User;
   var Role = require('../../server/models').Role;
+  var Document = require('../../server/models').Document;
 
   module.exports = {
+    // ///////////////////////////
+    // User Testing Utilities. //
+    // ///////////////////////////
+
     /**
      * Wherever you need raw user data, use this one.
      */
@@ -182,6 +187,31 @@
           }
           resolve(role);
         });
+      });
+    },
+
+    // ////////////////////////////////
+    // Documents Testing Utilities. //
+    // ////////////////////////////////
+    testDocument: require('./testDocumentData'),
+    testDocuments: require('./testDocuments'),
+    seedTestDocuments: function (_log) {
+      log('Seeding test documents...', _log);
+      this.testDocuments.forEach(function (doc) {
+        Role.findOne({title: doc.role}, function (err, role) {
+          if (err) throw err;
+          doc.role = role._id;
+          Document.create(doc, function (err) {
+            if (err) throw err;
+          });
+        });
+      });
+      log(['Created', this.testDocuments.length, 'documents'], _log);
+    },
+    destroyTestDocuments: function (_log) {
+      log('Destroying test documents...', _log);
+      return Document.remove({}, function (err) { // eslint-disable-line
+        log('Destroyed test documents.', _log);
       });
     }
   };
