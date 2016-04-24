@@ -4,9 +4,11 @@
   process.env.NODE_ENV = 'testing';
 
   // Configure the app with this new env.
-  require('../../../app');
+  var app = require('../../../app');
+  var request = require('supertest')(app);
   var expect = require('chai').expect;
   var Role = require('../../../server/models').Role;
+  var testUtils = require('../../helpers/utils');
 
   describe('Role Test Suite', function () {
     it('should create all predefined roles when initialized', function (done) {
@@ -41,6 +43,29 @@
         expect(roles).to.be.instanceOf(Array).and.to.have.lengthOf(4);
         done();
       });
+    });
+
+    it('should fetch all roles', function (done) {
+      testUtils.createUserByPost()
+        .then(function (response) {
+          request
+            .get('/roles')
+            .set('x-access-token', response.body.token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(4);
+
+              var expected = ['public', 'user', 'owner', 'admin'];
+              var gotten = res.body.map(function (role) {
+                return role.title;
+              });
+              expect(expected.sort()).to.eql(gotten.sort());
+              done();
+            });
+        })
+        .catch(done);
     });
   });
 })();

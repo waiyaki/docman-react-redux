@@ -35,5 +35,8 @@
 
     // Documents Routes
     require('./documents/documents')(app);
+
+    // Roles routes>
+    require('./roles/roles')(app);
   };
 })();

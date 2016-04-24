@@ -3,9 +3,11 @@
 
   var usersController = require('./users');
   var documentsController = require('./documents');
+  var rolesController = require('./roles');
 
   module.exports = {
     usersController: usersController,
-    documentsController: documentsController
+    documentsController: documentsController,
+    rolesController: rolesController
   };
 })();
