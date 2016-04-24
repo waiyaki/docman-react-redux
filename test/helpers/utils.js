@@ -195,14 +195,49 @@
     // ////////////////////////////////
     testDocument: require('./testDocumentData'),
     testDocuments: require('./testDocuments'),
-    seedTestDocuments: function (_log) {
+    createDocumentByPost: function (token, data, _log) {
+      // If only _log was passed, make data null in order to use the default.
+      if (!_log && typeof data !== 'object') {
+        _log = data;
+        data = null;
+      }
+      data = data || this.testDocumentData;
+      return new Promise(function (resolve, reject) {
+        if (!token) {
+          var err = new Error('No access token provided');
+          reject(err);
+        } else {
+          log(['Attempting to create document with data', data], _log);
+          return request
+            .post('/documents')
+            .send(data)
+            .set('x-access-token', token)
+            .accept('application/json')
+            .end(function (err, res) {
+              if (err) {
+                reject(err);
+              } else {
+                log('Document created successfully.', _log);
+                resolve(res);
+              }
+            });
+        }
+      });
+    },
+    seedTestDocuments: function (owner_id, _log) {
       log('Seeding test documents...', _log);
-      this.testDocuments.forEach(function (doc) {
-        Role.findOne({title: doc.role}, function (err, role) {
-          if (err) throw err;
-          doc.role = role._id;
-          Document.create(doc, function (err) {
+
+      var _this = this;
+      // eslint-disable-next-line
+      User.findOne({_id: owner_id}).exec(function (err, user) {
+        _this.testDocuments.forEach(function (doc) {
+          doc.owner = user._id;
+          Role.findOne({title: doc.role}, function (err, role) {
             if (err) throw err;
+            doc.role = role._id;
+            Document.create(doc, function (err) {
+              if (err) throw err;
+            });
           });
         });
       });

@@ -32,9 +32,16 @@
           message: err.message
         });
       }
-      return res.status(500).send({
-        message: 'Server encountered an error.'
-      });
+      if (['testing', 'production'].indexOf(process.env.NODE_ENV !== -1)) {
+        return res.status(500).send({
+          message: 'Server encountered an error.',
+          error: err
+        });
+      } else {
+        return res.status(500).send({
+          message: 'Server encountered an error.'
+        });
+      }
     }
   }
 

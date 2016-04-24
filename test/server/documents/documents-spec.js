@@ -15,7 +15,7 @@
         testUtils.createUserByPost()
           .then(function (res) {
             token = res.body.token;
-            testUtils.seedTestDocuments();
+            testUtils.seedTestDocuments(res.body._id);
             done();
           })
           .catch(done);
@@ -30,7 +30,7 @@
           .catch(done);
       });
 
-      it('should fetch all documents accessible to the logged in user',
+      it('should fetch all documents if the current user is an admin',
         function (done) {
           testUtils.makeAdmin()
             .then(function () {
@@ -47,6 +47,66 @@
             })
             .catch(done);
         });
+
+      it('should only fetch public, user and own documents for non-admins',
+        function (done) {
+          testUtils
+            .createUserByPost({
+              username: 'some-user',
+              password: 'test',
+              email: 'test@test.com'
+            })
+            .then(function (res) {
+              request
+                .get('/documents')
+                .set('x-access-token', res.body.token)
+                .accept('application/json')
+                .end(function (err, res) {
+                  expect(err).to.be.null;
+                  expect(res.status).to.equal(200);
+                  expect(res.body).to.be.defined;
+                  expect(res.body).to.be.instanceOf(Array)
+                    .and.to.have.lengthOf(2);
+                  done();
+                });
+            })
+            .catch(done);
+        });
+    });
+
+    describe('Test create documents functionality', function () {
+      var token;
+      before(function (done) {
+        testUtils.createUserByPost()
+          .then(function (res) {
+            token = res.body.token;
+            done();
+          })
+          .catch(done);
+      });
+
+      after(function (done) {
+        testUtils.destroyTestUsers()
+          .then(function () {
+            testUtils.destroyTestDocuments();
+            done();
+          })
+          .catch(done);
+      });
+
+      it('should create a document', function (done) {
+        testUtils.createDocumentByPost(token, testUtils.testDocument)
+          .then(function (res) {
+            expect(res.status).to.equal(201);
+            expect(res.body).to.be.defined;
+            expect(res.body.title).to.eql(testUtils.testDocument.title);
+            expect(res.body.content).to.eql(testUtils.testDocument.content);
+            expect(res.body.createdAt).to.be.defined;
+            expect(res.body.role).to.be.defined;
+            done();
+          })
+          .catch(done);
+      });
     });
   });
 })();
