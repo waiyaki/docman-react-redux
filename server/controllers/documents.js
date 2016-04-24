@@ -60,6 +60,23 @@
     },
 
     /**
+     * Fetch a single document.
+     */
+    retrieve: function (req, res) {
+      Document.findOne({_id: req.params.doc_id}).exec(function (err, doc) {
+        if (err) {
+          return resolveError(err, res);
+        }
+        if (!doc) {
+          return res.status(404).send({
+            message: 'Document not found.'
+          });
+        }
+        return res.status(200).send(doc);
+      });
+    },
+
+    /**
      * Update a document.
      */
     update: function (req, res) {

@@ -145,6 +145,20 @@
         done();
       });
 
+      it('should fetch a document', function (done) {
+        request
+          .get('/documents/' + doc._id)
+          .set('x-access-token', token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.defined;
+            expect(res.body._id).to.eql(doc._id);
+            done();
+          });
+      });
+
       it('should update a document', function (done) {
         request
           .put('/documents/' + doc._id)

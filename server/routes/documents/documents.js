@@ -20,6 +20,11 @@
     }, docsController.create);
 
     /**
+     * Fetch a single document.
+     */
+    app.get('/documents/:doc_id', docsController.retrieve);
+
+    /**
      * Update a document.
      */
     app.put('/documents/:doc_id', docsController.update);
