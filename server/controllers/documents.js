@@ -57,6 +57,55 @@
           });
           return res.status(200).send(docs.length ? docs : []);
         });
+    },
+
+    /**
+     * Update a document.
+     */
+    update: function (req, res) {
+      Document.findOne({_id: req.params.doc_id})
+        .exec(function (err, doc) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          if (!doc) {
+            return res.status(404).send({
+              message: 'Document not found.'
+            });
+          }
+
+          if (req.body.title) doc.title = req.body.title;
+          if (req.body.content) doc.content = req.body.content;
+          if (req.body.role && typeof req.body.role === 'string') {
+            Role.findOne({title: req.body.role}, function (err, role) {
+              if (err) {
+                return resolveError(err, res);
+              }
+              doc.role = role._id;
+              doc.save(function (err) {
+                if (err) {
+                  return resolveError(err, res);
+                }
+                // Have to findOne here else role will not be populated.
+                Document
+                  .findOne({ _id: doc._id })
+                  .exec(function (err, doc) {
+                    if (err) {
+                      return resolveError(err, res);
+                    }
+                    return res.status(200).send(doc);
+                  });
+              });
+            });
+          } else {
+            doc.save(function (err) {
+              if (err) {
+                return resolveError(err, res);
+              }
+              return res.status(200).send(doc);
+            });
+          }
+        });
     }
   };
 

@@ -72,6 +72,8 @@
             })
             .catch(done);
         });
+
+      it('should list documents sorted by the date created');
     });
 
     describe('Test create documents functionality', function () {
@@ -106,6 +108,60 @@
             done();
           })
           .catch(done);
+      });
+    });
+
+    describe('Test update and delete documents functionality', function () {
+      var doc;
+      var token;
+      before(function (done) {
+        testUtils.createUserByPost()
+          .then(function (res) {
+            token = res.body.token;
+            done();
+          })
+          .catch(done);
+      });
+
+      after(function (done) {
+        testUtils.destroyTestUsers()
+          .then(function () {
+            done();
+          })
+          .catch(done);
+      });
+
+      beforeEach(function (done) {
+        testUtils.createDocumentByPost(token, testUtils.testDocument)
+          .then(function (res) {
+            doc = res.body;
+            done();
+          })
+          .catch(done);
+      });
+
+      afterEach(function (done) {
+        testUtils.destroyTestDocuments();
+        done();
+      });
+
+      it('should update a document', function (done) {
+        request
+          .put('/documents/' + doc._id)
+          .send({
+            title: 'Changed title',
+            content: 'Some content',
+            role: 'owner'
+          })
+          .set('x-access-token', token)
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body.title).to.eql('Changed title');
+            expect(res.body.content).to.eql('Some content');
+            expect(res.body.role.title).to.eql('owner');
+            done();
+          });
       });
     });
   });

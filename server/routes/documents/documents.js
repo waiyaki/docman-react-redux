@@ -18,5 +18,10 @@
         required_fields: ['title', 'content']
       });
     }, docsController.create);
+
+    /**
+     * Update a document.
+     */
+    app.put('/documents/:doc_id', docsController.update);
   };
 })();
