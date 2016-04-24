@@ -163,6 +163,17 @@
             done();
           });
       });
+
+      it('should delete a document', function (done) {
+        request
+          .delete('/documents/' + doc._id)
+          .set('x-access-token', token)
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(204);
+            done();
+          });
+      });
     });
   });
 })();

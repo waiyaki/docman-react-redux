@@ -23,5 +23,10 @@
      * Update a document.
      */
     app.put('/documents/:doc_id', docsController.update);
+
+    /**
+     * Delete a single document.
+     */
+    app.delete('/documents/:doc_id', docsController.delete);
   };
 })();

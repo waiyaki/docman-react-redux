@@ -106,6 +106,25 @@
             });
           }
         });
+    },
+
+    /**
+     * Delete a single document.
+     */
+    delete: function (req, res) {
+      Document.findOne({_id: req.params.doc_id})
+        .remove()
+        .exec(function (err, docsRemoved) {
+          if (err) {
+            return resolveError(err, res);
+          }
+          if (!docsRemoved) {
+            return res.status(404).send({
+              message: 'Document not found.'
+            });
+          }
+          return res.status(204).send({});
+        });
     }
   };
 
