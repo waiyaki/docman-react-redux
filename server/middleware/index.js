@@ -54,7 +54,7 @@
             if (!user) {
               // Probably using a token whose user's been deleted.
               return res.status(401).send({
-                message: 'Invalid token. Please try loggin in again.'
+                message: 'Invalid token. Please try logging in again.'
               });
             }
             req.decoded = user;
@@ -79,7 +79,7 @@
           if (!user) {
             // Maybe we have an invalid token? User deleted? :thinking_face:
             return res.status(401).send({
-              message: 'Token validation error. Please try logging in again.'
+              message: 'Invalid token. Please try logging in again.'
             });
           }
           if (user.role && user.role.title === 'admin') {

@@ -170,7 +170,7 @@
           .catch(done);
       });
 
-      it('should restrict access to the API if no token is not provided',
+      it('should restrict access to the API if a token is not provided',
         function (done) {
           request
             .get('/users/some/non-existent/route')

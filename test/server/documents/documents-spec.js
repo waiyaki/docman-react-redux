@@ -73,7 +73,22 @@
             .catch(done);
         });
 
-      it('should list documents sorted by the date created');
+      it('should list documents sorted by the date created', function (done) {
+        request
+          .get('/documents')
+          .set('x-access-token', token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+
+            var sorted = Object.assign([], res.body);
+            sorted = sorted.sort(function (a, b) {
+              return a.createdAt < b.createdAt;
+            });
+            expect(res.body).to.eql(sorted);
+            done();
+          });
+      });
     });
 
     describe('Test create documents functionality', function () {
