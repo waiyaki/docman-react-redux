@@ -355,5 +355,85 @@
           });
       });
     });
+
+    describe("Test getting user's documents", function () {
+      var user1Token;
+      var user2Token;
+      var user1;
+      var user2;
+      before(function (done) {
+        testUtils.createUserByPost()
+          .then(function (res) {
+            user1 = res.body;
+            user1Token = res.body.token;
+            testUtils.createUserByPost({
+              username: 'test user',
+              password: 'strong',
+              email: 'strong@test.com'
+            }).then(function (response) {
+              user2 = response.body;
+              user2Token = response.body.token;
+              testUtils.seedTestDocuments(user1._id);
+              done();
+            }).catch(done);
+          })
+          .catch(done);
+      });
+
+      after(function (done) {
+        testUtils.destroyTestUsers()
+          .then(function () {
+            testUtils.destroyTestDocuments();
+            done();
+          })
+          .catch(done);
+      });
+
+      it("should get a user's accessible documents", function (done) {
+        request
+          .get('/users/' + user1.username + '/documents')
+          .set('x-access-token', user2Token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
+            done();
+          });
+      });
+
+      it('should let the owner access all of their owned documents',
+        function (done) {
+          request
+            .get('/users/' + user1.username + '/documents')
+            .set('x-access-token', user1Token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(4);
+              done();
+            });
+        });
+
+      it("should get all of a user's documents for admin users",
+        function (done) {
+          testUtils.makeAdmin(user2.username)
+            .then(function () {
+              request
+                .get('/users/' + user1.username + '/documents')
+                .set('x-access-token', user2Token)
+                .accept('application/json')
+                .end(function (err, res) {
+                  expect(err).to.be.null;
+                  expect(res.status).to.equal(200);
+                  expect(res.body).to.be.instanceOf(Array)
+                    .and.to.have.lengthOf(4);
+                  done();
+                });
+            })
+            .catch(done);
+        });
+    });
   });
 })();

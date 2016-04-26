@@ -24,5 +24,10 @@
      * Delete a user account.
      */
     app.delete('/users/profile', usersController.delete);
+
+    /**
+     * Get a user's documents.
+     */
+    app.get('/users/:username/documents', usersController.documents);
   };
 })();

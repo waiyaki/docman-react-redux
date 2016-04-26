@@ -3,6 +3,7 @@
 
   var User = require('../models').User;
   var Role = require('../models').Role;
+  var Document = require('../models').Document;
   var resolveError = require('../utils');
 
   var usersController = {
@@ -168,6 +169,34 @@
             token: user.generateJwt()
           });
         });
+    },
+
+    /**
+     * Get the specified user's documents.
+     */
+    documents: function (req, res) {
+      User.findOne({username: req.params.username}, function (err, user) {
+        if (err) {
+          return resolveError(err, res);
+        }
+        if (!user) {
+          return res.status(404).send({
+            message: 'User not found.'
+          });
+        }
+        Document.find({owner: user._id})
+          .sort('-createdAt')
+          .exec(function (err, docs) {
+            if (err) {
+              return resolveError(err, res);
+            }
+            docs = docs.filter(function (doc) {
+              return doc.role.accessLevel <= req.decoded.role.accessLevel ||
+              doc.owner.username === req.decoded.username;
+            });
+            return res.status(200).send(docs);
+          });
+      });
     }
   };
 

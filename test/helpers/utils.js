@@ -231,11 +231,12 @@
       // eslint-disable-next-line
       User.findOne({_id: owner_id}).exec(function (err, user) {
         _this.testDocuments.forEach(function (doc) {
-          doc.owner = user._id;
-          Role.findOne({title: doc.role}, function (err, role) {
+          var data = Object.assign({}, doc);
+          data.owner = user._id;
+          Role.findOne({title: data.role}, function (err, role) {
             if (err) throw err;
-            doc.role = role._id;
-            Document.create(doc, function (err) {
+            data.role = role._id;
+            Document.create(data, function (err) {
               if (err) throw err;
             });
           });
