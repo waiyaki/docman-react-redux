@@ -3,8 +3,11 @@
 
   var Document = require('../models').Document;
   var Role = require('../models').Role;
-  var User = require('../models').User;
-  var resolveError = require('../utils');
+  var utils = require('../utils');
+  var filterByDate = utils.filterByDate;
+  var filterByUser = utils.filterByUser;
+  var filterByRole = utils.filterByRole;
+  var resolveError = utils.resolveError;
 
   var documentsController = {
     /**
@@ -45,92 +48,6 @@
      * List all documents according to the given criteria.
      */
     list: function (req, res) {
-      function filterByDate (queryParams) {
-        return new Promise(function (resolve, reject) {
-          var hasDate = queryParams.created || queryParams.created_min || queryParams.created_min;
-          if (!hasDate) {
-            return resolve({});
-          }
-          var parseDate = function (date) {
-            try {
-              date = new Date(date);
-              if (date.toString() === 'Invalid Date') {
-                throw new Error(date);
-              }
-              return date.toUTCString();
-            } catch (err) {
-              throw err;
-            }
-          };
-          try {
-            if (queryParams.created) {
-              var date = parseDate(queryParams.created);
-              var created_max = new Date(date);
-              // Add a day to this day to get everything that was created between
-              // this date and the next at 0000hrs.
-              created_max = created_max.setDate(created_max.getDate() + 1);
-              queryParams.created_min = date;
-              queryParams.created_max = created_max;
-            } else {
-              if (queryParams.created_max) {
-                var _max = parseDate(queryParams.created_max);
-                _max = new Date(_max);
-                // Include today's records as well.
-                created_max = _max.setDate(_max.getDate() + 1);
-                queryParams.created_max = created_max;
-              } else if (queryParams.created_min) {
-                queryParams.created_min = parseDate(queryParams.created_min);
-              }
-            }
-            var qp = Object.assign({}, {
-              created_min: queryParams.created_min,
-              created_max: queryParams.created_max
-            });
-            resolve(qp);
-          } catch (err) {
-            var error = new Error('Error parsing date: ' + err.message);
-            reject(error);
-          }
-        });
-      }
-
-      function filterByUser (queryParams) {
-        return new Promise(function (resolve, reject) {
-          var username = queryParams.user || queryParams.username;
-          if (!username) {
-            return resolve({});
-          }
-          User.findOne({username: username}, function (err, user) {
-            if (err) {
-              return reject(err);
-            }
-            if (!user) {
-              var error = new Error(username + 'This user does not exist.');
-              return reject(error);
-            }
-            resolve({user: user});
-          });
-        });
-      }
-
-      function filterByRole (queryParams) {
-        return new Promise(function (resolve, reject) {
-          if (!queryParams.role) {
-            return resolve({});
-          }
-          Role.findOne({title: queryParams.role}, function (err, role) {
-            if (err) {
-              return reject(err);
-            }
-            if (!role) {
-              var error = new Error(queryParams.role + 'This role is invalid.');
-              return reject(error);
-            }
-            resolve({role: role});
-          });
-        });
-      }
-
       function runQuery (query) {
         Promise.all([
           filterByDate(queryParams),
@@ -164,7 +81,7 @@
             return res.status(200).send(docs.length ? docs : []);
           });
         }).catch(function (err) {
-          return resolveError(err, res);
+          return resolveError(err, res, 400);
         });
       }
 

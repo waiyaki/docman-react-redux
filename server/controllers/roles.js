@@ -2,7 +2,7 @@
   'use strict';
 
   var Role = require('../models').Role;
-  var resolveError = require('../utils');
+  var resolveError = require('../utils').resolveError;
 
   module.exports = {
     list: function (req, res) {

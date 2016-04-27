@@ -4,7 +4,7 @@
   var User = require('../models').User;
   var Role = require('../models').Role;
   var Document = require('../models').Document;
-  var resolveError = require('../utils');
+  var resolveError = require('../utils').resolveError;
 
   var usersController = {
     /**
