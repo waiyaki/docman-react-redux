@@ -21,7 +21,7 @@
           var roleTitles = roles.map(function (role) {
             return role.title;
           });
-          expect(roleTitles).to.eql(defaults);
+          expect(roleTitles.sort()).to.eql(defaults.sort());
           done();
         });
     });

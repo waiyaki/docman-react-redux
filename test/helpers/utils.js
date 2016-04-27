@@ -224,26 +224,64 @@
         }
       });
     },
+
     seedTestDocuments: function (owner_id, _log) {
       log('Seeding test documents...', _log);
 
       var _this = this;
       // eslint-disable-next-line
-      User.findOne({_id: owner_id}).exec(function (err, user) {
-        _this.testDocuments.forEach(function (doc) {
-          var data = Object.assign({}, doc);
-          data.owner = user._id;
-          Role.findOne({title: data.role}, function (err, role) {
-            if (err) throw err;
-            data.role = role._id;
-            Document.create(data, function (err) {
-              if (err) throw err;
+      return new Promise(function (resolve, reject) {
+        return User.findOne({_id: owner_id}).exec(function (err, user) {
+          if (err) {
+            reject(err);
+          }
+          _this.testDocuments.forEach(function (doc) {
+            var data = Object.assign({}, doc);
+            data.owner = user._id;
+            Role.findOne({title: data.role}, function (err, role) {
+              if (err) reject(err);
+              data.role = role._id;
+              Document.create(data, function (err) {
+                if (err) reject(err);
+              });
             });
           });
+          log(['Created', _this.testDocuments.length, 'documents'], _log);
+          resolve(true);
         });
       });
-      log(['Created', this.testDocuments.length, 'documents'], _log);
     },
+
+    /**
+     * Backdate every document found in the datebase. Every document is
+     * backdated by a day more than the document immediately ahead of it.
+     */
+    backDateDocumentCreatedAt: function (_log) {
+      return new Promise(function (resolve, reject) {
+        var timeout = 300;
+        log(['Backdating documents in ', timeout, 'milliseconds...'], _log);
+        setInterval(function () {
+          return Document.find({}, function (err, docs) {
+            if (err) {
+              reject(err);
+            }
+            docs.forEach(function (doc, index) {
+              var created = new Date(doc.createdAt);
+              created = created.setDate(created.getDate() - index);
+              doc.createdAt = created;
+              doc.save(function (err, doc) {
+                if (err) {
+                  reject(err);
+                }
+              });
+            });
+            log(['Backdated ', docs.length, 'documents successfully'], _log);
+            resolve(docs);
+          });
+        }, timeout);
+      });
+    },
+
     destroyTestDocuments: function (_log) {
       log('Destroying test documents...', _log);
       return Document.remove({}, function (err) { // eslint-disable-line

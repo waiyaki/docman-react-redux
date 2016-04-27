@@ -204,5 +204,157 @@
           });
       });
     });
+
+    describe('Document Search Suite', function () {
+      // User variables.
+      var user1;
+      var user2;
+
+      // Date variables.
+      var created = new Date();
+      var created_max = created.toISOString().replace(/T.*/g, '');
+      var created_min = created.setDate(created.getDate() - 2);
+      created_min = new Date(created_min).toISOString().replace(/T.*/g, '');
+
+      before(function (done) {
+        testUtils.createUserByPost()
+          .then(function (res) {
+            user1 = res.body;
+            testUtils.createUserByPost({
+              username: 'Another',
+              password: 'test',
+              email: 'test@another.com'
+            }).then(function (response) {
+              user2 = response.body;
+              testUtils.seedTestDocuments(user1._id)
+                .then(function () {
+                  testUtils.backDateDocumentCreatedAt()
+                    .then(function () {
+                      done();
+                    })
+                    .catch(done);
+                })
+                .catch(done);
+            })
+              .catch(done);
+          })
+          .catch(done);
+      });
+
+      after(function (done) {
+        testUtils.destroyTestUsers()
+          .then(function () {
+            testUtils.destroyTestDocuments();
+            done();
+          })
+          .catch(done);
+      });
+
+      it('should correctly filter listed documents by role', function (done) {
+        request
+          .get('/documents?role=user')
+          .set('x-access-token', user1.token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(1);
+            expect(res.body[0].role.title).to.eql('user');
+            done();
+          });
+      });
+
+      it('should correctly limit the listed documents', function (done) {
+        request
+          .get('/documents?limit=2')
+          .set('x-access-token', user1.token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
+            done();
+          });
+      });
+
+      it('should correctly filter listed documents by user', function (done) {
+        request
+          .get('/documents?user=' + user1.username)
+          .set('x-access-token', user1.token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(4);
+          });
+
+        request
+          .get('/documents?user=' + user2.username)
+          .set('x-access-token', user1.token)
+          .accept('application/json')
+          .end(function (err, res) {
+            expect(err).to.be.null;
+            expect(res.status).to.equal(200);
+            expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
+            done();
+          });
+      });
+
+      it('should correctly filter listed documents by date created',
+        function (done) {
+          request
+            .get('/documents?created=' + created_min)
+            .set('x-access-token', user1.token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(1);
+              done();
+            });
+        });
+
+      it('should correctly filter listed documents by date range',
+        function (done) {
+          var query = '?created_min=' + created_min +
+            '&created_max=' + created_max;
+          request
+            .get('/documents' + query)
+            .set('x-access-token', user1.token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(3);
+              done();
+            });
+        });
+      it('should correctly filter documents by a combination of filters',
+        function (done) {
+          var query = '?created_min=' + created_min +
+            '&created_max=' + created_max;
+          var q1 = query + '&limit=2&user=' + user1.username;
+          var q2 = query + '&role=owner&user=' + user2.username;
+          request
+            .get('/documents' + q1)
+            .set('x-access-token', user1.token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
+            });
+          request
+            .get('/documents' + q2)
+            .set('x-access-token', user1.token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
+              done();
+            });
+        });
+    });
   });
 })();
