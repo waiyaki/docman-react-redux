@@ -2,5 +2,12 @@ language: node_js
 node_js:
   - "5"
 
-services:
-  - mongodb
+sudo: false
+addons:
+  apt:
+    sources:
+      - mongodb-upstart
+      - mongodb-3.0-precise
+    packages:
+      - mongodb-org-server
+      - mongodb-org-shell

@@ -2,7 +2,7 @@
   'use strict';
 
   var mongoose = require('mongoose');
-  var bcrypt = require('bcrypt');
+  var bcrypt = require('bcrypt-nodejs');
   var jwt = require('jsonwebtoken');
   var app_config = require('../config/config');
 
@@ -77,7 +77,7 @@
     }
 
     // Replace password with the hashed version.
-    this.password = bcrypt.hashSync(this.password, 8);
+    this.password = bcrypt.hashSync(this.password);
     next();
   });
 

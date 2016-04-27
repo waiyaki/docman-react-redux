@@ -30,7 +30,7 @@
         expect(role).to.be.undefined;
         expect(err.name).to.equal('MongoError');
         expect(err.code).to.equal(11000);
-        expect(err.message).to.match(/E11000 duplicate key error collection/);
+        expect(err.message).to.match(/duplicate key error/);
         done();
       });
     });

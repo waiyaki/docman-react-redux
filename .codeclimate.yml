@@ -7,7 +7,7 @@ engines:
   eslint:
     enabled: true
     config:
-      config: .eslintrc-v1.json
+      config: ./.eslintrc-v1.json
     checks:
       complexity:
         enabled: true
