@@ -6,6 +6,10 @@
 
   /**
    * Give users helpful error messages.
+   *
+   * @param {Object} err - Error thrown
+   * @param {Object} res - The response object to return
+   * @param {Number} [status] - Status to return to the API user.
    */
   function resolveError (err, res, status) {
     if (status) {
@@ -60,6 +64,19 @@
     }
   }
 
+  /**
+   * Filter documents by the given date query.
+   *
+   * @param {Object} [queryParams]
+   * @param {Object} [queryParams.created] - Filter documents created on
+   *                                       this date.
+   * @param {Object} [queryParams.created_min] - Filter documents created
+   *                                           later than this date.
+   * @param {Object} [queryParams.created_max] - Filter documents created
+   *                                           earlier than this date.
+   *
+   * @returns {Object} - With created_max and created_min date range.
+   */
   function filterByDate (queryParams) {
     return new Promise(function (resolve, reject) {
       var hasDate = queryParams.created || queryParams.created_min || queryParams.created_min;
@@ -91,17 +108,17 @@
             var _max = parseDate(queryParams.created_max);
             _max = new Date(_max);
             // Include today's records as well.
-            created_max = _max.setDate(_max.getDate() + 1);
-            queryParams.created_max = created_max;
+            _max = _max.setDate(_max.getDate() + 1);
+            queryParams.created_max = _max;
           } else if (queryParams.created_min) {
             queryParams.created_min = parseDate(queryParams.created_min);
           }
         }
-        var qp = Object.assign({}, {
+        var param = Object.assign({}, {
           created_min: queryParams.created_min,
           created_max: queryParams.created_max
         });
-        resolve(qp);
+        resolve(param);
       } catch (err) {
         var error = new Error('Error parsing date: ' + err.message);
         reject(error);
@@ -109,6 +126,15 @@
     });
   }
 
+  /**
+   * Filter documents by the given user query.
+   *
+   * @param {Object} [queryParams]
+   * @param {Object} [<queryParams.user|queryParams.username>] - Username of
+   *                 user to find.
+   *
+   * @returns {Object} User object
+   */
   function filterByUser (queryParams) {
     return new Promise(function (resolve, reject) {
       var username = queryParams.user || queryParams.username;
@@ -128,6 +154,15 @@
     });
   }
 
+  /**
+   * Filter documents by the given role query.
+   *
+   * @param {Object} [queryParams]
+   * @param {Object} [<queryParams.user|queryParams.username>] - Role title of
+   *                 role to find.
+   *
+   * @returns {Object} Role object
+   */
   function filterByRole (queryParams) {
     return new Promise(function (resolve, reject) {
       if (!queryParams.role) {
