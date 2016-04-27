@@ -1,8 +1,6 @@
 (function () {
   'use strict';
 
-  process.env.NODE_ENV = 'testing';
-
   // Configure the app with this new env.
   var app = require('../../../app');
   var request = require('supertest')(app);
