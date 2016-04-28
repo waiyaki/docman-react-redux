@@ -75,9 +75,21 @@
               return resolveError(err, res);
             }
             docs = docs.filter(function (doc) {
-              return doc.role.accessLevel <= req.decoded.role.accessLevel ||
-              doc.owner.username === req.decoded.username;
+              // We can access anything we own.
+              if (doc.owner._id === req.decoded._id) {
+                return true;
+              } else if (req.decoded.role.title === 'admin') {
+                // Admins can access anything.
+                return true;
+              } else if (req.decoded._id) {
+                // If we're authenticated, we can access docs reserved for
+                // authenticated users.
+                return doc.role.title === 'user' || doc.role.title === 'public';
+              }
+              // Anyone else can only access the public docs.
+              return doc.role.title === 'public';
             });
+
             return res.status(200).send(docs.length ? docs : []);
           });
         }).catch(function (err) {
@@ -88,7 +100,7 @@
       var queryParams = req.query;
       var query = Document.find({})
         .limit(Number(queryParams.limit) || null)
-        .sort('-createdAt');
+        .sort('-createdAt'); // Sort the documents in descending order.
 
       return runQuery(query);
     },

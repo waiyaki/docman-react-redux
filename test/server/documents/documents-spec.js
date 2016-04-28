@@ -307,7 +307,8 @@
             .end(function (err, res) {
               expect(err).to.be.null;
               expect(res.status).to.equal(200);
-              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(1);
+              // No permission to access the doc created that day :/
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
               done();
             });
         });
@@ -323,7 +324,14 @@
             .end(function (err, res) {
               expect(err).to.be.null;
               expect(res.status).to.equal(200);
-              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(3);
+              // Expecting one public, one 'user' documents.
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
+              var expectedDocsRoles = ['user', 'public'];
+              var returnedDocsRoles = res.body.reduce(function (acc, doc) {
+                acc.push(doc.role.title);
+                return acc;
+              }, []);
+              expect(returnedDocsRoles.sort()).to.eql(expectedDocsRoles.sort());
               done();
             });
         });

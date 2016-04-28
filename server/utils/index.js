@@ -158,7 +158,7 @@
    * Filter documents by the given role query.
    *
    * @param {Object} [queryParams]
-   * @param {Object} [<queryParams.user|queryParams.username>] - Role title of
+   * @param {Object} [queryParams.role] - Role title of
    *                 role to find.
    *
    * @returns {Object} Role object
