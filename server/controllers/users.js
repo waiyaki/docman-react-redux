@@ -121,7 +121,18 @@
 
           user.save(function (err, user) {
             if (err) {
-              return resolveError(err, res);
+              if (err.code === 11000) {
+                if (/email/.test(err.errmsg)) {
+                  return resolveError({
+                    message: 'A user with this email already exists'
+                  }, res, 409);
+                } else if (/username/.test(err.errmsg)) {
+                  return resolveError({
+                    message: 'A user with this username already exists'
+                  }, res, 409);
+                }
+              }
+              return resolveError(err, res, 409);
             }
             return res.status(200).send(user);
           });

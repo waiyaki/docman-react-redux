@@ -333,10 +333,9 @@
             .accept('application/json')
             .end(function (err, res) {
               expect(err).to.be.null;
-              expect(res.status).to.equal(400);
-              expect(res.body).to.eql({
-                message: 'A user with this username already exists'
-              });
+              expect(res.status).to.equal(409);
+              expect(res.body.message).to.eql(
+                'A user with this username already exists');
               done();
             });
         }).catch(done);
