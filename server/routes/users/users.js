@@ -8,22 +8,26 @@
     /**
      * Get all users in the system. Admin access only.
      */
-    app.get('/users', customMiddleware.isAdmin, usersController.list);
+    app.get('/users',
+      customMiddleware.isAdminOrOwnProfile, usersController.list);
 
     /**
      * Get a logged in user's profile.
      */
-    app.get('/users/profile', usersController.retrieve);
+    app.get('/users/:username',
+      customMiddleware.isAdminOrOwnProfile, usersController.retrieve);
 
     /**
      * Update a user's profile.
      */
-    app.put('/users/profile', usersController.update);
+    app.put('/users/:username',
+      customMiddleware.isAdminOrOwnProfile, usersController.update);
 
     /**
      * Delete a user account.
      */
-    app.delete('/users/profile', usersController.delete);
+    app.delete('/users/:username',
+      customMiddleware.isAdminOrOwnProfile, usersController.delete);
 
     /**
      * Get a user's documents.

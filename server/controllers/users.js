@@ -83,7 +83,7 @@
      */
     retrieve: function (req, res) {
       return User
-        .findOne({_id: req.decoded._id}, '-__v')
+        .findOne({username: req.params.username}, '-__v')
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -97,7 +97,7 @@
      */
     update: function (req, res) {
       return User
-        .findOne({_id: req.decoded._id})
+        .findOne({username: req.params.username})
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -144,7 +144,9 @@
      * Delete a user's account.
      */
     delete: function (req, res) {
-      return User.findOneAndRemove({_id: req.decoded._id}, function (err) {
+      return User.findOneAndRemove({
+        username: req.params.username
+      }, function (err) {
         if (err) {
           return resolveError(err, res);
         }

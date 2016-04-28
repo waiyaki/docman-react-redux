@@ -263,11 +263,11 @@
     });
 
     describe('Test user profile functionality', function () {
-      var token;
+      var user;
       beforeEach(function (done) {
         testUtils.createUserByPost(testUtils.testUserData)
           .then(function (res) {
-            token = res.body.token;
+            user = res.body;
             done();
           })
           .catch(done);
@@ -283,13 +283,12 @@
 
       it("should fetch the logged in user's profile", function (done) {
         request
-          .get('/users/profile')
-          .set('x-access-token', token)
+          .get('/users/' + user.username)
+          .set('x-access-token', user.token)
           .accept('application/json')
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.body).to.be.defined;
-
             var expected = ['username', 'email', '_id', 'role'];
             expect(res.body).to.have.all.keys(expected);
             done();
@@ -298,8 +297,8 @@
 
       it("should update a user's profile", function (done) {
         request
-          .put('/users/profile')
-          .set('x-access-token', token)
+          .put('/users/' + user.username)
+          .set('x-access-token', user.token)
           .send({
             username: 'changedUsername',
             email: 'changedemail@email.com',
@@ -325,7 +324,7 @@
           email: 'someone@somewhere.com'
         }).then(function (res) {
           request
-            .put('/users/profile')
+            .put('/users/' + res.body.username)
             .send({
               username: testUtils.testUserData.username // Already created in beforeEach
             })
@@ -343,8 +342,8 @@
 
       it("should delete the logged in user's profile", function (done) {
         request
-          .delete('/users/profile')
-          .set('x-access-token', token)
+          .delete('/users/' + user.username)
+          .set('x-access-token', user.token)
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.status).to.equal(204);
