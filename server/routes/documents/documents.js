@@ -8,12 +8,12 @@
     /**
      * List all documents accessible by this user.
      */
-    app.get('/documents', docsController.list);
+    app.get('/api/documents', docsController.list);
 
     /**
      * Create a new document.
      */
-    app.post('/documents', function (req, res, next) {
+    app.post('/api/documents', function (req, res, next) {
       return customMiddleware.validatePost(req, res, next, {
         required_fields: ['title', 'content']
       });
@@ -22,16 +22,16 @@
     /**
      * Fetch a single document.
      */
-    app.get('/documents/:doc_id', docsController.retrieve);
+    app.get('/api/documents/:doc_id', docsController.retrieve);
 
     /**
      * Update a document.
      */
-    app.put('/documents/:doc_id', docsController.update);
+    app.put('/api/documents/:doc_id', docsController.update);
 
     /**
      * Delete a single document.
      */
-    app.delete('/documents/:doc_id', docsController.delete);
+    app.delete('/api/documents/:doc_id', docsController.delete);
   };
 })();

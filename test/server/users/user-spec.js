@@ -171,7 +171,7 @@
       it('should restrict access to the API if a token is not provided',
         function (done) {
           request
-            .get('/users/some/non-existent/route')
+            .get('/api/users/some/non-existent/route')
             .accept('application/json')
             .end(function (err, res) {
               expect(err).to.be.null;
@@ -183,7 +183,7 @@
 
       it('should disallow requests with invalid tokens', function (done) {
         request
-          .get('/users/some/non-existent/route')
+          .get('/api/users/some/non-existent/route')
           .accept('application/json')
           .set('x-access-token', 'somerandomthing')
           .end(function (err, res) {
@@ -233,7 +233,7 @@
 
       it('should forbid access to non-admins', function (done) {
         request
-          .get('/users')
+          .get('/api/users')
           .set('x-access-token', token)
           .accept('application/json')
           .end(function (err, res) {
@@ -248,7 +248,7 @@
         testUtils.makeAdmin(testUtils.testUserData.username)
           .then(function () {
             request
-              .get('/users')
+              .get('/api/users')
               .set('x-access-token', token)
               .accept('application/json')
               .end(function (err, res) {
@@ -283,7 +283,7 @@
 
       it("should fetch the logged in user's profile", function (done) {
         request
-          .get('/users/' + user.username)
+          .get('/api/users/' + user.username)
           .set('x-access-token', user.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -297,7 +297,7 @@
 
       it("should update a user's profile", function (done) {
         request
-          .put('/users/' + user.username)
+          .put('/api/users/' + user.username)
           .set('x-access-token', user.token)
           .send({
             username: 'changedUsername',
@@ -324,7 +324,7 @@
           email: 'someone@somewhere.com'
         }).then(function (res) {
           request
-            .put('/users/' + res.body.username)
+            .put('/api/users/' + res.body.username)
             .send({
               username: testUtils.testUserData.username // Already created in beforeEach
             })
@@ -342,7 +342,7 @@
 
       it("should delete the logged in user's profile", function (done) {
         request
-          .delete('/users/' + user.username)
+          .delete('/api/users/' + user.username)
           .set('x-access-token', user.token)
           .end(function (err, res) {
             expect(err).to.be.null;
@@ -387,7 +387,7 @@
 
       it("should get a user's accessible documents", function (done) {
         request
-          .get('/users/' + user1.username + '/documents')
+          .get('/api/users/' + user1.username + '/documents')
           .set('x-access-token', user2Token)
           .accept('application/json')
           .end(function (err, res) {
@@ -401,7 +401,7 @@
       it('should let the owner access all of their owned documents',
         function (done) {
           request
-            .get('/users/' + user1.username + '/documents')
+            .get('/api/users/' + user1.username + '/documents')
             .set('x-access-token', user1Token)
             .accept('application/json')
             .end(function (err, res) {
@@ -415,7 +415,7 @@
       it("should not give access to a user's private documents to other users",
         function (done) {
           request
-            .get('/users/' + user1.username + '/documents?role=private')
+            .get('/api/users/' + user1.username + '/documents?role=private')
             .set('x-access-token', user2Token)
             .accept('application/json')
             .end(function (err, res) {
@@ -431,7 +431,7 @@
           testUtils.makeAdmin(user2.username)
             .then(function () {
               request
-                .get('/users/' + user1.username + '/documents')
+                .get('/api/users/' + user1.username + '/documents')
                 .set('x-access-token', user2Token)
                 .accept('application/json')
                 .end(function (err, res) {

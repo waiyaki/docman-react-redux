@@ -33,7 +33,7 @@
           testUtils.makeAdmin()
             .then(function () {
               request
-                .get('/documents')
+                .get('/api/documents')
                 .set('x-access-token', token)
                 .end(function (err, res) {
                   expect(err).to.be.null;
@@ -57,7 +57,7 @@
             })
             .then(function (res) {
               request
-                .get('/documents')
+                .get('/api/documents')
                 .set('x-access-token', res.body.token)
                 .accept('application/json')
                 .end(function (err, res) {
@@ -74,7 +74,7 @@
 
       it('should list documents sorted by the date created', function (done) {
         request
-          .get('/documents')
+          .get('/api/documents')
           .set('x-access-token', token)
           .accept('application/json')
           .end(function (err, res) {
@@ -161,7 +161,7 @@
 
       it('should fetch a document', function (done) {
         request
-          .get('/documents/' + doc._id)
+          .get('/api/documents/' + doc._id)
           .set('x-access-token', token)
           .accept('application/json')
           .end(function (err, res) {
@@ -175,7 +175,7 @@
 
       it('should update a document', function (done) {
         request
-          .put('/documents/' + doc._id)
+          .put('/api/documents/' + doc._id)
           .send({
             title: 'Changed title',
             content: 'Some content',
@@ -194,7 +194,7 @@
 
       it('should delete a document', function (done) {
         request
-          .delete('/documents/' + doc._id)
+          .delete('/api/documents/' + doc._id)
           .set('x-access-token', token)
           .end(function (err, res) {
             expect(err).to.be.null;
@@ -251,7 +251,7 @@
 
       it('should correctly filter listed documents by role', function (done) {
         request
-          .get('/documents?role=user')
+          .get('/api/documents?role=user')
           .set('x-access-token', user1.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -265,7 +265,7 @@
 
       it('should correctly limit the listed documents', function (done) {
         request
-          .get('/documents?limit=2')
+          .get('/api/documents?limit=2')
           .set('x-access-token', user1.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -278,7 +278,7 @@
 
       it('should correctly filter listed documents by user', function (done) {
         request
-          .get('/users/' + user1.username + '/documents')
+          .get('/api/users/' + user1.username + '/documents')
           .set('x-access-token', user1.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -288,7 +288,7 @@
           });
 
         request
-          .get('/users/' + user2.username + '/documents')
+          .get('/api/users/' + user2.username + '/documents')
           .set('x-access-token', user1.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -302,7 +302,7 @@
       it('should correctly filter listed documents by date created',
         function (done) {
           request
-            .get('/documents?created=' + created_min)
+            .get('/api/documents?created=' + created_min)
             .set('x-access-token', user1.token)
             .accept('application/json')
             .end(function (err, res) {
@@ -318,7 +318,7 @@
           var query = '?created_min=' + created_min +
             '&created_max=' + created_max;
           request
-            .get('/documents' + query)
+            .get('/api/documents' + query)
             .set('x-access-token', user1.token)
             .accept('application/json')
             .end(function (err, res) {
@@ -343,7 +343,7 @@
           var q1 = query + '&limit=2';
           var q2 = query + '&role=public';
           request
-            .get('/documents' + q1)
+            .get('/api/documents' + q1)
             .set('x-access-token', user1.token)
             .accept('application/json')
             .end(function (err, res) {
@@ -352,7 +352,7 @@
               expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
             });
           request
-            .get('/documents' + q2)
+            .get('/api/documents' + q2)
             .set('x-access-token', user1.token)
             .accept('application/json')
             .end(function (err, res) {
