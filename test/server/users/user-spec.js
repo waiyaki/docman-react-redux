@@ -413,6 +413,20 @@
             });
         });
 
+      it("should not give access to a user's private documents to other users",
+        function (done) {
+          request
+            .get('/users/' + user1.username + '/documents?role=private')
+            .set('x-access-token', user2Token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
+              done();
+            });
+        });
+
       it("should get all of a user's documents for admin users",
         function (done) {
           testUtils.makeAdmin(user2.username)

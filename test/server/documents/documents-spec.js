@@ -278,7 +278,7 @@
 
       it('should correctly filter listed documents by user', function (done) {
         request
-          .get('/documents?user=' + user1.username)
+          .get('/users/' + user1.username + '/documents')
           .set('x-access-token', user1.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -288,7 +288,7 @@
           });
 
         request
-          .get('/documents?user=' + user2.username)
+          .get('/users/' + user2.username + '/documents')
           .set('x-access-token', user1.token)
           .accept('application/json')
           .end(function (err, res) {
@@ -335,12 +335,13 @@
               done();
             });
         });
+
       it('should correctly filter documents by a combination of filters',
         function (done) {
           var query = '?created_min=' + created_min +
             '&created_max=' + created_max;
-          var q1 = query + '&limit=2&user=' + user1.username;
-          var q2 = query + '&role=&user=' + user2.username;
+          var q1 = query + '&limit=2';
+          var q2 = query + '&role=public';
           request
             .get('/documents' + q1)
             .set('x-access-token', user1.token)
@@ -357,7 +358,7 @@
             .end(function (err, res) {
               expect(err).to.be.null;
               expect(res.status).to.equal(200);
-              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(1);
               done();
             });
         });

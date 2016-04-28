@@ -65,7 +65,7 @@ The server will run at [http://localhost:3000](http://localhost:3000)
 * `/users/:username/documents` [GET]
     - `HEADER` - `x-access-token`
 
-    Returns documents created by the user with this username
+    Returns documents created by the user with this username. These documents can be filtered against all filters described in the `/documents [GET]` route.
 
 * `/users` [GET]
     - `HEADER` - `x-access-token`
@@ -105,8 +105,6 @@ The server will run at [http://localhost:3000](http://localhost:3000)
     You can filter the documents to return only the ones that matter to you.
     - `/documents?limit=2` - Returns the accessible documents limited to the latest 2.
 
-    - `/documents?user=test` - Returns the public documents created by `test`.
-
     - `/documents?role=public` - Returns all documents accessible to the authenticated user that are public (whether the user owns them or not).
 
     - `/documents?created=2016-04-25` - Returns the documents created on the
@@ -115,7 +113,7 @@ The server will run at [http://localhost:3000](http://localhost:3000)
     - `/documents?created_min=2016-04-25&created_max=2016-04-27` - Returns the accessible documents created between the 25th and 27th of April, 2016. The `created_max` date is inclusive.
 
     The filters can be mixed and matched to fit the specific need at that moment. For example:
-    - `/documents?created_min=2016-04-24&created_max=2016-04-28&=user=test&role=public&limit=2` - Will return the latest `2` documents created by `test` `between` the 24th and 28th of April 2016, inclusive, and are accessible by the `public`.
+    - `/documents?created_min=2016-04-24&created_max=2016-04-28&role=public&limit=2` - Will return the latest `2` documents created `between` the 24th and 28th of April 2016, inclusive, and are accessible by the `public`.
 
 # Testing
 You can run tests by ensuring you have the project set up then running:

@@ -5,6 +5,7 @@
   var Role = require('../models').Role;
   var Document = require('../models').Document;
   var resolveError = require('../utils').resolveError;
+  var runQuery = require('../utils').runQuery;
 
   var usersController = {
     /**
@@ -195,18 +196,17 @@
             message: 'User not found.'
           });
         }
-        Document.find({owner: user._id})
-          .sort('-createdAt')
-          .exec(function (err, docs) {
-            if (err) {
-              return resolveError(err, res);
-            }
-            docs = docs.filter(function (doc) {
-              return doc.role.accessLevel <= req.decoded.role.accessLevel ||
-              doc.owner.username === req.decoded.username;
-            });
-            return res.status(200).send(docs);
-          });
+
+        var queryParams = req.query;
+        var query = Document.find({owner: user._id})
+          .limit(Number(queryParams.limit) || null)
+          .sort('-createdAt'); // Sort the documents in descending order.
+
+        return runQuery(req, query).then(function (docs) {
+          return res.status(200).send(docs);
+        }).catch(function (err) {
+          return resolveError(err, res, 400);
+        });
       });
     }
   };
