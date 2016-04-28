@@ -8,7 +8,7 @@
       type: String,
       default: 'user',
       unique: true,
-      enum: ['user', 'owner', 'admin', 'public']
+      enum: ['user', 'private', 'admin', 'public']
     },
     accessLevel: {
       type: Number,
@@ -22,7 +22,7 @@
   RoleSchema.pre('save', function (next) {
     var accessLevelsMap = {
       'admin': 4,
-      'owner': 3,
+      'private': 3,
       'user': 2,
       'public': 1
     };

@@ -75,13 +75,14 @@
               return resolveError(err, res);
             }
             docs = docs.filter(function (doc) {
-              // We can access anything we own.
-              if (doc.owner._id === req.decoded._id) {
-                return true;
-              } else if (req.decoded.role.title === 'admin') {
-                // Admins can access anything.
-                return true;
-              } else if (req.decoded._id) {
+              if (req.decoded._id) {
+                // We can access anything we own.
+                if (doc.owner.username === req.decoded.username) {
+                  return true;
+                } else if (req.decoded.role.title === 'admin') {
+                  // Admins can access anything.
+                  return true;
+                }
                 // If we're authenticated, we can access docs reserved for
                 // authenticated users.
                 return doc.role.title === 'user' || doc.role.title === 'public';

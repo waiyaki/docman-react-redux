@@ -12,7 +12,7 @@
   {
     "title": "Test Document 3",
     "content": "Some test content",
-    "role": "owner"
+    "role": "private"
   },
   {
     "title": "Test Document 4",

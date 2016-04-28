@@ -39,7 +39,8 @@
                   expect(err).to.be.null;
                   expect(res.status).to.equal(200);
                   expect(res.body).to.be.defined;
-                  expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(4);
+                  expect(res.body).to.be.instanceOf(Array)
+                    .and.to.have.lengthOf(4);
                   done();
                 });
             })
@@ -178,7 +179,7 @@
           .send({
             title: 'Changed title',
             content: 'Some content',
-            role: 'owner'
+            role: 'private'
           })
           .set('x-access-token', token)
           .end(function (err, res) {
@@ -186,7 +187,7 @@
             expect(res.status).to.equal(200);
             expect(res.body.title).to.eql('Changed title');
             expect(res.body.content).to.eql('Some content');
-            expect(res.body.role.title).to.eql('owner');
+            expect(res.body.role.title).to.eql('private');
             done();
           });
       });
@@ -307,8 +308,7 @@
             .end(function (err, res) {
               expect(err).to.be.null;
               expect(res.status).to.equal(200);
-              // No permission to access the doc created that day :/
-              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(1);
               done();
             });
         });
@@ -324,9 +324,9 @@
             .end(function (err, res) {
               expect(err).to.be.null;
               expect(res.status).to.equal(200);
-              // Expecting one public, one 'user' documents.
-              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(2);
-              var expectedDocsRoles = ['user', 'public'];
+              // Expecting one public, one 'user' and one 'private' document.
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(3);
+              var expectedDocsRoles = ['user', 'public', 'private'];
               var returnedDocsRoles = res.body.reduce(function (acc, doc) {
                 acc.push(doc.role.title);
                 return acc;
@@ -340,7 +340,7 @@
           var query = '?created_min=' + created_min +
             '&created_max=' + created_max;
           var q1 = query + '&limit=2&user=' + user1.username;
-          var q2 = query + '&role=owner&user=' + user2.username;
+          var q2 = query + '&role=&user=' + user2.username;
           request
             .get('/documents' + q1)
             .set('x-access-token', user1.token)

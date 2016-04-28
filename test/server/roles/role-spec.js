@@ -55,7 +55,7 @@
               expect(res.status).to.equal(200);
               expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(4);
 
-              var expected = ['public', 'user', 'owner', 'admin'];
+              var expected = ['public', 'user', 'private', 'admin'];
               var gotten = res.body.map(function (role) {
                 return role.title;
               });
