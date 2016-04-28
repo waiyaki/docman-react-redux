@@ -88,17 +88,17 @@
       it('should create a user with first and last names when provided',
         function (done) {
           var tData = Object.assign({}, testUtils.testUserData, {
-            first_name: 'Test',
-            last_name: 'User'
+            firstName: 'Test',
+            lastName: 'User'
           });
           testUtils.createUserByPost(tData)
             .then(function (res) {
               expect(res.status).to.equal(201);
               expect(res.body.name).to.be.defined;
               expect(res.body.name)
-                .to.have.property('first_name', tData.first_name);
+                .to.have.property('firstName', tData.firstName);
               expect(res.body.name)
-                .to.have.property('last_name', tData.last_name);
+                .to.have.property('lastName', tData.lastName);
               done();
             })
             .catch(done);
@@ -166,6 +166,32 @@
             done();
           })
           .catch(done);
+      });
+
+      it('should disallow logins with wrong username', function (done) {
+        testUtils.login({
+          username: 'somerandomthing',
+          password: testUtils.testUserData.password
+        }).then(function (res) {
+          expect(res.status).to.equal(401);
+          expect(res.body).to.eql({
+            message: 'Authentication failed. User not found.'
+          });
+          done();
+        }).catch(done);
+      });
+
+      it('should disallow logins with wrong password', function (done) {
+        testUtils.login({
+          username: testUtils.testUserData.username,
+          password: 'somerandomthing'
+        }).then(function (res) {
+          expect(res.status).to.equal(401);
+          expect(res.body).to.eql({
+            message: 'Incorrect username/password combination'
+          });
+          done();
+        }).catch(done);
       });
 
       it('should restrict access to the API if a token is not provided',
@@ -302,16 +328,16 @@
           .send({
             username: 'changedUsername',
             email: 'changedemail@email.com',
-            first_name: 'Test',
-            last_name: 'User'
+            firstName: 'Test',
+            lastName: 'User'
           })
           .accept('application/json')
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.status).to.equal(200);
             expect(res.body.username).to.eql('changedUsername');
-            expect(res.body.name.first_name).to.eql('Test');
-            expect(res.body.name.last_name).to.eql('User');
+            expect(res.body.name.firstName).to.eql('Test');
+            expect(res.body.name.lastName).to.eql('User');
             expect(res.body.email).to.eql('changedemail@email.com');
             done();
           });

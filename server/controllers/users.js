@@ -20,11 +20,11 @@
         name: {}
       };
 
-      if (req.body.full_name) {
-        data.name.full_name = req.body.full_name;
+      if (req.body.fullName) {
+        data.name.fullName = req.body.fullName;
       } else {
-        data.name.first_name = req.body.first_name;
-        data.name.last_name = req.body.last_name;
+        data.name.firstName = req.body.firstName;
+        data.name.lastName = req.body.lastName;
       }
 
       Role
@@ -53,7 +53,7 @@
                 _id: user._id,
                 username: user.username,
                 email: user.email,
-                full_name: user.name.full_name,
+                fullName: user.name.fullName,
                 name: user.name,
                 role: user.role,
                 token: user.generateJwt()
@@ -113,11 +113,11 @@
           if (req.body.username) user.username = req.body.username;
           if (req.body.password) user.password = req.body.password;
           if (req.body.email) user.email = req.body.email;
-          if (req.body.full_name) {
-            user.name.full_name = req.body.full_name;
-          } else if (req.body.first_name || req.body.last_name) {
-            user.name.first_name = req.body.first_name || user.name.first_name;
-            user.name.last_name = req.body.last_name || user.name.last_name;
+          if (req.body.fullName) {
+            user.name.fullName = req.body.fullName;
+          } else if (req.body.firstName || req.body.lastName) {
+            user.name.firstName = req.body.firstName || user.name.firstName;
+            user.name.lastName = req.body.lastName || user.name.lastName;
           }
 
           user.save(function (err, user) {
@@ -169,11 +169,11 @@
           }
 
           if (!user) {
-            return res.status(400).send({
+            return res.status(401).send({
               message: 'Authentication failed. User not found.'
             });
           } else if (!user.validatePassword(req.body.password)) {
-            return res.status(400).send({
+            return res.status(401).send({
               message: 'Incorrect username/password combination'
             });
           }

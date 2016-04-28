@@ -2,7 +2,7 @@
   'use strict';
 
   var jwt = require('jsonwebtoken');
-  var app_config = require('../config/config');
+  var appConfig = require('../config/config');
   var User = require('../models').User;
 
   var customMiddleware = {
@@ -38,7 +38,7 @@
         });
       }
 
-      jwt.verify(token, app_config.SECRET_KEY, function (err, decoded) {
+      jwt.verify(token, appConfig.SECRET_KEY, function (err, decoded) {
         if (err) {
           return res.status(401).send({
             message: 'Failed to authenticate token.'
