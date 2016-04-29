@@ -47,7 +47,7 @@
       testUtils.createUserByPost()
         .then(function (response) {
           request
-            .get('/roles')
+            .get('/api/roles')
             .set('x-access-token', response.body.token)
             .accept('application/json')
             .end(function (err, res) {

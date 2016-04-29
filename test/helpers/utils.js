@@ -39,7 +39,7 @@
       return new Promise(function (resolve, reject) {
         log(['Attempting to create user with data', data], _log);
         return request
-          .post('/users')
+          .post('/api/users')
           .send(data)
           .accept('application/json')
           .end(function (err, res) {
@@ -63,7 +63,7 @@
           'Attempting to login user', userData.username,
           'with password', userData.password, '...'], _log);
         return request
-          .post('/users/login')
+          .post('/api/users/login')
           .send(userData)
           .accept('application/json')
           .end(function (err, res) {
@@ -209,7 +209,7 @@
         } else {
           log(['Attempting to create document with data', data], _log);
           return request
-            .post('/documents')
+            .post('/api/documents')
             .send(data)
             .set('x-access-token', token)
             .accept('application/json')

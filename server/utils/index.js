@@ -1,7 +1,6 @@
 (function () {
   'use strict';
 
-  var User = require('../models').User;
   var Role = require('../models').Role;
 
   /**
@@ -127,34 +126,6 @@
   }
 
   /**
-   * Filter documents by the given user query.
-   *
-   * @param {Object} [queryParams]
-   * @param {Object} [<queryParams.user|queryParams.username>] - Username of
-   *                 user to find.
-   *
-   * @returns {Object} User object
-   */
-  function filterByUser (queryParams) {
-    return new Promise(function (resolve, reject) {
-      var username = queryParams.user || queryParams.username;
-      if (!username) {
-        return resolve({});
-      }
-      User.findOne({username: username}, function (err, user) {
-        if (err) {
-          return reject(err);
-        }
-        if (!user) {
-          var error = new Error(username + ': This user does not exist.');
-          return reject(error);
-        }
-        resolve({user: user});
-      });
-    });
-  }
-
-  /**
    * Filter documents by the given role query.
    *
    * @param {Object} [queryParams]
@@ -182,10 +153,66 @@
     });
   }
 
+  /**
+   * Return documents obtained by running a query from the user against the
+   * documents model.
+   *
+   * @param {Object} req - The request object.
+   * @param {Object} query - A Mongoose query object.
+   *
+   * @returns {Array} - An array of documents.
+   */
+  function runQuery (req, query) {
+    var queryParams = req.query;
+    return new Promise(function (resolve, reject) {
+      Promise.all([
+        filterByDate(queryParams),
+        filterByRole(queryParams)
+      ]).then(function (queryParams) {
+        var params = queryParams.reduce(function (params, q) {
+          return Object.assign(params, q);
+        }, {});
+
+        if (params.created_max || params.created_min) {
+          query.where('createdAt')
+            .gte(params.created_min)
+            .lte(params.created_max);
+        }
+        if (params.role) {
+          query.where('role').equals(params.role._id);
+        }
+
+        query.exec(function (err, docs) {
+          if (err) {
+            return reject(err);
+          }
+          docs = docs.filter(function (doc) {
+            if (req.decoded._id) {
+              // We can access anything we own.
+              if (doc.owner.username === req.decoded.username) {
+                return true;
+              } else if (req.decoded.role.title === 'admin') {
+                // Admins can access anything.
+                return true;
+              }
+              // If we're authenticated, we can access docs reserved for
+              // authenticated users.
+              return doc.role.title === 'user' || doc.role.title === 'public';
+            }
+            // Anyone else can only access the public docs.
+            return doc.role.title === 'public';
+          });
+
+          return resolve(docs);
+        });
+      }).catch(function (err) {
+        reject(err);
+      });
+    });
+  }
+
   module.exports = {
     resolveError: resolveError,
-    filterByRole: filterByRole,
-    filterByDate: filterByDate,
-    filterByUser: filterByUser
+    runQuery: runQuery
   };
 })();

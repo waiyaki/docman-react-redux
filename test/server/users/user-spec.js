@@ -88,17 +88,17 @@
       it('should create a user with first and last names when provided',
         function (done) {
           var tData = Object.assign({}, testUtils.testUserData, {
-            first_name: 'Test',
-            last_name: 'User'
+            firstName: 'Test',
+            lastName: 'User'
           });
           testUtils.createUserByPost(tData)
             .then(function (res) {
               expect(res.status).to.equal(201);
               expect(res.body.name).to.be.defined;
               expect(res.body.name)
-                .to.have.property('first_name', tData.first_name);
+                .to.have.property('firstName', tData.firstName);
               expect(res.body.name)
-                .to.have.property('last_name', tData.last_name);
+                .to.have.property('lastName', tData.lastName);
               done();
             })
             .catch(done);
@@ -168,10 +168,36 @@
           .catch(done);
       });
 
+      it('should disallow logins with wrong username', function (done) {
+        testUtils.login({
+          username: 'somerandomthing',
+          password: testUtils.testUserData.password
+        }).then(function (res) {
+          expect(res.status).to.equal(401);
+          expect(res.body).to.eql({
+            message: 'Authentication failed. User not found.'
+          });
+          done();
+        }).catch(done);
+      });
+
+      it('should disallow logins with wrong password', function (done) {
+        testUtils.login({
+          username: testUtils.testUserData.username,
+          password: 'somerandomthing'
+        }).then(function (res) {
+          expect(res.status).to.equal(401);
+          expect(res.body).to.eql({
+            message: 'Incorrect username/password combination'
+          });
+          done();
+        }).catch(done);
+      });
+
       it('should restrict access to the API if a token is not provided',
         function (done) {
           request
-            .get('/users/some/non-existent/route')
+            .get('/api/users/some/non-existent/route')
             .accept('application/json')
             .end(function (err, res) {
               expect(err).to.be.null;
@@ -183,7 +209,7 @@
 
       it('should disallow requests with invalid tokens', function (done) {
         request
-          .get('/users/some/non-existent/route')
+          .get('/api/users/some/non-existent/route')
           .accept('application/json')
           .set('x-access-token', 'somerandomthing')
           .end(function (err, res) {
@@ -233,7 +259,7 @@
 
       it('should forbid access to non-admins', function (done) {
         request
-          .get('/users')
+          .get('/api/users')
           .set('x-access-token', token)
           .accept('application/json')
           .end(function (err, res) {
@@ -248,7 +274,7 @@
         testUtils.makeAdmin(testUtils.testUserData.username)
           .then(function () {
             request
-              .get('/users')
+              .get('/api/users')
               .set('x-access-token', token)
               .accept('application/json')
               .end(function (err, res) {
@@ -263,11 +289,11 @@
     });
 
     describe('Test user profile functionality', function () {
-      var token;
+      var user;
       beforeEach(function (done) {
         testUtils.createUserByPost(testUtils.testUserData)
           .then(function (res) {
-            token = res.body.token;
+            user = res.body;
             done();
           })
           .catch(done);
@@ -283,13 +309,12 @@
 
       it("should fetch the logged in user's profile", function (done) {
         request
-          .get('/users/profile')
-          .set('x-access-token', token)
+          .get('/api/users/' + user.username)
+          .set('x-access-token', user.token)
           .accept('application/json')
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.body).to.be.defined;
-
             var expected = ['username', 'email', '_id', 'role'];
             expect(res.body).to.have.all.keys(expected);
             done();
@@ -298,21 +323,21 @@
 
       it("should update a user's profile", function (done) {
         request
-          .put('/users/profile')
-          .set('x-access-token', token)
+          .put('/api/users/' + user.username)
+          .set('x-access-token', user.token)
           .send({
             username: 'changedUsername',
             email: 'changedemail@email.com',
-            first_name: 'Test',
-            last_name: 'User'
+            firstName: 'Test',
+            lastName: 'User'
           })
           .accept('application/json')
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.status).to.equal(200);
             expect(res.body.username).to.eql('changedUsername');
-            expect(res.body.name.first_name).to.eql('Test');
-            expect(res.body.name.last_name).to.eql('User');
+            expect(res.body.name.firstName).to.eql('Test');
+            expect(res.body.name.lastName).to.eql('User');
             expect(res.body.email).to.eql('changedemail@email.com');
             done();
           });
@@ -325,7 +350,7 @@
           email: 'someone@somewhere.com'
         }).then(function (res) {
           request
-            .put('/users/profile')
+            .put('/api/users/' + res.body.username)
             .send({
               username: testUtils.testUserData.username // Already created in beforeEach
             })
@@ -333,10 +358,9 @@
             .accept('application/json')
             .end(function (err, res) {
               expect(err).to.be.null;
-              expect(res.status).to.equal(400);
-              expect(res.body).to.eql({
-                message: 'A user with this username already exists'
-              });
+              expect(res.status).to.equal(409);
+              expect(res.body.message).to.eql(
+                'A user with this username already exists');
               done();
             });
         }).catch(done);
@@ -344,8 +368,8 @@
 
       it("should delete the logged in user's profile", function (done) {
         request
-          .delete('/users/profile')
-          .set('x-access-token', token)
+          .delete('/api/users/' + user.username)
+          .set('x-access-token', user.token)
           .end(function (err, res) {
             expect(err).to.be.null;
             expect(res.status).to.equal(204);
@@ -389,7 +413,7 @@
 
       it("should get a user's accessible documents", function (done) {
         request
-          .get('/users/' + user1.username + '/documents')
+          .get('/api/users/' + user1.username + '/documents')
           .set('x-access-token', user2Token)
           .accept('application/json')
           .end(function (err, res) {
@@ -403,7 +427,7 @@
       it('should let the owner access all of their owned documents',
         function (done) {
           request
-            .get('/users/' + user1.username + '/documents')
+            .get('/api/users/' + user1.username + '/documents')
             .set('x-access-token', user1Token)
             .accept('application/json')
             .end(function (err, res) {
@@ -414,12 +438,26 @@
             });
         });
 
+      it("should not give access to a user's private documents to other users",
+        function (done) {
+          request
+            .get('/api/users/' + user1.username + '/documents?role=private')
+            .set('x-access-token', user2Token)
+            .accept('application/json')
+            .end(function (err, res) {
+              expect(err).to.be.null;
+              expect(res.status).to.equal(200);
+              expect(res.body).to.be.instanceOf(Array).and.to.have.lengthOf(0);
+              done();
+            });
+        });
+
       it("should get all of a user's documents for admin users",
         function (done) {
           testUtils.makeAdmin(user2.username)
             .then(function () {
               request
-                .get('/users/' + user1.username + '/documents')
+                .get('/api/users/' + user1.username + '/documents')
                 .set('x-access-token', user2Token)
                 .accept('application/json')
                 .end(function (err, res) {

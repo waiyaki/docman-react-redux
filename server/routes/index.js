@@ -6,19 +6,19 @@
 
   module.exports = function (app) {
     // Return a default response for the root url.
-    app.get('/', function (req, res) {
+    app.get('/api', function (req, res) {
       res.json({message: 'Welcome to DocMan'});
     });
 
     // Create a user
-    app.post('/users', function (req, res, next) {
+    app.post('/api/users', function (req, res, next) {
       return customMiddleware.validatePost(req, res, next, {
         required_fields: ['username', 'email', 'password']
       });
     }, usersController.create);
 
     // Login a user
-    app.post('/users/login', function (req, res, next) {
+    app.post('/api/users/login', function (req, res, next) {
       return customMiddleware.validatePost(req, res, next, {
         required_fields: ['username', 'password']
       });

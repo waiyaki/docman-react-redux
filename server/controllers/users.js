@@ -5,6 +5,7 @@
   var Role = require('../models').Role;
   var Document = require('../models').Document;
   var resolveError = require('../utils').resolveError;
+  var runQuery = require('../utils').runQuery;
 
   var usersController = {
     /**
@@ -19,11 +20,11 @@
         name: {}
       };
 
-      if (req.body.full_name) {
-        data.name.full_name = req.body.full_name;
+      if (req.body.fullName) {
+        data.name.fullName = req.body.fullName;
       } else {
-        data.name.first_name = req.body.first_name;
-        data.name.last_name = req.body.last_name;
+        data.name.firstName = req.body.firstName;
+        data.name.lastName = req.body.lastName;
       }
 
       Role
@@ -52,7 +53,7 @@
                 _id: user._id,
                 username: user.username,
                 email: user.email,
-                full_name: user.name.full_name,
+                fullName: user.name.fullName,
                 name: user.name,
                 role: user.role,
                 token: user.generateJwt()
@@ -82,7 +83,7 @@
      */
     retrieve: function (req, res) {
       return User
-        .findOne({_id: req.decoded._id}, '-__v')
+        .findOne({username: req.params.username}, '-__v')
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -96,7 +97,7 @@
      */
     update: function (req, res) {
       return User
-        .findOne({_id: req.decoded._id})
+        .findOne({username: req.params.username})
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -112,16 +113,27 @@
           if (req.body.username) user.username = req.body.username;
           if (req.body.password) user.password = req.body.password;
           if (req.body.email) user.email = req.body.email;
-          if (req.body.full_name) {
-            user.name.full_name = req.body.full_name;
-          } else if (req.body.first_name || req.body.last_name) {
-            user.name.first_name = req.body.first_name || user.name.first_name;
-            user.name.last_name = req.body.last_name || user.name.last_name;
+          if (req.body.fullName) {
+            user.name.fullName = req.body.fullName;
+          } else if (req.body.firstName || req.body.lastName) {
+            user.name.firstName = req.body.firstName || user.name.firstName;
+            user.name.lastName = req.body.lastName || user.name.lastName;
           }
 
           user.save(function (err, user) {
             if (err) {
-              return resolveError(err, res);
+              if (err.code === 11000) {
+                if (/email/.test(err.errmsg)) {
+                  return resolveError({
+                    message: 'A user with this email already exists'
+                  }, res, 409);
+                } else if (/username/.test(err.errmsg)) {
+                  return resolveError({
+                    message: 'A user with this username already exists'
+                  }, res, 409);
+                }
+              }
+              return resolveError(err, res, 409);
             }
             return res.status(200).send(user);
           });
@@ -132,7 +144,9 @@
      * Delete a user's account.
      */
     delete: function (req, res) {
-      return User.findOneAndRemove({_id: req.decoded._id}, function (err) {
+      return User.findOneAndRemove({
+        username: req.params.username
+      }, function (err) {
         if (err) {
           return resolveError(err, res);
         }
@@ -155,11 +169,11 @@
           }
 
           if (!user) {
-            return res.status(400).send({
+            return res.status(401).send({
               message: 'Authentication failed. User not found.'
             });
           } else if (!user.validatePassword(req.body.password)) {
-            return res.status(400).send({
+            return res.status(401).send({
               message: 'Incorrect username/password combination'
             });
           }
@@ -184,18 +198,17 @@
             message: 'User not found.'
           });
         }
-        Document.find({owner: user._id})
-          .sort('-createdAt')
-          .exec(function (err, docs) {
-            if (err) {
-              return resolveError(err, res);
-            }
-            docs = docs.filter(function (doc) {
-              return doc.role.accessLevel <= req.decoded.role.accessLevel ||
-              doc.owner.username === req.decoded.username;
-            });
-            return res.status(200).send(docs);
-          });
+
+        var queryParams = req.query;
+        var query = Document.find({owner: user._id})
+          .limit(Number(queryParams.limit) || null)
+          .sort('-createdAt'); // Sort the documents in descending order.
+
+        return runQuery(req, query).then(function (docs) {
+          return res.status(200).send(docs);
+        }).catch(function (err) {
+          return resolveError(err, res, 400);
+        });
       });
     }
   };

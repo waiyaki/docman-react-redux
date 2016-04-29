@@ -7,6 +7,6 @@
     /**
      * List all roles in the system..
      */
-    app.get('/roles', rolesController.list);
+    app.get('/api/roles', rolesController.list);
   };
 })();

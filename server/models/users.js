@@ -4,7 +4,7 @@
   var mongoose = require('mongoose');
   var bcrypt = require('bcrypt-nodejs');
   var jwt = require('jsonwebtoken');
-  var app_config = require('../config/config');
+  var appConfig = require('../config/config');
 
   var UserSchema = new mongoose.Schema({
     email: {
@@ -24,8 +24,8 @@
       select: false
     },
     name: {
-      first_name: String,
-      last_name: String
+      firstName: String,
+      lastName: String
     },
     role: {
       type: mongoose.Schema.Types.ObjectId,
@@ -49,9 +49,9 @@
   /**
    * Get a virtual full name.
    */
-  UserSchema.virtual('name.full_name').get(function () {
-    var full = this.name.first_name || '';
-    full = this.name.last_name ? full + ' ' + this.name.last_name : full;
+  UserSchema.virtual('name.fullName').get(function () {
+    var full = this.name.firstName || '';
+    full = this.name.lastName ? full + ' ' + this.name.lastName : full;
 
     return full || null;
   });
@@ -59,11 +59,11 @@
   /**
    * Set a user's names, given the full name.
    */
-  UserSchema.virtual('name.full_name').set(function (name) {
+  UserSchema.virtual('name.fullName').set(function (name) {
     if (name) {
       name = name.split(' ');
-      this.name.first_name = name[0];
-      this.name.last_name = name.slice(1).join(' ');
+      this.name.firstName = name[0];
+      this.name.lastName = name.slice(1).join(' ');
     }
   });
 
@@ -99,7 +99,7 @@
       _id: this._id,
       username: this.username,
       exp: parseInt(expiry.getTime() / 1000)
-    }, app_config.SECRET_KEY);
+    }, appConfig.SECRET_KEY);
   };
 
   module.exports = mongoose.model('User', UserSchema);

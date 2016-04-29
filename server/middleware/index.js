@@ -2,7 +2,7 @@
   'use strict';
 
   var jwt = require('jsonwebtoken');
-  var app_config = require('../config/config');
+  var appConfig = require('../config/config');
   var User = require('../models').User;
 
   var customMiddleware = {
@@ -38,7 +38,7 @@
         });
       }
 
-      jwt.verify(token, app_config.SECRET_KEY, function (err, decoded) {
+      jwt.verify(token, appConfig.SECRET_KEY, function (err, decoded) {
         if (err) {
           return res.status(401).send({
             message: 'Failed to authenticate token.'
@@ -67,7 +67,7 @@
      * Allow only admins to interact with the upcoming endpoint.
      * Has to be used after the `authenticate` middleware.
      */
-    isAdmin: function (req, res, next) {
+    isAdminOrOwnProfile: function (req, res, next) {
       User
         .findOne({_id: req.decoded._id})
         .populate('role', 'title')
@@ -83,6 +83,10 @@
             });
           }
           if (user.role && user.role.title === 'admin') {
+            // Allow admins access to all profiles.
+            return next();
+          } else if (req.params && req.params.username === user.username) {
+            // Allow users access to their own profiles.
             return next();
           }
           return res.status(403).send({

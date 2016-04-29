@@ -4,9 +4,7 @@
   var Document = require('../models').Document;
   var Role = require('../models').Role;
   var utils = require('../utils');
-  var filterByDate = utils.filterByDate;
-  var filterByUser = utils.filterByUser;
-  var filterByRole = utils.filterByRole;
+  var runQuery = utils.runQuery;
   var resolveError = utils.resolveError;
 
   var documentsController = {
@@ -48,62 +46,16 @@
      * List all documents according to the given criteria.
      */
     list: function (req, res) {
-      function runQuery (query) {
-        Promise.all([
-          filterByDate(queryParams),
-          filterByRole(queryParams),
-          filterByUser(queryParams)
-        ]).then(function (queryParams) {
-          var params = queryParams.reduce(function (params, q) {
-            return Object.assign(params, q);
-          }, {});
-
-          if (params.created_max || params.created_min) {
-            query.where('createdAt')
-              .gte(params.created_min)
-              .lte(params.created_max);
-          }
-          if (params.role) {
-            query.where('role').equals(params.role._id);
-          }
-          if (params.user) {
-            query.where('owner').equals(params.user._id);
-          }
-
-          query.exec(function (err, docs) {
-            if (err) {
-              return resolveError(err, res);
-            }
-            docs = docs.filter(function (doc) {
-              if (req.decoded._id) {
-                // We can access anything we own.
-                if (doc.owner.username === req.decoded.username) {
-                  return true;
-                } else if (req.decoded.role.title === 'admin') {
-                  // Admins can access anything.
-                  return true;
-                }
-                // If we're authenticated, we can access docs reserved for
-                // authenticated users.
-                return doc.role.title === 'user' || doc.role.title === 'public';
-              }
-              // Anyone else can only access the public docs.
-              return doc.role.title === 'public';
-            });
-
-            return res.status(200).send(docs.length ? docs : []);
-          });
-        }).catch(function (err) {
-          return resolveError(err, res, 400);
-        });
-      }
-
       var queryParams = req.query;
       var query = Document.find({})
         .limit(Number(queryParams.limit) || null)
         .sort('-createdAt'); // Sort the documents in descending order.
 
-      return runQuery(query);
+      return runQuery(req, query).then(function (docs) {
+        return res.status(200).send(docs);
+      }).catch(function (err) {
+        return resolveError(err, res, 400);
+      });
     },
 
     /**

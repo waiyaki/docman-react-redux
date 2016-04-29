@@ -2,14 +2,14 @@
   /* eslint-disable no-console */
   'use strict';
 
-  var app_config = require('./config');
+  var appConfig = require('./config');
   var mongoose = require('mongoose');
 
-  mongoose.connect(app_config.DB_URI);
+  mongoose.connect(appConfig.DB_URI);
 
   // Log connection events.
   mongoose.connection.once('connected', function () {
-    console.log('Mongoose connected to ', app_config.DB_URI);
+    console.log('Mongoose connected to ', appConfig.DB_URI);
   });
 
   mongoose.connection.on('error', function (err) {
