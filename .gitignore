@@ -37,3 +37,6 @@ node_modules
 
 # Finder stuff
 .DS_Store
+
+# webpack bundled js code
+bundle.js
