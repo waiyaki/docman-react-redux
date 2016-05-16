@@ -7,16 +7,16 @@ import AppBar from 'material-ui/AppBar';
 export default class App extends React.Component {
   render () {
     return (
-      <div className='main-application'>
-        <div className='main-application__navbar'>
-          <MuiThemeProvider muiTheme={getMuiTheme()}>
-              <AppBar zDepth={0}></AppBar>
-          </MuiThemeProvider>
+      <MuiThemeProvider muiTheme={getMuiTheme()}>
+        <div className='main-application'>
+          <div className='main-application__navbar'>
+                <AppBar zDepth={0}></AppBar>
+          </div>
+          <div className='main-application__body'>
+            {this.props.children}
+          </div>
         </div>
-        <div className='main-application__body'>
-          {this.props.children}
-        </div>
-      </div>
+      </MuiThemeProvider>
     );
   }
 }
