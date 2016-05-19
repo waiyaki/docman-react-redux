@@ -1,20 +1,22 @@
 import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 
-import {loginUser} from '../../actions/LoginActions';
-import Login from '../presentational/Login'; // eslint-disable-line
+import {signupUser} from '../../actions/SignupActions';
+import SignupPage from '../presentational/SignupPage'; // eslint-disable-line
 
-class LoginContainer extends React.Component {
+class SignupContainer extends React.Component {
   constructor (props) {
     super(props);
 
     this.state = {
       username: '',
       password: '',
+      confirmPassword: '',
+      email: '',
       error: null
     };
 
-    this.handleLogin = this.handleLogin.bind(this);
+    this.handleSignup = this.handleSignup.bind(this);
     this.handleFieldUpdate = this.handleFieldUpdate.bind(this);
   }
 
@@ -39,10 +41,11 @@ class LoginContainer extends React.Component {
     }
   }
 
-  handleLogin () {
-    this.props.dispatch(loginUser({
+  handleSignup () {
+    this.props.dispatch(signupUser({
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
+      email: this.state.email
     }));
   }
 
@@ -54,8 +57,8 @@ class LoginContainer extends React.Component {
   }
 
   render () {
-    return <Login
-      onLogin={this.handleLogin}
+    return <SignupPage
+      onSignup={this.handleSignup}
       onFieldUpdate={this.handleFieldUpdate}
       auth={this.props.auth.toJS()}
       errors={this.state.errors}
@@ -63,7 +66,7 @@ class LoginContainer extends React.Component {
   }
 }
 
-LoginContainer.propTypes = {
+SignupContainer.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 
@@ -76,4 +79,4 @@ function mapStateToProps (state) {
   };
 }
 
-export default connect(mapStateToProps)(LoginContainer);
+export default connect(mapStateToProps)(SignupContainer);

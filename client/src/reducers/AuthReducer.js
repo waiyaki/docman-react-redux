@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 
-import { LOGIN_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST } from '../constants';
+import * as actionTypes from '../constants';
 
 export default function (state = Map({
   isAuthenticated: !!localStorage.getItem('token'),
@@ -10,7 +10,8 @@ export default function (state = Map({
   user: null
 }), action) {
   switch (action.type) {
-    case LOGIN_REQUEST:
+    case actionTypes.LOGIN_REQUEST:
+    case actionTypes.SIGNUP_REQUEST:
       return state.merge(Map({
         isAuthenticated: false,
         isFetching: true,
@@ -18,7 +19,9 @@ export default function (state = Map({
         user: null,
         error: null
       }));
-    case LOGIN_SUCCESS:
+
+    case actionTypes.LOGIN_SUCCESS:
+    case actionTypes.SIGNUP_SUCCESS:
       return state.merge(Map({
         isAuthenticated: true,
         isFetching: false,
@@ -26,7 +29,9 @@ export default function (state = Map({
         error: null,
         user: action.user
       }));
-    case LOGIN_FAILURE:
+
+    case actionTypes.LOGIN_FAILURE:
+    case actionTypes.SIGNUP_FAILURE:
       return state.merge(Map({
         isAuthenticated: false,
         isFetching: false,

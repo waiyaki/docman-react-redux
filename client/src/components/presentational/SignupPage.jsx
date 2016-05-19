@@ -12,28 +12,43 @@ const errorStyle = {
   color: 'red'
 };
 
-const Login = (props) => {
+const Signup = (props) => {
   return (
     <div className='row'>
       <div className='col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-lg-offset-4 col-md-6 col-lg-4'>
         <div className='box center'>
           <Card>
-            <CardTitle title='Login'/>
+            <CardTitle title='Signup'/>
             <CardText>
               <TextField
                 hintText='Enter Username'
                 floatingLabelText='Username'
                 name='username'
                 type='text'
-                required
                 onChange={props.onFieldUpdate}
-              /><br />
+              />
+              <br />
+              <TextField
+                hintText='Enter Email'
+                floatingLabelText='Email'
+                name='email'
+                type='email'
+                onChange={props.onFieldUpdate}
+              />
+              <br />
               <TextField
                 hintText='Enter Password'
                 floatingLabelText='Password'
                 name='password'
                 type='password'
-                required
+                onChange={props.onFieldUpdate}
+              />
+              <br />
+              <TextField
+                hintText='Confirm Password'
+                floatingLabelText='Confirm Password'
+                name='confirmPassword'
+                type='password'
                 onChange={props.onFieldUpdate}
               />
             </CardText>
@@ -47,8 +62,8 @@ const Login = (props) => {
                 }
                 <RaisedButton
                   backgroundColor='#00BCD4'
-                  label='Login'
-                  onClick={props.onLogin}
+                  label='Signup'
+                  onClick={props.onSignup}
                   />
                 </CardActions>
             }
@@ -59,9 +74,10 @@ const Login = (props) => {
   );
 };
 
-Login.propTypes = {
-  onLogin: PropTypes.func.isRequired,
-  onFieldUpdate: PropTypes.func.isRequired
+Signup.propTypes = {
+  onSignup: PropTypes.func.isRequired,
+  onFieldUpdate: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
 };
 
-export default Login;
+export default Signup;
