@@ -12,40 +12,25 @@ const errorStyle = {
   color: 'red'
 };
 
-const Signup = (props) => {
+const Login = (props) => {
   return (
     <Card>
-      <CardTitle title='Signup'/>
+      <CardTitle title='Login'/>
       <CardText>
         <TextField
           hintText='Enter Username'
           floatingLabelText='Username'
           name='username'
           type='text'
+          required
           onChange={props.onFieldUpdate}
-        />
-        <br />
-        <TextField
-          hintText='Enter Email'
-          floatingLabelText='Email'
-          name='email'
-          type='email'
-          onChange={props.onFieldUpdate}
-        />
-        <br />
+        /><br />
         <TextField
           hintText='Enter Password'
           floatingLabelText='Password'
           name='password'
           type='password'
-          onChange={props.onFieldUpdate}
-        />
-        <br />
-        <TextField
-          hintText='Confirm Password'
-          floatingLabelText='Confirm Password'
-          name='confirmPassword'
-          type='password'
+          required
           onChange={props.onFieldUpdate}
         />
       </CardText>
@@ -59,23 +44,22 @@ const Signup = (props) => {
           }
           <RaisedButton
             backgroundColor='#00BCD4'
-            label='Signup'
+            label='Login'
             onClick={props.onAuthAction}
             />
-            <p>
-              Already Registered?<br />
-              <RaisedButton
-                label='Login'
-                onClick={props.toggleView}
-              />
-            </p>
+          <p>
+            <RaisedButton
+              label='Or Register'
+              onClick={props.toggleView}
+            />
+          </p>
           </CardActions>
       }
     </Card>
   );
 };
 
-Signup.propTypes = {
+Login.propTypes = {
   onAuthAction: PropTypes.func.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,
   toggleView: PropTypes.func.isRequired,
@@ -83,4 +67,4 @@ Signup.propTypes = {
   errors: PropTypes.array
 };
 
-export default Signup;
+export default Login;

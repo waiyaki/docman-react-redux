@@ -10,7 +10,7 @@ export default class MainContainer extends React.Component {
       <MuiThemeProvider muiTheme={getMuiTheme()}>
         <div className='main-application'>
           <div className='main-application__navbar'>
-                <AppBar zDepth={0}></AppBar>
+              <AppBar zDepth={0}></AppBar>
           </div>
           <div className='main-application__body'>
             {this.props.children}
