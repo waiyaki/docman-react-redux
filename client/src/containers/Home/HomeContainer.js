@@ -8,7 +8,9 @@ import UnauthenticatedHomeContainer from '../Auth/UnauthenticatedHomeContainer';
 
 class HomeContainer extends React.Component {
   render () {
-    return <UnauthenticatedHomeContainer />;
+    return this.props.auth.get('isAuthenticated')
+      ? <Home />
+      : <UnauthenticatedHomeContainer />;
   }
 }
 
