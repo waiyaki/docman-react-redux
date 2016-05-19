@@ -5,8 +5,7 @@ import {loginUser} from '../../actions/LoginActions';
 import {signupUser} from '../../actions/SignupActions';
 
 /* eslint-disable no-unused-vars */
-import LoginPage from '../../components/Auth/LoginPage';
-import SignupPage from '../../components/Auth/SignupPage';
+import UnauthenticatedHomePage from '../../components/Auth/UnauthenticatedHomePage';
 /* eslint-disable no-unused-vars */
 
 class UnauthenticatedHomeContainer extends React.Component {
@@ -67,35 +66,20 @@ class UnauthenticatedHomeContainer extends React.Component {
 
   toggleView () {
     this.setState({
-      showingLogin: !this.state.showingLogin
+      showingLogin: !this.state.showingLogin,
+      errors: null
     });
   }
 
   render () {
-    return (
-      <div className='main-application__unauthed'>
-        <div className='auth-container'>
-          <div className='box center'>
-            {this.state.showingLogin
-              ? <LoginPage
-                onAuthAction={this.handleAuthAction}
-                onFieldUpdate={this.handleFieldUpdate}
-                auth={this.props.auth.toJS()}
-                errors={this.state.errors}
-                toggleView={this.toggleView}
-              />
-              : <SignupPage
-                onAuthAction={this.handleAuthAction}
-                onFieldUpdate={this.handleFieldUpdate}
-                auth={this.props.auth.toJS()}
-                errors={this.state.errors}
-                toggleView={this.toggleView}
-              />
-            }
-          </div>
-        </div>
-      </div>
-    );
+    return <UnauthenticatedHomePage
+      auth={this.props.auth.toJS()}
+      errors={this.state.errors}
+      onAuthAction={this.handleAuthAction}
+      onFieldUpdate={this.handleFieldUpdate}
+      showingLogin={this.state.showingLogin}
+      toggleView={this.toggleView}
+      />;
   }
 }
 

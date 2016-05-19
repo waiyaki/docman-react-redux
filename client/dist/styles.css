@@ -7,13 +7,15 @@ body, html {
   width: 100%;
 }
 
-.main-application__body {
-  margin: 0.5em;
-}
-
+.main-application,
+.main-application__body,
 .main-application__unauthed {
   height: 100%;
   width: 100%;
+}
+
+.main-application__content {
+  margin: 1em;
 }
 
 .auth-container {

@@ -48,8 +48,9 @@ const Login = (props) => {
             onClick={props.onAuthAction}
             />
           <p>
+            Not Registered? <br />
             <RaisedButton
-              label='Or Register'
+              label='Register'
               onClick={props.toggleView}
             />
           </p>
