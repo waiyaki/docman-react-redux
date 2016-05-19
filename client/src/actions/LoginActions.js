@@ -34,7 +34,7 @@ export function loginUser (credentials) {
     dispatch(loginRequest(credentials));
 
     return Axios
-      .post('/api/users/login', {credentials})
+      .post('/api/users/login', credentials)
       .then((user) => {
         dispatch(loginSuccess(user));
       })

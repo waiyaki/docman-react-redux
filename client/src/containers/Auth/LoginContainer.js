@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 
 import {loginUser} from '../../actions/LoginActions';
-import Login from '../presentational/Login'; // eslint-disable-line
+import Login from '../../components/Auth/Login'; // eslint-disable-line
 
 class LoginContainer extends React.Component {
   constructor (props) {

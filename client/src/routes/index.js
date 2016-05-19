@@ -4,12 +4,12 @@ import {Provider} from 'react-redux';
 import {IndexRoute, Router, Route, hashHistory} from 'react-router';
 /* eslint-enable no-unused-vars */
 
-import configureStore from '../configureStore';
+import configureStore from '../store/configureStore';
 
-import MainContainer from '../App';
-import HomeContainer from '../components/containers/HomeContainer';
-import LoginContainer from '../components/containers/LoginContainer';
-import SignupContainer from '../components/containers/SignupContainer';
+import MainContainer from '../containers/Main/MainContainer';
+import HomeContainer from '../containers/Home/HomeContainer';
+import LoginContainer from '../containers/Auth/LoginContainer';
+import SignupContainer from '../containers/Auth/SignupContainer';
 
 const store = configureStore();
 

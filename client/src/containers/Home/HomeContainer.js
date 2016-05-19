@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Home from '../presentational/Home.jsx';
+import Home from '../../components/Home/Home.jsx';
 
 export default class HomeContainer extends React.Component {
   render () {

@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 
 import {signupUser} from '../../actions/SignupActions';
-import SignupPage from '../presentational/SignupPage'; // eslint-disable-line
+import SignupPage from '../../components/Auth/SignupPage'; // eslint-disable-line
 
 class SignupContainer extends React.Component {
   constructor (props) {

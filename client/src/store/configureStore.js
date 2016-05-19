@@ -2,7 +2,7 @@ import {createStore, applyMiddleware} from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import createLogger from 'redux-logger';
 
-import RootReducer from './reducers';
+import RootReducer from '../reducers';
 
 const loggerMiddleware = createLogger();
 

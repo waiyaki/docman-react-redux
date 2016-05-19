@@ -4,7 +4,7 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import AppBar from 'material-ui/AppBar';
 
-export default class App extends React.Component {
+export default class MainContainer extends React.Component {
   render () {
     return (
       <MuiThemeProvider muiTheme={getMuiTheme()}>
