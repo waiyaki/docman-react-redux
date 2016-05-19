@@ -1,9 +1,9 @@
-import {combineReducers} from 'redux';
+import {combineReducers} from 'redux-immutable';
 
 import AuthReducer from './AuthReducer';
 
 const RootReducer = combineReducers({
-  AuthReducer
+  auth: AuthReducer
 });
 
 export default RootReducer;

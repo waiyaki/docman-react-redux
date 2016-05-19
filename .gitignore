@@ -39,4 +39,5 @@ node_modules
 .DS_Store
 
 # webpack bundled js code
-bundle.js
+dist/
+!index.html

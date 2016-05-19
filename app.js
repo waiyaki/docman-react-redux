@@ -1,10 +1,13 @@
 (function () {
   'use strict';
 
+  var path = require('path');
   var express = require('express');
   var logger = require('morgan');
   var bodyParser = require('body-parser');
   var dotenv = require('dotenv');
+
+  var publicPath = path.resolve(__dirname, './client/dist');
 
   var env = process.env.NODE_ENV;
   if (env === 'testing' || env === 'development') {
@@ -23,8 +26,12 @@
   // Grab post data from the request.
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
+  app.use(express.static(publicPath));
 
   // Routes
+  app.get('/', function (req, res) {
+    return res.sendFile(path.resolve(publicPath, '/index.html'));
+  });
   require('./server/routes')(app);
 
   // If we get here, we must have matched nothing... Or we're dying.

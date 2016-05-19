@@ -4,6 +4,7 @@
  * Returns functions that generate actions with types and optional data
  */
 import * as actionTypes from '../constants';
+import Axios from 'axios';
 
 export function loginRequest (credentials) {
   return {
@@ -29,5 +30,24 @@ export function loginFailure (error) {
     isAuthenticated: false,
     isFetching: false,
     error: error.data
+  };
+}
+
+export function loginUser (credentials) {
+  return function (dispatch) {
+    // Announce to the application that we're performing login
+    dispatch(loginRequest(credentials));
+
+    return Axios
+      .post('/api/users/login', {
+        username: credentials.username,
+        password: credentials.password
+      })
+      .then((user) => {
+        dispatch(loginSuccess(user));
+      })
+      .catch((error) => {
+        dispatch(loginFailure(error));
+      });
   };
 }
