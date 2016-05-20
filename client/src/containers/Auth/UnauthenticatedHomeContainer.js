@@ -1,8 +1,9 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {loginUser} from '../../actions/LoginActions';
-import {signupUser} from '../../actions/SignupActions';
+import {
+  loginUser, signupUser, credentialsUpdate, toggleLoginView
+} from '../../actions/AuthActions';
 
 /* eslint-disable no-unused-vars */
 import UnauthenticatedHomePage from '../../components/Auth/UnauthenticatedHomePage';
@@ -11,9 +12,8 @@ import UnauthenticatedHomePage from '../../components/Auth/UnauthenticatedHomePa
 class UnauthenticatedHomeContainer extends React.Component {
   constructor (props) {
     super(props);
-
     this.state = {
-      showingLogin: true
+      errors: null
     };
 
     this.handleAuthAction = this.handleAuthAction.bind(this);
@@ -22,15 +22,16 @@ class UnauthenticatedHomeContainer extends React.Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    let auth = nextProps.auth.toJS();
-    if (auth.error) {
+    let errors = nextProps.auth.get('error');
+    errors = errors ? errors.toJS() : null;
+    if (errors) {
       let messages = [];
-      if (Array.isArray(auth.error)) {
-        messages = auth.error.map(error => {
+      if (Array.isArray(errors)) {
+        messages = errors.map(error => {
           return Object.keys(error).map(key => `${key}: ${error[key]}`);
         }).toString().split(',');
       } else {
-        messages.push(auth.error.message);
+        messages.push(errors.message);
       }
       this.setState({
         errors: messages
@@ -43,32 +44,24 @@ class UnauthenticatedHomeContainer extends React.Component {
   }
 
   handleAuthAction () {
-    if (this.state.showingLogin) {
-      this.props.dispatch(loginUser({
-        username: this.state.username,
-        password: this.state.password
-      }));
+    if (this.props.auth.get('isShowingLogin')) {
+      this.props.dispatch(loginUser(
+        this.props.auth.get('credentials').toJS()));
     } else {
-      this.props.dispatch(signupUser({
-        username: this.state.username,
-        password: this.state.password,
-        email: this.state.email
-      }));
+      this.props.dispatch(signupUser(
+        this.props.auth.get('credentials').toJS()));
     }
   }
 
   handleFieldUpdate (event) {
     event.preventDefault();
-    this.setState({
-      [event.target.name]: event.target.value
-    });
+    let credentials = this.props.auth.get('credentials');
+    credentials = credentials.set(event.target.name, event.target.value);
+    this.props.dispatch(credentialsUpdate(credentials.toJS()));
   }
 
   toggleView () {
-    this.setState({
-      showingLogin: !this.state.showingLogin,
-      errors: null
-    });
+    this.props.dispatch(toggleLoginView());
   }
 
   render () {
@@ -77,7 +70,6 @@ class UnauthenticatedHomeContainer extends React.Component {
       errors={this.state.errors}
       onAuthAction={this.handleAuthAction}
       onFieldUpdate={this.handleFieldUpdate}
-      showingLogin={this.state.showingLogin}
       toggleView={this.toggleView}
       />;
   }

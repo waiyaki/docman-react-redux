@@ -24,6 +24,7 @@ const Login = (props) => {
           type='text'
           required
           onChange={props.onFieldUpdate}
+          value={props.auth.credentials.username}
         /><br />
         <TextField
           hintText='Enter Password'
@@ -32,6 +33,7 @@ const Login = (props) => {
           type='password'
           required
           onChange={props.onFieldUpdate}
+          value={props.auth.credentials.password}
         />
       </CardText>
       {props.auth.isFetching
@@ -64,7 +66,10 @@ Login.propTypes = {
   onAuthAction: PropTypes.func.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,
   toggleView: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
+  auth: PropTypes.shape({
+    isFetching: PropTypes.bool.isRequired,
+    credentials: PropTypes.object.isRequired
+  }).isRequired,
   errors: PropTypes.array
 };
 

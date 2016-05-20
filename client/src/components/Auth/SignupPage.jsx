@@ -23,6 +23,7 @@ const Signup = (props) => {
           name='username'
           type='text'
           onChange={props.onFieldUpdate}
+          value={props.auth.credentials.username}
         />
         <br />
         <TextField
@@ -31,6 +32,7 @@ const Signup = (props) => {
           name='email'
           type='email'
           onChange={props.onFieldUpdate}
+          value={props.auth.credentials.email}
         />
         <br />
         <TextField
@@ -39,6 +41,7 @@ const Signup = (props) => {
           name='password'
           type='password'
           onChange={props.onFieldUpdate}
+          value={props.auth.credentials.password}
         />
         <br />
         <TextField
@@ -79,7 +82,10 @@ Signup.propTypes = {
   onAuthAction: PropTypes.func.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,
   toggleView: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
+  auth: PropTypes.shape({
+    isFetching: PropTypes.bool.isRequired,
+    credentials: PropTypes.object.isRequired
+  }).isRequired,
   errors: PropTypes.array
 };
 

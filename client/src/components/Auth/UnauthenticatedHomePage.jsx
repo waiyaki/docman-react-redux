@@ -15,21 +15,9 @@ const UnauthenticatedHomePage = (props) => {
       </div>
       <div className='auth-container'>
         <div className='box center'>
-          {props.showingLogin
-            ? <LoginPage
-              onAuthAction={props.onAuthAction}
-              onFieldUpdate={props.onFieldUpdate}
-              auth={props.auth}
-              errors={props.errors}
-              toggleView={props.toggleView}
-            />
-            : <SignupPage
-              onAuthAction={props.onAuthAction}
-              onFieldUpdate={props.onFieldUpdate}
-              auth={props.auth}
-              errors={props.errors}
-              toggleView={props.toggleView}
-            />
+          {props.auth.isShowingLogin
+            ? <LoginPage {...props} />
+          : <SignupPage {...props} />
           }
         </div>
       </div>
@@ -41,9 +29,12 @@ UnauthenticatedHomePage.propTypes = {
   onAuthAction: PropTypes.func.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,
   toggleView: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  errors: PropTypes.array,
-  showingLogin: PropTypes.bool.isRequired
+  auth: PropTypes.shape({
+    isFetching: PropTypes.bool.isRequired,
+    credentials: PropTypes.object.isRequired,
+    isShowingLogin: PropTypes.bool.isRequired
+  }).isRequired,
+  errors: PropTypes.array
 };
 
 export default UnauthenticatedHomePage;

@@ -1,23 +1,25 @@
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
 
 export default function (state = Map({
   isAuthenticated: !!localStorage.getItem('token'),
   isFetching: false,
-  credentials: null,
+  credentials: Map({
+    username: '',
+    email: '',
+    password: ''
+  }),
   error: null,
-  user: null
+  user: null,
+  isShowingLogin: true
 }), action) {
   switch (action.type) {
     case actionTypes.LOGIN_REQUEST:
     case actionTypes.SIGNUP_REQUEST:
       return state.merge(Map({
-        isAuthenticated: false,
         isFetching: true,
-        credentials: action.credentials,
-        user: null,
-        error: null
+        credentials: fromJS(action.credentials)
       }));
 
     case actionTypes.LOGIN_SUCCESS:
@@ -25,9 +27,13 @@ export default function (state = Map({
       return state.merge(Map({
         isAuthenticated: true,
         isFetching: false,
-        credentials: null,
+        credentials: Map({
+          username: '',
+          email: '',
+          password: ''
+        }),
         error: null,
-        user: action.user
+        user: fromJS(action.user)
       }));
 
     case actionTypes.LOGIN_FAILURE:
@@ -35,9 +41,21 @@ export default function (state = Map({
       return state.merge(Map({
         isAuthenticated: false,
         isFetching: false,
-        error: action.error,
+        error: fromJS(action.error),
         user: null
       }));
+
+    case actionTypes.CREDENTIALS_UPDATE:
+      return state.merge(Map({
+        credentials: fromJS(action.credentials)
+      }));
+
+    case actionTypes.TOGGLE_LOGIN_VIEW:
+      return state.merge(Map({
+        isShowingLogin: !state.get('isShowingLogin'),
+        error: null
+      }));
+
     default:
       return state;
   }
