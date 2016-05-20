@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import {
   loginUser, signupUser, credentialsUpdate, toggleLoginView
 } from '../../actions/AuthActions';
+import {validateField} from '../../actions/AuthValidationActions';
 
 /* eslint-disable no-unused-vars */
 import UnauthenticatedHomePage from '../../components/Auth/UnauthenticatedHomePage';
@@ -18,6 +19,7 @@ class UnauthenticatedHomeContainer extends React.Component {
 
     this.handleAuthAction = this.handleAuthAction.bind(this);
     this.handleFieldUpdate = this.handleFieldUpdate.bind(this);
+    this.handleValidateField = this.handleValidateField.bind(this);
     this.toggleView = this.toggleView.bind(this);
   }
 
@@ -58,6 +60,15 @@ class UnauthenticatedHomeContainer extends React.Component {
     let credentials = this.props.auth.get('credentials');
     credentials = credentials.set(event.target.name, event.target.value);
     this.props.dispatch(credentialsUpdate(credentials.toJS()));
+    this.props.dispatch(validateField(event.target.name));
+  }
+
+  handleValidateField (event) {
+    event.preventDefault();
+    let validations = this.props.auth.get('validations').toJS();
+    if (!validations.isValid) {
+      this.props.dispatch(validateField(event.target.name));
+    }
   }
 
   toggleView () {
@@ -71,6 +82,7 @@ class UnauthenticatedHomeContainer extends React.Component {
       onAuthAction={this.handleAuthAction}
       onFieldUpdate={this.handleFieldUpdate}
       toggleView={this.toggleView}
+      onValidateField={this.handleValidateField}
       />;
   }
 }

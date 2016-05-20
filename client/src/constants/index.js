@@ -13,3 +13,6 @@ export const CREDENTIALS_UPDATE = 'CREDENTIALS_UPDATE';
 
 // Toggle between Login and Signup.
 export const TOGGLE_LOGIN_VIEW = 'TOGGLE_LOGIN_VIEW';
+
+// Field Validations.
+export const VALIDATE_FIELD = 'VALIDATE_FIELD';

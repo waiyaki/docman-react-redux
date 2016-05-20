@@ -1,6 +1,7 @@
 import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
+import AuthFieldsValidationReducer from './AuthFieldsValidationReducer';
 
 export default function (state = Map({
   isAuthenticated: !!localStorage.getItem('token'),
@@ -8,11 +9,15 @@ export default function (state = Map({
   credentials: Map({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   }),
   error: null,
   user: null,
-  isShowingLogin: true
+  isShowingLogin: true,
+  validations: Map({
+    isValid: false
+  })
 }), action) {
   switch (action.type) {
     case actionTypes.LOGIN_REQUEST:
@@ -30,7 +35,8 @@ export default function (state = Map({
         credentials: Map({
           username: '',
           email: '',
-          password: ''
+          password: '',
+          confirmPassword: ''
         }),
         error: null,
         user: fromJS(action.user)
@@ -53,7 +59,15 @@ export default function (state = Map({
     case actionTypes.TOGGLE_LOGIN_VIEW:
       return state.merge(Map({
         isShowingLogin: !state.get('isShowingLogin'),
-        error: null
+        error: null,
+        validations: Map({
+          isValid: false
+        })
+      }));
+
+    case actionTypes.VALIDATE_FIELD:
+      return state.merge(AuthFieldsValidationReducer(state, {
+        type: action.field
       }));
 
     default:
