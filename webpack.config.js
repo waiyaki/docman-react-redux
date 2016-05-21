@@ -1,6 +1,7 @@
 var webpack = require('webpack');
 
-module.exports = {
+var config = {
+  devtool: 'eval-source-map',
   entry: [
     'webpack-dev-server/client?http://localhost:8080',
     'webpack/hot/only-dev-server',
@@ -29,3 +30,19 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin()
   ]
 };
+
+/*
+ * If bundling for production, optimize output
+ */
+if (process.env.NODE_ENV === 'production') {
+  config.devtool = false;
+  config.plugins = [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.optimize.UglifyJsPlugin({comments: false}),
+    new webpack.DefinePlugin({
+      'process.env': {NODE_ENV: JSON.stringify('production')}
+    })
+  ];
+}
+
+module.exports = config;
