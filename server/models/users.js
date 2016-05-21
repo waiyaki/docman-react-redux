@@ -4,13 +4,20 @@
   var mongoose = require('mongoose');
   var bcrypt = require('bcrypt-nodejs');
   var jwt = require('jsonwebtoken');
+  var Validator = require('validator');
   var appConfig = require('../config/config');
 
   var UserSchema = new mongoose.Schema({
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+      validate: {
+        validator: function (email) {
+          return Validator.isEmail(email);
+        },
+        message: '{VALUE} is not a valid email address.'
+      }
     },
     username: {
       type: String,

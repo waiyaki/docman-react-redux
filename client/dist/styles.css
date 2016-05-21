@@ -1,15 +1,38 @@
-body {
-  margin: 0px;
+body, html {
+  height: 100%;
+  margin: 0;
+  min-height: 100%;
+  min-width: 100%;
+  padding: 0;
+  width: 100%;
 }
 
-.main-application__body {
-  margin: 0.5em;
+.main-application,
+.main-application__body,
+.main-application__unauthed {
+  height: 100%;
+  width: 100%;
+}
+
+.main-application__content {
+  margin: 1em;
+}
+
+.auth-container {
+  float: right;
+  height: 100%;
+  width: 30%;
+  margin: 20px 40px 0;
 }
 
 .center {
-   -webkit-box-pack: center;
-   -webkit-justify-content: center;
-   -ms-flex-pack: center;
-   justify-content: center;
-   text-align: center;
- }
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}

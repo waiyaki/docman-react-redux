@@ -45,10 +45,11 @@
       // Check for validation errors from Mongoose.
       var validationErrors = ['ValidationError'];
       if (validationErrors.indexOf(err.name) !== -1) {
-        return res.status(400).send({
-          error: err.name,
-          message: err.message
+        var messages = {};
+        Object.keys(err.errors).forEach(function (key) {
+          messages.message = err.errors[key].message;
         });
+        return res.status(400).send(messages);
       }
       if (['testing', 'production'].indexOf(process.env.NODE_ENV !== -1)) {
         return res.status(500).send({
