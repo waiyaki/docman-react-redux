@@ -106,6 +106,8 @@ export default function (state = Map(), action) {
   // In case we are signing up...
   if (!newState.get('isShowingLogin')) {
     isValid = isValid &&
+      newState.getIn(['credentials', 'email']) &&
+      !newState.getIn(['validations', 'email']) &&
       newState.getIn(['credentials', 'confirmPassword']) &&
       !newState.getIn(['validations', 'confirmPassword']);
   }
