@@ -3,7 +3,7 @@ import { Map, fromJS } from 'immutable';
 import * as actionTypes from '../constants';
 import AuthFieldsValidationReducer from './AuthFieldsValidationReducer';
 
-export default function (state = Map({
+const INITIAL_AUTH_STATE = Map({
   isAuthenticated: !!localStorage.getItem('token'),
   isFetching: false,
   credentials: Map({
@@ -18,7 +18,9 @@ export default function (state = Map({
   validations: Map({
     isValid: false
   })
-}), action) {
+});
+
+export default function (state = INITIAL_AUTH_STATE, action) {
   switch (action.type) {
     case actionTypes.LOGIN_REQUEST:
     case actionTypes.SIGNUP_REQUEST:
@@ -49,6 +51,11 @@ export default function (state = Map({
         isFetching: false,
         error: fromJS(action.error),
         user: null
+      }));
+
+    case actionTypes.LOGOUT_REQUEST:
+      return INITIAL_AUTH_STATE.merge(fromJS({
+        isAuthenticated: false
       }));
 
     case actionTypes.CREDENTIALS_UPDATE:

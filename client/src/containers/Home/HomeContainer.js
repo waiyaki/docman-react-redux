@@ -6,10 +6,22 @@ import Home from '../../components/Home/Home.jsx';
 import UnauthenticatedHomeContainer from '../Auth/UnauthenticatedHomeContainer';
 /* eslint-enable no-unused-vars */
 
+import {logoutUser} from '../../actions/AuthActions';
+
 class HomeContainer extends React.Component {
+  constructor (props) {
+    super(props);
+
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  handleLogout (event) {
+    this.props.dispatch(logoutUser());
+  }
+
   render () {
     return this.props.auth.get('isAuthenticated')
-      ? <Home />
+      ? <Home onLogout={this.handleLogout} {...this.props}/>
       : <UnauthenticatedHomeContainer />;
   }
 }
