@@ -77,6 +77,11 @@ export default function (state = INITIAL_AUTH_STATE, action) {
         type: action.field
       }));
 
+    case actionTypes.UPDATE_USER_DETAILS:
+      return state.merge(Map({
+        user: action.user
+      }));
+
     default:
       return state;
   }

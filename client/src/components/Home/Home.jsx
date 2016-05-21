@@ -9,6 +9,7 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 /* eslint-enable no-unused-vars */
 
 export default function Home (props) {
+  let auth = props.auth.toJS();
   return (
     <div className='main-application__body'>
       <div className='main-application__navbar'>
@@ -23,6 +24,12 @@ export default function Home (props) {
                 targetOrigin={{horizontal: 'right', vertical: 'top'}}
                 anchorOrigin={{horizontal: 'right', vertical: 'top'}}
               >
+                <MenuItem
+                  primaryText={auth.user && auth.user.username
+                    ? auth.user.username
+                    : 'Profile'
+                  }
+                ></MenuItem>
                 <MenuItem
                   onTouchTap={props.onLogout}
                   primaryText='Logout'

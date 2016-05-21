@@ -7,12 +7,29 @@ import UnauthenticatedHomeContainer from '../Auth/UnauthenticatedHomeContainer';
 /* eslint-enable no-unused-vars */
 
 import {logoutUser} from '../../actions/AuthActions';
+import {loadUserDetails} from '../../actions/UserActions';
 
 class HomeContainer extends React.Component {
   constructor (props) {
     super(props);
 
     this.handleLogout = this.handleLogout.bind(this);
+    this.updateUserDetailsIfNeeded = this.updateUserDetailsIfNeeded.bind(this);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    this.updateUserDetailsIfNeeded(nextProps);
+  }
+
+  componentDidMount () {
+    this.updateUserDetailsIfNeeded(this.props);
+  }
+
+  updateUserDetailsIfNeeded (props) {
+    let auth = props.auth.toJS();
+    if (auth.isAuthenticated && !(auth.user && auth.user.username)) {
+      this.props.dispatch(loadUserDetails());
+    }
   }
 
   handleLogout (event) {

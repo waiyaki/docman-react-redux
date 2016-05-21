@@ -30,7 +30,7 @@ export function loginSuccess (user) {
 export function loginFailure (error) {
   return {
     type: LOGIN_FAILURE,
-    error: error.data
+    error: error.data || {message: error.message}
   };
 }
 
@@ -75,7 +75,7 @@ export function signupSuccess (user) {
 export function signupFailure (error) {
   return {
     type: SIGNUP_FAILURE,
-    error: error.data
+    error: error.data || {message: error.message}
   };
 }
 
@@ -94,7 +94,7 @@ export function signupUser (credentials) {
   };
 }
 
-/* CREDENTIALS_UPDATE ACTIONS */
+/* USER DETAILS ACTIONS */
 export function credentialsUpdate (credentials) {
   return {
     type: CREDENTIALS_UPDATE,

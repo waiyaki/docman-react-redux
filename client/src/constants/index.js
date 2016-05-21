@@ -17,3 +17,7 @@ export const TOGGLE_LOGIN_VIEW = 'TOGGLE_LOGIN_VIEW';
 
 // Field Validations.
 export const VALIDATE_FIELD = 'VALIDATE_FIELD';
+
+// User Constants
+export const UPDATE_USER_DETAILS = 'UPDATE_USER_DETAILS';
+export const UPDATE_USER_DETAILS_ERROR = 'UPDATE_USER_DETAILS_ERROR';
