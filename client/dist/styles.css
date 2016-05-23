@@ -7,6 +7,10 @@ body, html {
   width: 100%;
 }
 
+body {
+  background-color: #F5F8FA;
+}
+
 .main-application,
 .main-application__body,
 .main-application__unauthed {
@@ -18,11 +22,46 @@ body, html {
   margin: 1em;
 }
 
+@media (min-width: 1024px) {
+  .margin-gt-md {
+    margin-left: 5%;
+    margin-right: 5%
+  }
+
+}
+
+@media (max-width: 768px) {
+  .hide-sm-xs {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .hide-gt-sm {
+    display: none;
+  }
+}
+
 .auth-container {
   float: right;
   height: 100%;
   width: 30%;
   margin: 20px 40px 0;
+}
+
+.sidebar {
+  border: 1px solid #e7e7e7;
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+}
+
+.sidebar-card__loading {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  height: 250px;
+  width: 100%;
 }
 
 .center {
