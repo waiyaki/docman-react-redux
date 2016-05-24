@@ -4,7 +4,14 @@ import createLogger from 'redux-logger';
 
 import RootReducer from '../reducers';
 
-const loggerMiddleware = createLogger();
+const loggerMiddleware = createLogger({
+  collapsed: true,
+  duration: true,
+  timestamp: true,
+  stateTransformer: function (state) {
+    return state.toJS();
+  }
+});
 
 export default function configureStore (initialState) {
   return createStore(

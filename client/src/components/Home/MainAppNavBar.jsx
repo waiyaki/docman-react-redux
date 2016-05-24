@@ -23,8 +23,8 @@ const NavBar = (props) => {
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
             >
               <MenuItem
-                primaryText={props.auth.user && props.auth.user.username
-                  ? props.auth.user.username
+                primaryText={props.userDetails.user && props.userDetails.user.username
+                  ? props.userDetails.user.username
                   : 'Profile'
                 }
               />
@@ -44,8 +44,8 @@ const NavBar = (props) => {
             targetOrigin={{horizontal: 'right', vertical: 'top'}}
           >
             <MenuItem
-              primaryText={props.auth.user && props.auth.user.username
-                ? props.auth.user.username
+              primaryText={props.userDetails.user && props.userDetails.user.username
+                ? props.userDetails.user.username
                 : 'Profile'
               }
             />
@@ -63,13 +63,13 @@ const NavBar = (props) => {
 };
 
 NavBar.propTypes = {
-  auth: PropTypes.shape({
+  onLogout: PropTypes.func.isRequired,
+  userDetails: PropTypes.shape({
     user: PropTypes.shape({
-      username: PropTypes.string,
-      email: PropTypes.string
+      username: PropTypes.string.isRequired,
+      email: PropTypes.string.isRequired
     })
-  }).isRequired,
-  onLogout: PropTypes.func.isRequired
+  }).isRequired
 };
 
 export default NavBar;
