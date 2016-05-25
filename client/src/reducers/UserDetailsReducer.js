@@ -4,8 +4,13 @@ import * as actionTypes from '../constants';
 
 const INITIAL_USER_DETAILS_STATE = Map({
   isFetching: false,
+  isShowingUpdate: false,
   user: null,
-  fetchError: null
+  updatedUser: Map(),
+  fetchError: null,
+  validations: Map({
+    isValid: false
+  })
 });
 
 export default function (state = INITIAL_USER_DETAILS_STATE, action) {
@@ -18,7 +23,8 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
     case actionTypes.FETCH_USER_DETAILS_SUCCESS:
       return state.merge(Map({
         isFetching: false,
-        user: fromJS(action.user)
+        user: fromJS(action.user),
+        updatedUser: fromJS(action.user)
       }));
 
     case actionTypes.FETCH_USER_DETAILS_ERROR:
@@ -33,13 +39,14 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
     case actionTypes.USER_DETAILS_UPDATE_REQUEST:
       return state.merge(Map({
         isFetching: true,
-        userUpdate: fromJS(action.userUpdate)
+        updatedUser: fromJS(action.updatedUser)
       }));
 
     case actionTypes.USER_DETAILS_UPDATE_SUCCESS:
       return state.merge(Map({
         isFetching: false,
-        userUpdate: null,
+        isShowingUpdate: false,
+        updatedUser: fromJS(action.user),
         user: fromJS(action.user)
       }));
 
@@ -51,6 +58,16 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
 
     case actionTypes.LOGOUT_REQUEST:
       return state.merge(INITIAL_USER_DETAILS_STATE);
+
+    case actionTypes.TOGGLE_SHOW_USER_UPDATE_VIEW:
+      return state.merge(Map({
+        isShowingUpdate: !state.get('isShowingUpdate')
+      }));
+
+    case actionTypes.USER_DETAILS_FIELD_UPDATE:
+      return state.merge(Map({
+        updatedUser: fromJS(action.updatedUser)
+      }));
 
     default:
       return state;

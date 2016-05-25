@@ -1,7 +1,7 @@
 import React, {PropTypes} from 'react';
 
 import MainAppNavBar from './MainAppNavBar';
-import UserSideBar from '../UserSidebar/UserSideBar';
+import UserSideBarContainer from '../../containers/UserSidebar/UserSideBarContainer';
 import UserSidebarLoading from '../UserSidebar/UserSidebarLoading';
 
 const Home = (props) => {
@@ -15,7 +15,7 @@ const Home = (props) => {
         <div className='row'>
           <div className='col-sm-4 col-lg-3 hide-sm-xs'>
             {props.userDetails.user
-              ? <UserSideBar userDetails={props.userDetails} />
+              ? <UserSideBarContainer />
               : <UserSidebarLoading />
             }
           </div>
