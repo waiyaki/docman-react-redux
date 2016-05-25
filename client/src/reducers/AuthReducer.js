@@ -1,7 +1,7 @@
 import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
-import AuthFieldsValidationReducer from './AuthFieldsValidationReducer';
+import FieldsValidationReducer from './FieldsValidationReducer';
 
 const INITIAL_AUTH_STATE = Map({
   isAuthenticated: !!localStorage.getItem('token'),
@@ -72,9 +72,16 @@ export default function (state = INITIAL_AUTH_STATE, action) {
         })
       }));
 
-    case actionTypes.VALIDATE_FIELD:
-      return state.merge(AuthFieldsValidationReducer(state, {
-        type: action.field
+    /**
+     * Validate input fields entered by the user.
+     * In this instance, modify the behaviour of the validator based on the
+     * fact that we're validating auth fields.
+     */
+    case actionTypes.VALIDATE_AUTH_FIELD:
+      return state.merge(FieldsValidationReducer(state, {
+        type: action.field,
+        target: 'credentials',
+        currentView: 'auth'
       }));
 
     case actionTypes.FETCH_USER_DETAILS_SUCCESS:
