@@ -9,7 +9,7 @@ export function requestFetchUserDetails () {
   };
 }
 
-export function fetchUserDetails (user) {
+export function fetchUserDetailsSuccess (user) {
   return {
     type: actionTypes.FETCH_USER_DETAILS_SUCCESS,
     user: user.data
@@ -36,7 +36,7 @@ export function loadUserDetails () {
       .get(`/api/users/${user.username}`, {
         headers: {'x-access-token': userToken}
       })
-      .then((user) => dispatch(fetchUserDetails(user)))
+      .then((user) => dispatch(fetchUserDetailsSuccess(user)))
       .catch((error) => {
         // If we get a 401 while fetching this user's details using the cached
         // token, that token is invalid. Log them out.
@@ -50,10 +50,10 @@ export function loadUserDetails () {
   };
 }
 
-export function requestUserDetailsUpdate (userUpdate) {
+export function requestUserDetailsUpdate (updatedUser) {
   return {
     type: actionTypes.USER_DETAILS_UPDATE_REQUEST,
-    userUpdate
+    updatedUser
   };
 }
 
@@ -76,8 +76,22 @@ export function updateUserDetails (userUpdate) {
     dispatch(requestUserDetailsUpdate(userUpdate));
 
     return Axios
-      .put(`/api/users/${userUpdate.username}`, userUpdate)
+      .put(`/api/users/${userUpdate.username}`, userUpdate, {
+        headers: {'x-access-token': window.localStorage.getItem('token')}
+      })
       .then((updatedUser) => dispatch(userDetailsUpdateSuccess(updatedUser)))
       .catch((error) => dispatch(userDetailsUpdateFailure(error)));
+  };
+}
+
+export function userDetailsFieldUpdate (updatedUser) {
+  return {
+    type: actionTypes.USER_DETAILS_FIELD_UPDATE,
+    updatedUser
+  };
+}
+export function toggleShowUserUpdateView () {
+  return {
+    type: actionTypes.TOGGLE_SHOW_USER_UPDATE_VIEW
   };
 }
