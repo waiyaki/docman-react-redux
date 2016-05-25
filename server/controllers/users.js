@@ -135,6 +135,7 @@
               }
               return resolveError(err, res, 409);
             }
+            user.password = null;
             return res.status(200).send(user);
           });
         });
