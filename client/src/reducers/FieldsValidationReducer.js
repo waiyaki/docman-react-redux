@@ -93,21 +93,19 @@ export default function (state = Map(), action) {
      */
     case 'confirmPassword':
       let confirmPassword = state.getIn([action.target, 'confirmPassword']);
-      if (!confirmPassword) {
-        if (action.currentView === 'auth') {
-          newState = state.mergeDeep(Map({
-            validations: Map({
-              confirmPassword: 'This field is required.'
-            })
-          }));
-        } else if (action.currentView === 'userDetails' &&
-            state.getIn([action.target, 'password'])) {
-          newState = state.mergeDeep(Map({
-            validations: Map({
-              confirmPassword: 'This field is required.'
-            })
-          }));
-        }
+      if (!confirmPassword && action.currentView === 'auth') {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            confirmPassword: 'This field is required.'
+          })
+        }));
+      } else if (!confirmPassword && action.currentView === 'userDetails' &&
+          state.getIn([action.target, 'password'])) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            confirmPassword: 'This field is required.'
+          })
+        }));
       } else if (confirmPassword !== state.getIn([action.target, 'password'])) {
         newState = state.mergeDeep(Map({
           validations: Map({
