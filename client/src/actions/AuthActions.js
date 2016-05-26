@@ -12,6 +12,8 @@ import {
   CREDENTIALS_UPDATE, TOGGLE_LOGIN_VIEW
 } from '../constants';
 
+import {showSnackBarMessage} from './UtilityActions';
+
 /* LOGIN ACTIONS */
 export function loginRequest (credentials) {
   return {
@@ -44,16 +46,29 @@ export function loginUser (credentials) {
       .then((user) => {
         window.localStorage.setItem('token', user.data.token);
         dispatch(loginSuccess(user));
+        dispatch(showSnackBarMessage('Successfully logged in.'));
       })
-      .catch((error) => dispatch(loginFailure(error)));
+      .catch((error) => {
+        dispatch(loginFailure(error));
+        dispatch(showSnackBarMessage('Oops! An error occurred.'));
+      });
   };
 }
 
 /* LOGOUT ACTION */
-export function logoutUser () {
-  window.localStorage.removeItem('token');
+export function performUserLogout () {
   return {
     type: LOGOUT_REQUEST
+  };
+}
+
+export function logoutUser (message) {
+  return function (dispatch) {
+    window.localStorage.removeItem('token');
+    dispatch(performUserLogout());
+    if (message !== false) {
+      dispatch(showSnackBarMessage('Successfully logged out.'));
+    }
   };
 }
 
@@ -89,8 +104,12 @@ export function signupUser (credentials) {
       .then((user) => {
         window.localStorage.setItem('token', user.data.token);
         dispatch(signupSuccess(user));
+        dispatch(showSnackBarMessage("Yay! You've successfully registered!"));
       })
-      .catch((error) => dispatch(signupFailure(error)));
+      .catch((error) => {
+        dispatch(signupFailure(error));
+        dispatch(showSnackBarMessage('Oops! An error occurred.'));
+      });
   };
 }
 

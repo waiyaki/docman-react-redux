@@ -2,6 +2,7 @@ import Axios from 'axios';
 
 import * as actionTypes from '../constants';
 import {logoutUser} from './AuthActions';
+import {showSnackBarMessage} from './UtilityActions';
 
 export function requestFetchUserDetails () {
   return {
@@ -24,6 +25,14 @@ export function fetchUserDetailsError (error, authError = false) {
   };
 }
 
+/**
+ * Load user details from the server.
+ * Happens if there's a cached token in localStorage and we do not have details
+ * about the currently logged in user.
+ *
+ * Called when a user comes back to the application acts as a means
+ * of token validation.
+ */
 export function loadUserDetails () {
   let userToken = localStorage.getItem('token');
 
@@ -42,7 +51,7 @@ export function loadUserDetails () {
         // token, that token is invalid. Log them out.
         if (error.status === 401) {
           dispatch(fetchUserDetailsError(error, true));
-          dispatch(logoutUser());
+          dispatch(logoutUser(false));
         } else {
           dispatch(fetchUserDetailsError(error));
         }
@@ -79,8 +88,14 @@ export function updateUserDetails (userUpdate) {
       .put(`/api/users/${userUpdate.username}`, userUpdate, {
         headers: {'x-access-token': window.localStorage.getItem('token')}
       })
-      .then((updatedUser) => dispatch(userDetailsUpdateSuccess(updatedUser)))
-      .catch((error) => dispatch(userDetailsUpdateFailure(error)));
+      .then((updatedUser) => {
+        dispatch(userDetailsUpdateSuccess(updatedUser));
+        dispatch(showSnackBarMessage('Successfully updated profile.'));
+      })
+      .catch((error) => {
+        dispatch(userDetailsUpdateFailure(error));
+        dispatch(showSnackBarMessage('Oops! An error occurred.'));
+      });
   };
 }
 
