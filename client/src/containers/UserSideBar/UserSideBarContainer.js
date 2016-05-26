@@ -50,10 +50,7 @@ class UserSideBarContainer extends React.Component {
    */
   onValidateFieldOnBlur (event) {
     event.preventDefault();
-    let validations = this.props.userDetails.get('validations').toJS();
-    if (!validations.isValid) {
-      this.props.dispatch(validateUserDetailsField(event.target.name));
-    }
+    this.props.dispatch(validateUserDetailsField(event.target.name));
   }
 
   render () {
