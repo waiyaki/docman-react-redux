@@ -1,46 +1,45 @@
-/* eslint-disable no-unused-vars */
-import React from 'react';
+import React, {PropTypes} from 'react';
 
-import AppBar from 'material-ui/AppBar';
-import IconMenu from 'material-ui/IconMenu';
-import IconButton from 'material-ui/IconButton';
-import MenuItem from 'material-ui/MenuItem';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-/* eslint-enable no-unused-vars */
+import MainAppNavBar from './MainAppNavBar';
+import UserSideBarContainer from '../../containers/UserSidebar/UserSideBarContainer';
+import UserSidebarLoading from '../UserSidebar/UserSidebarLoading';
 
-export default function Home (props) {
-  let auth = props.auth.toJS();
+const Home = (props) => {
   return (
     <div className='main-application__body'>
-      <div className='main-application__navbar'>
-          <AppBar
-            zDepth={0}
-            title='Home'
-            iconElementRight={
-              <IconMenu
-                iconButtonElement={
-                  <IconButton><MoreVertIcon /></IconButton>
-                }
-                targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-              >
-                <MenuItem
-                  primaryText={auth.user && auth.user.username
-                    ? auth.user.username
-                    : 'Profile'
-                  }
-                ></MenuItem>
-                <MenuItem
-                  onTouchTap={props.onLogout}
-                  primaryText='Logout'
-                ></MenuItem>
-              </IconMenu>
+      <MainAppNavBar
+        onLogout={props.onLogout}
+        userDetails={props.userDetails}
+      />
+      <div className='main-application__content margin-gt-md'>
+        <div className='row'>
+          <div className='col-sm-4 col-lg-3 hide-sm-xs'>
+            {props.userDetails.user
+              ? <UserSideBarContainer />
+              : <UserSidebarLoading />
             }
-          ></AppBar>
-      </div>
-      <div className='main-application__content'>
-        Hello World from the home component!
+          </div>
+          <div className='col-sm-8 col-lg-9'>
+            Hello World from the home component!
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+Home.propTypes = {
+  onLogout: PropTypes.func.isRequired,
+  userDetails: PropTypes.shape({
+    user: PropTypes.shape({
+      email: PropTypes.string,
+      role: PropTypes.shape({
+        accessLevel: PropTypes.number,
+        title: PropTypes.string
+      }),
+      username: PropTypes.string
+    })
+  })
+};
+
+export default Home;
