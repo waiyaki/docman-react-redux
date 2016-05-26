@@ -6,6 +6,7 @@ import {
   Card, CardActions, CardHeader, CardMedia, CardTitle
 } from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import Edit from 'material-ui/svg-icons/image/edit';
 
 const UserSidebar = (props) => {
   const user = props.userDetails.user;
@@ -40,7 +41,11 @@ const UserSidebar = (props) => {
           title={user ? user.username : ''}
         />
         <CardActions>
-          <FlatButton label='Edit' onClick={props.handleToggleShowUpdate} />
+          <FlatButton
+            icon={<Edit />}
+            label='Edit'
+            onClick={props.handleToggleShowUpdate}
+          />
         </CardActions>
       </Card>
     </div>

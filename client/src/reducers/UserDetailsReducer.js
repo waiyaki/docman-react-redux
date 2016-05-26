@@ -1,6 +1,7 @@
 import {Map, fromJS} from 'immutable';
 
 import * as actionTypes from '../constants';
+import FieldsValidationReducer from './FieldsValidationReducer';
 
 const INITIAL_USER_DETAILS_STATE = Map({
   isFetching: false,
@@ -59,14 +60,34 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
     case actionTypes.LOGOUT_REQUEST:
       return state.merge(INITIAL_USER_DETAILS_STATE);
 
+    /**
+     * Toggle between showing the user profile and updating it.
+     */
     case actionTypes.TOGGLE_SHOW_USER_UPDATE_VIEW:
       return state.merge(Map({
-        isShowingUpdate: !state.get('isShowingUpdate')
+        isShowingUpdate: !state.get('isShowingUpdate'),
+        userUpdateError: null,
+        validations: Map({
+          isValid: false
+        })
       }));
 
     case actionTypes.USER_DETAILS_FIELD_UPDATE:
       return state.merge(Map({
         updatedUser: fromJS(action.updatedUser)
+      }));
+
+    /**
+     * Validate the fields entered by the user when they're updating the
+     * user profile.
+     * Modify the behaviour of the FieldsValidationReducer based on the fact
+     * that we're validating user details fields.
+     */
+    case actionTypes.VALIDATE_USER_DETAILS_FIELD:
+      return state.merge(FieldsValidationReducer(state, {
+        type: action.field,
+        target: 'updatedUser',
+        currentView: 'userDetails'
       }));
 
     default:

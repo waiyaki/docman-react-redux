@@ -6,8 +6,9 @@ import {connect} from 'react-redux';
 import {
   toggleShowUserUpdateView, userDetailsFieldUpdate, updateUserDetails
 } from '../../actions/UserDetailsActions';
+import {validateUserDetailsField} from '../../actions/ValidationActions';
 import UserSideBar from '../../components/UserSidebar/UserSideBar';
-import UserSideBarUpdate from '../../components/UserSidebar/UserSideBarUpdate';
+import UserSideBarUpdate from '../../components/UserSidebar/UserProfileUpdate';
 
 class UserSideBarContainer extends React.Component {
   constructor (props) {
@@ -16,6 +17,7 @@ class UserSideBarContainer extends React.Component {
     this.onFieldUpdate = this.onFieldUpdate.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onToggleShowUpdateView = this.onToggleShowUpdateView.bind(this);
+    this.onValidateFieldOnBlur = this.onValidateFieldOnBlur.bind(this);
   }
 
   onFieldUpdate (event) {
@@ -23,6 +25,7 @@ class UserSideBarContainer extends React.Component {
     let updatedUser = this.props.userDetails.get('updatedUser');
     updatedUser = updatedUser.set(event.target.name, event.target.value);
     this.props.dispatch(userDetailsFieldUpdate(updatedUser.toJS()));
+    this.props.dispatch(validateUserDetailsField(event.target.name));
   }
 
   onSubmit () {
@@ -30,8 +33,27 @@ class UserSideBarContainer extends React.Component {
       updateUserDetails(this.props.userDetails.get('updatedUser').toJS()));
   }
 
+  /**
+   * Toggle between showing the user details view and update user details view.
+   */
   onToggleShowUpdateView () {
     this.props.dispatch(toggleShowUserUpdateView());
+  }
+
+  /**
+   * Validate input fields on blur. Only run the validation if the field was
+   * not valid even after having run the validations when something changed in
+   * that field.
+   *
+   * This method also enables us to validate the fields after a user enters
+   * the field then leaves without entering anything (touched field).
+   */
+  onValidateFieldOnBlur (event) {
+    event.preventDefault();
+    let validations = this.props.userDetails.get('validations').toJS();
+    if (!validations.isValid) {
+      this.props.dispatch(validateUserDetailsField(event.target.name));
+    }
   }
 
   render () {
@@ -41,6 +63,7 @@ class UserSideBarContainer extends React.Component {
             handleFieldUpdate={this.onFieldUpdate}
             handleProfileUpdate={this.onSubmit}
             handleToggleShowUpdate={this.onToggleShowUpdateView}
+            handleValidateFieldOnBlur={this.onValidateFieldOnBlur}
             userDetails={this.props.userDetails.toJS()}
           />
         : <UserSideBar

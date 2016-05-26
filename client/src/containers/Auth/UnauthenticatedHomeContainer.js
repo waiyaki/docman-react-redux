@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {
   loginUser, signupUser, credentialsUpdate, toggleLoginView
 } from '../../actions/AuthActions';
-import {validateField} from '../../actions/AuthValidationActions';
+import {validateAuthField} from '../../actions/ValidationActions';
 
 /* eslint-disable no-unused-vars */
 import UnauthenticatedHomePage from '../../components/Auth/UnauthenticatedHomePage';
@@ -60,14 +60,14 @@ class UnauthenticatedHomeContainer extends React.Component {
     let credentials = this.props.auth.get('credentials');
     credentials = credentials.set(event.target.name, event.target.value);
     this.props.dispatch(credentialsUpdate(credentials.toJS()));
-    this.props.dispatch(validateField(event.target.name));
+    this.props.dispatch(validateAuthField(event.target.name));
   }
 
   handleValidateField (event) {
     event.preventDefault();
     let validations = this.props.auth.get('validations').toJS();
     if (!validations.isValid) {
-      this.props.dispatch(validateField(event.target.name));
+      this.props.dispatch(validateAuthField(event.target.name));
     }
   }
 
