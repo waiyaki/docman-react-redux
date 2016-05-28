@@ -5,13 +5,17 @@ import * as actionTypes from '../constants';
 const INITIAL_DOCUMENTS_STATE = Map({
   documents: List(),
   isFetching: false,
-  documentsFetchError: null
+  documentsFetchError: null,
+  documentViewOptions: Map({
+    expandedDocId: ''
+  })
 });
 
 /**
  * Handle state changes related to documents.
+ *
  * Performs some operation on the current state based on the specified action
- * and returns a new state.
+ * and returns a new documents state.
  */
 export default function (state = INITIAL_DOCUMENTS_STATE, action) {
   switch (action.type) {
@@ -30,6 +34,13 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
       return state.merge(Map({
         isFetching: false,
         documentsFetchError: action.error
+      }));
+
+    case actionTypes.EXPAND_DOCUMENT:
+      return state.merge(Map({
+        documentViewOptions: Map({
+          expandedDocId: action.docId
+        })
       }));
 
     default:

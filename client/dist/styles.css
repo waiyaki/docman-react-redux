@@ -103,9 +103,6 @@ body {
 
 .sidebar {
   border: 1px solid #e7e7e7;
-  height: 100%;
-  min-height: 100%;
-  width: 100%;
 }
 
 .sidebar-card__loading {
