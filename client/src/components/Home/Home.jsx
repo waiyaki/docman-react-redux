@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react';
 import MainAppNavBar from './MainAppNavBar';
 import UserSideBarContainer from '../../containers/UserSidebar/UserSideBarContainer';
 import UserSidebarLoading from '../UserSidebar/UserSidebarLoading';
+import DocumentsContainer from '../../containers/Documents/DocumentsContainer';
 
 const Home = (props) => {
   return (
@@ -19,8 +20,8 @@ const Home = (props) => {
               : <UserSidebarLoading />
             }
           </div>
-          <div className='col-sm-8 col-lg-9'>
-            Hello World from the home component!
+          <div className='col-xs-12 col-sm-8 col-lg-9'>
+            <DocumentsContainer />
           </div>
         </div>
       </div>

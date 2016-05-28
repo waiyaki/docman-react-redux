@@ -48,3 +48,13 @@ export function fetchDocumentsFromServer () {
       });
   };
 }
+
+/**
+ * Expand a single document.
+ */
+export function expandDocument (docId) {
+  return {
+    type: actionTypes.EXPAND_DOCUMENT,
+    docId: docId || ''
+  };
+}
