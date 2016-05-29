@@ -1,6 +1,7 @@
 import React, {PropTypes} from 'react';
 
 import Document from './Document';
+import CreateDocumentContainer from '../../containers/Documents/CreateDocumentContainer';
 
 const noDocsFoundStyles = {
   box: {
@@ -36,6 +37,7 @@ const Documents = (props) => {
             </div>
           </div>
       }
+      <CreateDocumentContainer />
     </div>
   );
 };
