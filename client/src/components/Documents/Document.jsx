@@ -85,6 +85,12 @@ const Document = (props) => {
                     }}
                     primaryText='Edit Document'
                   />
+                  <MenuItem
+                    onTouchTap={function () {
+                      props.onDeleteDocument(props.document._id);
+                    }}
+                    primaryText='Delete Document'
+                  />
                 </IconMenu>
             : null
           }
@@ -145,6 +151,7 @@ Document.propTypes = {
   }).isRequired,
   documentCrudOptions: PropTypes.object, // eslint-disable-line
   expandedDocId: PropTypes.string.isRequired,
+  onDeleteDocument: PropTypes.func.isRequired,
   onExpandChange: PropTypes.func.isRequired,
   onUpdateThisDocument: PropTypes.func.isRequired,
   shouldWeAllowEditDocument: PropTypes.bool

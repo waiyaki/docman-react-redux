@@ -2,7 +2,7 @@ import React, {PropTypes} from 'react';
 import {connect} from 'react-redux';
 
 import {
-  fetchDocumentsFromServer, expandDocument, toggleDocumentUpdate
+  fetchDocumentsFromServer, expandDocument, toggleDocumentUpdate, deleteDocument
 } from '../../actions/DocumentsActions';
 import Documents from '../../components/Documents/Documents';
 import DocumentsLoading from '../../components/Documents/DocumentsLoading';
@@ -11,6 +11,13 @@ class DocumentsContainer extends React.Component {
   constructor (props) {
     super(props);
 
+    this.state = {
+      isShowingConfirmDialog: false,
+      documentToDelete: null
+    };
+
+    this.confirmDeleteDocument = this.confirmDeleteDocument.bind(this);
+    this.handleDeleteDocument = this.handleDeleteDocument.bind(this);
     this.handleExpandChange = this.handleExpandChange.bind(this);
     this.handleToggleUpdateThisDocument =
       this.handleToggleUpdateThisDocument.bind(this);
@@ -19,6 +26,13 @@ class DocumentsContainer extends React.Component {
 
   componentDidMount () {
     this.props.dispatch(fetchDocumentsFromServer());
+  }
+
+  handleDeleteDocument (docId) {
+    this.setState({
+      isShowingConfirmDialog: true,
+      documentToDelete: docId
+    });
   }
 
   /**
@@ -39,6 +53,20 @@ class DocumentsContainer extends React.Component {
   }
 
   /**
+   * Give the user the chance to confirm deletion of a document.
+   */
+  confirmDeleteDocument (confirmed) {
+    if (confirmed) {
+      this.props.dispatch(deleteDocument(this.state.documentToDelete));
+    }
+
+    this.setState({
+      isShowingConfirmDialog: false,
+      documentToDelete: null
+    });
+  }
+
+  /**
    * Determine whether to show an edit button in the document component.
    *
    * Allow edits from either admins or document owners.
@@ -54,11 +82,14 @@ class DocumentsContainer extends React.Component {
       this.props.docs.isFetching
         ? <DocumentsLoading />
         : <Documents
+            confirmDeleteDocument={this.confirmDeleteDocument}
             documentCrudOptions={this.props.docs.documentCrudOptions}
             documents={this.props.docs.documents}
             expandedDocId={this.props.docs.documentViewOptions.expandedDocId}
+            isShowingConfirmDialog={this.state.isShowingConfirmDialog}
             isUpdatingDocument={
               this.props.docs.documentCrudOptions.isUpdatingDocument}
+            onDeleteDocument={this.handleDeleteDocument}
             onExpandChange={this.handleExpandChange}
             onUpdateThisDocument={this.handleToggleUpdateThisDocument}
             shouldWeAllowEditDocument={this.shouldWeAllowEditDocument}

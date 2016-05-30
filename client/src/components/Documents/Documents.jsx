@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 
 import Document from './Document';
 import CreateDocumentContainer from '../../containers/Documents/CreateDocumentContainer';
+import ConfirmDeleteDocument from './ConfirmDeleteDocument';
 
 const noDocsFoundStyles = {
   box: {
@@ -23,10 +24,11 @@ const Documents = (props) => {
       {props.documents && props.documents.length
         ? props.documents.map((doc) => (
             <Document
-              documentCrudOptions={props.documentCrudOptions}
               document={doc}
+              documentCrudOptions={props.documentCrudOptions}
               expandedDocId={props.expandedDocId}
               key={doc._id}
+              onDeleteDocument={props.onDeleteDocument}
               onExpandChange={props.onExpandChange}
               onUpdateThisDocument={props.onUpdateThisDocument}
               shouldWeAllowEditDocument={props.shouldWeAllowEditDocument(doc)}
@@ -41,11 +43,16 @@ const Documents = (props) => {
           </div>
       }
       <CreateDocumentContainer />
+      <ConfirmDeleteDocument
+        confirmDeleteDocument={props.confirmDeleteDocument}
+        isShowingConfirmDialog={props.isShowingConfirmDialog}
+      />
     </div>
   );
 };
 
 Documents.propTypes = {
+  confirmDeleteDocument: PropTypes.func.isRequired,
   documentCrudOptions: PropTypes.object, // eslint-disable-line
   documents: PropTypes.arrayOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -63,6 +70,8 @@ Documents.propTypes = {
     updatedAt: PropTypes.string.isRequired
   })).isRequired,
   expandedDocId: PropTypes.string.isRequired,
+  isShowingConfirmDialog: PropTypes.bool.isRequired,
+  onDeleteDocument: PropTypes.func.isRequired,
   onExpandChange: PropTypes.func.isRequired,
   onUpdateThisDocument: PropTypes.func.isRequired,
   shouldWeAllowEditDocument: PropTypes.func.isRequired

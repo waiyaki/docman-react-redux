@@ -11,6 +11,7 @@ const INITIAL_DOCUMENTS_STATE = Map({
     expandedDocId: ''
   }),
   documentCrudOptions: Map({
+    deletedDocument: Map(),
     documentContent: Map({
       title: '',
       content: '',
@@ -176,6 +177,58 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         isUpdatingDocument: !state.getIn(
           ['documentCrudOptions', 'isUpdatingDocument']
         )
+      }));
+
+    /**
+     * Perform a document deletion.
+     *
+     * Make an optimistic deletion, but cache the deleted document together
+     * with it's index so we can roll back if the server errors.
+     */
+    case actionTypes.DELETE_DOCUMENT_REQUEST:
+      let deletedDocument;
+      return state.merge(Map({
+        documents: state.get('documents').filter((doc, index) => {
+          if (doc.get('_id') === action.documentId) {
+            deletedDocument = Map({
+              index: index,
+              item: doc
+            });
+            return false;
+          }
+          return true;
+        }),
+        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
+          deletedDocument: deletedDocument
+        }))
+      }));
+
+    /**
+     * Remove the cached deleted document if the deletion was successful
+     * server-side.
+     */
+    case actionTypes.DELETE_DOCUMENT_SUCCESS:
+      return state.mergeIn(
+        ['documentCrudOptions'],
+        INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      );
+
+    /**
+     * Roll back the optimistic update we made when requesting for a document
+     * deletion and insert that document back into the documents list.
+     */
+    case actionTypes.DELETE_DOCUMENT_FAILURE:
+      let delDocument = state.getIn(
+        ['documentCrudOptions', 'deletedDocument']).toJS();
+
+      return state.merge(Map({
+        documents: state
+          .get('documents')
+          .insert(delDocument.index, fromJS(delDocument.item)),
+        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
+          deletedDocument: Map(),
+          crudError: fromJS(action.error)
+        }))
       }));
 
     /**

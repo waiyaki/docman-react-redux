@@ -100,7 +100,7 @@ const CreateDocument = (props) => {
           <SelectField
             name='role'
             onChange={props.onRoleFieldUpdate}
-            value={props.documentContent.role || 'user'}
+            value={props.documentContent.role || 'public'}
           >
             {props.roles.map((role) => (
               <MenuItem
