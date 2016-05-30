@@ -3,10 +3,16 @@ import classNames from 'classnames';
 
 import React, {PropTypes} from 'react';
 
-import {Card, CardHeader, CardText, CardTitle} from 'material-ui/Card';
+import {
+  Card, CardHeader, CardText, CardTitle
+} from 'material-ui/Card';
 import IconButton from 'material-ui/IconButton';
 import MoreHorizIcon from 'material-ui/svg-icons/navigation/more-horiz';
 import ExpandLess from 'material-ui/svg-icons/navigation/expand-less';
+import IconMenu from 'material-ui/IconMenu';
+import MenuItem from 'material-ui/MenuItem';
+import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
+import CircularProgress from 'material-ui/CircularProgress';
 
 const Document = (props) => {
   // Construct a url for this document owner's gravatar.
@@ -30,6 +36,13 @@ const Document = (props) => {
     });
   };
 
+  // Determine whether we are updating this document and show a spinner
+  const updatingSelf = (doc) => {
+    return props.documentCrudOptions.isFetching &&
+      props.documentCrudOptions.isUpdatingDocument &&
+      props.documentCrudOptions.documentContent._id === doc._id;
+  };
+
   return (
     <div className={cardClasses(props.document, props.expandedDocId)}>
       <Card
@@ -45,7 +58,37 @@ const Document = (props) => {
             ? `${owner.name.firstName + ' ' + owner.name.lastName}`
             : owner.username
           }
-        />
+        >
+          {props.shouldWeAllowEditDocument
+            ? updatingSelf(props.document)
+              ? <CircularProgress
+                  size={0.5}
+                  style={{
+                    position: 'absolute',
+                    right: '4px'
+                  }}
+                />
+              : <IconMenu
+                  anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                  iconButtonElement={
+                    <IconButton><MoreVertIcon /></IconButton>
+                  }
+                  style={{
+                    position: 'absolute',
+                    right: '4px'
+                  }}
+                  targetOrigin={{horizontal: 'right', vertical: 'top'}}
+                >
+                  <MenuItem
+                    onTouchTap={function () {
+                      props.onUpdateThisDocument(props.document);
+                    }}
+                    primaryText='Edit Document'
+                  />
+                </IconMenu>
+            : null
+          }
+        </CardHeader>
         <CardTitle
           style={{'paddingTop': '0.5em'}}
           subtitle={
@@ -100,8 +143,11 @@ Document.propTypes = {
     createdAt: PropTypes.string.isRequired,
     updatedAt: PropTypes.string.isRequired
   }).isRequired,
+  documentCrudOptions: PropTypes.object, // eslint-disable-line
   expandedDocId: PropTypes.string.isRequired,
-  onExpandChange: PropTypes.func.isRequired
+  onExpandChange: PropTypes.func.isRequired,
+  onUpdateThisDocument: PropTypes.func.isRequired,
+  shouldWeAllowEditDocument: PropTypes.bool
 };
 
 export default Document;
