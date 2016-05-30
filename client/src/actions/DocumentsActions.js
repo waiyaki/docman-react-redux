@@ -221,3 +221,42 @@ export function toggleDocumentUpdate (doc) {
     });
   };
 }
+
+export function documentDeleteRequest (documentId) {
+  return {
+    type: actionTypes.DELETE_DOCUMENT_REQUEST,
+    documentId
+  };
+}
+
+export function documentDeleteSuccess () {
+  return {
+    type: actionTypes.DELETE_DOCUMENT_SUCCESS
+  };
+}
+
+export function deleteDocumentFailure (error) {
+  return {
+    type: actionTypes.DELETE_DOCUMENT_FAILURE,
+    error: error.data || {message: error.message}
+  };
+}
+
+export function deleteDocument (docId) {
+  return (dispatch) => {
+    dispatch(documentDeleteRequest(docId));
+
+    return Axios
+      .delete(`/api/documents/${docId}`, {
+        headers: {'x-access-token': window.localStorage.getItem('token')}
+      })
+      .then((success) => {
+        dispatch(documentDeleteSuccess());
+        showSnackBarMessage('Document deleted successfully.');
+      })
+      .catch((error) => {
+        dispatch(documentUpdateFailure(error));
+        showSnackBarMessage('An error occurred while deleting document.');
+      });
+  };
+}
