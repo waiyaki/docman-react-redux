@@ -14,6 +14,8 @@ import MenuItem from 'material-ui/MenuItem';
 import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import CircularProgress from 'material-ui/CircularProgress';
 
+import Chip from './Chip';
+
 const Document = (props) => {
   // Construct a url for this document owner's gravatar.
   const owner = props.document.owner;
@@ -98,7 +100,11 @@ const Document = (props) => {
         <CardTitle
           style={{'paddingTop': '0.5em'}}
           subtitle={
-            `${updatedAt.toDateString()}, ${updatedAt.toLocaleTimeString()}`}
+            <span>
+              {updatedAt.toDateString()}, {updatedAt.toLocaleTimeString()} <br/>
+              <Chip content={props.document.role.title}/>
+            </span>
+          }
           title={props.document.title}
         />
         {props.document.content.length > 250 && props.expandedDocId !== props.document._id
@@ -118,7 +124,6 @@ const Document = (props) => {
             </CardText>
         }
         <CardText expandable>
-          <span>{props.document.content}</span><br/>
           <IconButton
             onClick={function () {
               props.onExpandChange();

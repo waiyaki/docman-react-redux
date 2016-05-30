@@ -81,7 +81,7 @@ const CreateDocument = (props) => {
             floatingLabelText='Content'
             fullWidth
             hintText='Content'
-            multiline
+            multiLine
             name='content'
             onBlur={props.onFieldUpdate}
             required
