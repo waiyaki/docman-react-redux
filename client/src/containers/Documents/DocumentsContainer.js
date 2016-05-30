@@ -73,8 +73,10 @@ class DocumentsContainer extends React.Component {
    */
   shouldWeAllowEditDocument (doc) {
     const authenticatedUser = this.props.auth.get('user');
-    return authenticatedUser && (authenticatedUser.role.title === 'admin' ||
-      authenticatedUser.username === doc.owner.username);
+    return authenticatedUser && authenticatedUser.role && (
+      authenticatedUser.role.title === 'admin' ||
+      authenticatedUser.username === doc.owner.username
+    );
   }
 
   render () {
