@@ -23,10 +23,13 @@ const Documents = (props) => {
       {props.documents && props.documents.length
         ? props.documents.map((doc) => (
             <Document
+              documentCrudOptions={props.documentCrudOptions}
               document={doc}
               expandedDocId={props.expandedDocId}
               key={doc._id}
               onExpandChange={props.onExpandChange}
+              onUpdateThisDocument={props.onUpdateThisDocument}
+              shouldWeAllowEditDocument={props.shouldWeAllowEditDocument(doc)}
             />
           ))
         : <div className='col-xs-12'>
@@ -43,6 +46,7 @@ const Documents = (props) => {
 };
 
 Documents.propTypes = {
+  documentCrudOptions: PropTypes.object, // eslint-disable-line
   documents: PropTypes.arrayOf(PropTypes.shape({
     _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -59,7 +63,9 @@ Documents.propTypes = {
     updatedAt: PropTypes.string.isRequired
   })).isRequired,
   expandedDocId: PropTypes.string.isRequired,
-  onExpandChange: PropTypes.func.isRequired
+  onExpandChange: PropTypes.func.isRequired,
+  onUpdateThisDocument: PropTypes.func.isRequired,
+  shouldWeAllowEditDocument: PropTypes.func.isRequired
 };
 
 export default Documents;

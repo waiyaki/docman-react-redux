@@ -18,6 +18,7 @@ const INITIAL_DOCUMENTS_STATE = Map({
     }),
     isFetching: false,
     isShowingCreateModal: false,
+    isUpdatingDocument: false,
     crudError: null,
     validations: Map({
       isValid: false
@@ -65,7 +66,9 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      */
     case actionTypes.CREATE_DOCUMENT_REQUEST:
       return state.merge(Map({
-        documents: state.get('documents').unshift(action.documentContent),
+        documents: state
+          .get('documents')
+          .unshift(fromJS(action.documentContent)),
         documentCrudOptions: state.get('documentCrudOptions').mergeDeep({
           documentContent: fromJS(action.documentContent),
           isFetching: true
@@ -87,10 +90,8 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
       return state.merge(Map({
         documents: state.get('documents')
           .slice(1)
-          .unshift(action.documentContent),
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(
-          INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
-        )
+          .unshift(fromJS(action.documentContent)),
+        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
       }));
 
     /**
@@ -101,11 +102,11 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
     case actionTypes.CREATE_DOCUMENT_FAILURE:
       return state.merge(Map({
         documents: state.get('documents').slice(1),
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep({
+        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
           isFetching: false,
           isShowingCreateModal: true,
           crudError: fromJS(action.error)
-        })
+        }))
       }));
 
     case actionTypes.UPDATE_NEW_DOCUMENT_CONTENTS:
@@ -118,6 +119,64 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         isShowingCreateModal: !state.getIn(
           ['documentCrudOptions', 'isShowingCreateModal'])
       });
+
+    /**
+     * Update a document's details.
+     *
+     * TODO: Maybe add an optimistic update here 😕
+     */
+    case actionTypes.DOCUMENT_UPDATE_REQUEST:
+      return state.merge(Map({
+        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
+          documentContent: fromJS(action.document),
+          isFetching: true,
+          isShowingCreateModal: false
+        }))
+      }));
+
+    /**
+     * Handle a successful document update.
+     *
+     * Filter out the document to update and replace it
+     * with the updated document.
+     */
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+      let documents = state.get('documents');
+      return state.merge(Map({
+        documents: documents.map((doc) => {
+          if (doc.get('_id') === action.document._id) {
+            return fromJS(action.document);
+          }
+          return doc;
+        }),
+        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      }));
+
+    // TODO: If we add optimistic update, remember to roll that back here. 😰
+    case actionTypes.DOCUMENT_UPDATE_FAILURE:
+      return state.merge(Map({
+        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
+          isFetching: false,
+          isShowingCreateModal: true,
+          isUpdatingDocument: true,
+          crudError: fromJS(action.error)
+        }))
+      }));
+
+    /**
+     * Set the document that we're updating as well as
+     * show or hide the create/update document modal.
+     */
+    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+      return state.mergeDeepIn(['documentCrudOptions'], Map({
+        documentContent: fromJS(action.document),
+        isShowingCreateModal: !state.getIn(
+          ['documentCrudOptions', 'isShowingCreateModal']
+        ),
+        isUpdatingDocument: !state.getIn(
+          ['documentCrudOptions', 'isUpdatingDocument']
+        )
+      }));
 
     /**
      * Validate the fields entered by the user when they're creating a new

@@ -152,3 +152,72 @@ export function validateDocumentContents (field) {
     field
   };
 }
+
+/**
+ * Update a document's details.
+ */
+export function requestDocumentUpdate (doc) {
+  return {
+    type: actionTypes.DOCUMENT_UPDATE_REQUEST,
+    document: doc
+  };
+}
+
+export function documentUpdateSuccess (documentData) {
+  return {
+    type: actionTypes.DOCUMENT_UPDATE_SUCCESS,
+    document: documentData.data
+  };
+}
+
+export function documentUpdateFailure (error) {
+  return {
+    type: actionTypes.DOCUMENT_UPDATE_FAILURE,
+    error: error.data || {message: error.message}
+  };
+}
+
+export function updateDocument (doc) {
+  return (dispatch) => {
+    dispatch(requestDocumentUpdate(doc));
+
+    return Axios
+      .put(`/api/documents/${doc._id}`, doc, {
+        headers: {'x-access-token': window.localStorage.getItem('token')}
+      })
+      .then((updatedDoc) => {
+        dispatch(documentUpdateSuccess(updatedDoc));
+        dispatch(showSnackBarMessage('Successfully updated document.'));
+      })
+      .catch((error) => {
+        dispatch(documentUpdateFailure(error));
+        dispatch(showSnackBarMessage('Error while updating document.'));
+      });
+  };
+}
+
+/**
+ * Show the update document view with the given doc.
+ *
+ * Given this is a toggle function, we handle case where we're hiding the
+ * document update view, in which we won't have a document passed to us.
+ */
+export function toggleDocumentUpdate (doc) {
+  return (dispatch, getState) => {
+    if (!doc) {
+      doc = getState()
+        .getIn(['docs', 'documentCrudOptions', 'documentContent'])
+        .toJS();
+    }
+
+    // Decompose the role to just it's title.
+    doc = Object.assign({}, doc, {
+      role: doc.role.title
+    });
+
+    return dispatch({
+      type: actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE,
+      document: doc
+    });
+  };
+}

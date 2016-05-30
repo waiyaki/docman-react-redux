@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 
 import {
   createDocument, toggleCreateModal, updateNewDocumentContents,
-  validateDocumentContents
+  validateDocumentContents, updateDocument, toggleDocumentUpdate
 } from '../../actions/DocumentsActions';
 import CreateDocument from '../../components/Documents/CreateDocument';
 import {fetchRolesIfNecessary} from '../../actions/RolesActions';
@@ -54,15 +54,20 @@ class CreateDocumentContainer extends React.Component {
   }
 
   /**
-   * Dispatch an action to create a document in the server using the details
-   * in the new document's state.
+   * Dispatch an action to create/update a document in the server using the
+   * details in the new document's state.
    */
   handleSubmit () {
     if (this.props.documentCrudOptions.getIn(['validations', 'isValid'])) {
-      this.handleToggleShowModal();
-      this.props.dispatch(createDocument(
-        this.props.documentCrudOptions.get('documentContent').toJS())
-      );
+      const documentContent =
+        this.props.documentCrudOptions.get('documentContent').toJS();
+
+      if (this.props.documentCrudOptions.get('isUpdatingDocument')) {
+        this.props.dispatch(updateDocument(documentContent));
+      } else {
+        this.handleToggleShowModal();
+        this.props.dispatch(createDocument(documentContent));
+      }
     }
   }
 
@@ -70,7 +75,11 @@ class CreateDocumentContainer extends React.Component {
    * Show or hide the create new document modal.
    */
   handleToggleShowModal () {
-    this.props.dispatch(toggleCreateModal());
+    if (this.props.documentCrudOptions.get('isUpdatingDocument')) {
+      this.props.dispatch(toggleDocumentUpdate());
+    } else {
+      this.props.dispatch(toggleCreateModal());
+    }
   }
 
   handleValidateFieldOnBlur (field) {
