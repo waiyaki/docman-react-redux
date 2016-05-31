@@ -54,9 +54,7 @@ export default function (state = INITIAL_AUTH_STATE, action) {
       }));
 
     case actionTypes.LOGOUT_REQUEST:
-      return INITIAL_AUTH_STATE.merge(fromJS({
-        isAuthenticated: false
-      }));
+      return INITIAL_AUTH_STATE;
 
     case actionTypes.CREDENTIALS_UPDATE:
       return state.merge(Map({

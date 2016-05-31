@@ -259,6 +259,12 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         })
       }));
 
+    /**
+     * Reset state to original state when the user logs out.
+     */
+    case actionTypes.LOGOUT_REQUEST:
+      return INITIAL_DOCUMENTS_STATE;
+
     default:
       return state;
   }

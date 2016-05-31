@@ -58,7 +58,7 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
       }));
 
     case actionTypes.LOGOUT_REQUEST:
-      return state.merge(INITIAL_USER_DETAILS_STATE);
+      return INITIAL_USER_DETAILS_STATE;
 
     /**
      * Toggle between showing the user profile and updating it.

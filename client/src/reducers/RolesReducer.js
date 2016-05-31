@@ -27,6 +27,9 @@ export default function (state = INITIAL_ROLES_STATE, action) {
         rolesFetchError: fromJS(action.error)
       }));
 
+    case actionTypes.LOGOUT_REQUEST:
+      return INITIAL_ROLES_STATE;
+
     default:
       return state;
   }
