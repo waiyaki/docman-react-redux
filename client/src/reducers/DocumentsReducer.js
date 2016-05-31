@@ -167,7 +167,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * show or hide the create/update document modal.
      */
     case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
-      return state.mergeDeepIn(['documentCrudOptions'], Map({
+      const newState = state.mergeDeepIn(['documentCrudOptions'], Map({
         documentContent: fromJS(action.document),
         isShowingCreateModal: !state.getIn(
           ['documentCrudOptions', 'isShowingCreateModal']
@@ -176,6 +176,14 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
           ['documentCrudOptions', 'isUpdatingDocument']
         )
       }));
+      if (!newState.getIn(['documentCrudOptions', 'isUpdatingDocument'])) {
+        return newState.mergeDeepIn(
+          ['documentCrudOptions', 'documentContent'],
+          INITIAL_DOCUMENTS_STATE
+              .getIn(['documentCrudOptions', 'documentContent'])
+        );
+      }
+      return newState;
 
     /**
      * Perform a document deletion.
