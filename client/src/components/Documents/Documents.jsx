@@ -36,9 +36,16 @@ const Documents = (props) => {
           ))
         : <div className='col-xs-12'>
             <div className='box' style={noDocsFoundStyles.box}>
-              <span style={noDocsFoundStyles.containerSpan}>
-                No Documents Found.
-              </span>
+              {props.appliedFilter === 'all'
+                ? <span style={noDocsFoundStyles.containerSpan}>
+                    No Documents Found.
+                  </span>
+                : <span style={noDocsFoundStyles.containerSpan}>
+                    {
+                      `No Documents Matching Role '${props.appliedFilter}' Were Found.`
+                    }
+                  </span>
+              }
             </div>
           </div>
       }
@@ -52,6 +59,7 @@ const Documents = (props) => {
 };
 
 Documents.propTypes = {
+  appliedFilter: PropTypes.string.isRequired,
   confirmDeleteDocument: PropTypes.func.isRequired,
   documentCrudOptions: PropTypes.object, // eslint-disable-line
   documents: PropTypes.arrayOf(PropTypes.shape({

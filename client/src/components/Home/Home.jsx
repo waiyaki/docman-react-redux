@@ -9,8 +9,10 @@ const Home = (props) => {
   return (
     <div className='main-application__body'>
       <MainAppNavBar
+        onFilterChange={props.onFilterChange}
         onLogout={props.onLogout}
         userDetails={props.userDetails}
+        visibleFilter={props.visibleFilter}
       />
       <div className='main-application__content margin-gt-md'>
         <div className='row'>
@@ -30,6 +32,7 @@ const Home = (props) => {
 };
 
 Home.propTypes = {
+  onFilterChange: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
   userDetails: PropTypes.shape({
     user: PropTypes.shape({
@@ -40,7 +43,8 @@ Home.propTypes = {
       }),
       username: PropTypes.string
     })
-  })
+  }),
+  visibleFilter: PropTypes.string.isRequired
 };
 
 export default Home;

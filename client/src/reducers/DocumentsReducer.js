@@ -8,7 +8,8 @@ const INITIAL_DOCUMENTS_STATE = Map({
   isFetching: false,
   documentsFetchError: null,
   documentViewOptions: Map({
-    expandedDocId: ''
+    expandedDocId: '',
+    visibleFilter: 'all'
   }),
   documentCrudOptions: Map({
     deletedDocument: Map(),
@@ -53,11 +54,8 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
       }));
 
     case actionTypes.EXPAND_DOCUMENT:
-      return state.merge(Map({
-        documentViewOptions: Map({
-          expandedDocId: action.docId
-        })
-      }));
+      return state.mergeDeepIn(
+        ['documentViewOptions', 'expandedDocId'], action.docId);
 
     /**
      * Make the state aware of that we're creating a new document.
@@ -245,6 +243,13 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
           currentView: 'documentContent'
         }
       ));
+
+    case actionTypes.CHANGE_DOCUMENTS_FILTER:
+      return state.mergeDeep(Map({
+        documentViewOptions: Map({
+          visibleFilter: action.filter
+        })
+      }));
 
     default:
       return state;

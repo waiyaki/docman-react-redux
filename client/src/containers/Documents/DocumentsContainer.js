@@ -17,6 +17,7 @@ class DocumentsContainer extends React.Component {
     };
 
     this.confirmDeleteDocument = this.confirmDeleteDocument.bind(this);
+    this.getVisibleDocuments = this.getVisibleDocuments.bind(this);
     this.handleDeleteDocument = this.handleDeleteDocument.bind(this);
     this.handleExpandChange = this.handleExpandChange.bind(this);
     this.handleToggleUpdateThisDocument =
@@ -79,14 +80,28 @@ class DocumentsContainer extends React.Component {
     );
   }
 
+  getVisibleDocuments (documents, filter) {
+    if (filter === 'all') {
+      return documents;
+    }
+
+    return documents.filter((doc) => {
+      return doc.role.title === filter;
+    });
+  }
+
   render () {
     return (
       this.props.docs.isFetching
         ? <DocumentsLoading />
         : <Documents
+            appliedFilter={this.props.docs.documentViewOptions.visibleFilter}
             confirmDeleteDocument={this.confirmDeleteDocument}
             documentCrudOptions={this.props.docs.documentCrudOptions}
-            documents={this.props.docs.documents}
+            documents={this.getVisibleDocuments(
+              this.props.docs.documents,
+              this.props.docs.documentViewOptions.visibleFilter
+            )}
             expandedDocId={this.props.docs.documentViewOptions.expandedDocId}
             isShowingConfirmDialog={this.state.isShowingConfirmDialog}
             isUpdatingDocument={
@@ -115,7 +130,8 @@ DocumentsContainer.propTypes = {
     isFetching: PropTypes.bool.isRequired,
     documentCrudOptions: PropTypes.object, // eslint-disable-line
     documentViewOptions: PropTypes.shape({
-      expandedDocId: PropTypes.string
+      expandedDocId: PropTypes.string,
+      visibleFilter: PropTypes.string
     })
   })
 };
