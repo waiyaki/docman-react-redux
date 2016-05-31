@@ -252,11 +252,12 @@ export function deleteDocument (docId) {
       })
       .then((success) => {
         dispatch(documentDeleteSuccess());
-        showSnackBarMessage('Document deleted successfully.');
+        dispatch(showSnackBarMessage('Document deleted successfully.'));
       })
       .catch((error) => {
-        dispatch(documentUpdateFailure(error));
-        showSnackBarMessage('An error occurred while deleting document.');
+        dispatch(deleteDocumentFailure(error));
+        dispatch(showSnackBarMessage(
+          'An error occurred while deleting document.'));
       });
   };
 }
