@@ -260,3 +260,10 @@ export function deleteDocument (docId) {
       });
   };
 }
+
+export function changeDocumentsFilter (filter) {
+  return {
+    type: actionTypes.CHANGE_DOCUMENTS_FILTER,
+    filter
+  };
+}
