@@ -18,7 +18,7 @@ const createButtonStyles = {
   bottom: '24px'
 };
 
-const CreateDocument = (props) => {
+const CreateOrUpdateDocument = (props) => {
   let hideComponent = (item) => {
     return classNames({
       hidden: true
@@ -54,7 +54,10 @@ const CreateDocument = (props) => {
         actions={actions}
         modal
         open={props.isShowingCreateModal}
-        title='Create a new document'
+        title={props.isUpdatingDocument
+          ? 'Update Document'
+          : 'Create a new document'
+        }
       >
         <div>
           <TextField
@@ -117,13 +120,14 @@ const CreateDocument = (props) => {
   );
 };
 
-CreateDocument.propTypes = {
+CreateOrUpdateDocument.propTypes = {
   documentContent: PropTypes.shape({
     title: PropTypes.string,
     content: PropTypes.string,
     role: PropTypes.string
   }).isRequired,
   isShowingCreateModal: PropTypes.bool.isRequired,
+  isUpdatingDocument: PropTypes.bool.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,
   onRoleFieldUpdate: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
@@ -139,4 +143,4 @@ CreateDocument.propTypes = {
   }).isRequired
 };
 
-export default CreateDocument;
+export default CreateOrUpdateDocument;

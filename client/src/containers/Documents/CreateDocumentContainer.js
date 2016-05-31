@@ -7,7 +7,7 @@ import {
   createDocument, toggleCreateModal, updateNewDocumentContents,
   validateDocumentContents, updateDocument, toggleDocumentUpdate
 } from '../../actions/DocumentsActions';
-import CreateDocument from '../../components/Documents/CreateDocument';
+import CreateOrUpdateDocument from '../../components/Documents/CreateOrUpdateDocument';
 import {fetchRolesIfNecessary} from '../../actions/RolesActions';
 
 class CreateDocumentContainer extends React.Component {
@@ -88,12 +88,15 @@ class CreateDocumentContainer extends React.Component {
 
   render () {
     return (
-      <CreateDocument
+      <CreateOrUpdateDocument
         documentContent={
           this.props.documentCrudOptions.get('documentContent').toJS()
         }
         isShowingCreateModal={
           this.props.documentCrudOptions.get('isShowingCreateModal')}
+        isUpdatingDocument={
+          this.props.documentCrudOptions.get('isUpdatingDocument')
+        }
         onFieldUpdate={this.handleFieldUpdate}
         onRoleFieldUpdate={this.handleRoleFieldUpdate}
         onSubmit={this.handleSubmit}
