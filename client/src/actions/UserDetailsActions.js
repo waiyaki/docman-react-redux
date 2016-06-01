@@ -36,6 +36,10 @@ export function fetchUserDetailsError (error, authError = false) {
 export function loadUserDetails () {
   let userToken = localStorage.getItem('token');
 
+  if (!userToken) {
+    return;
+  }
+
   // Get User Payload from the base64 encoded token.
   let user = JSON.parse(window.atob(userToken.split('.')[1]));
   return function (dispatch) {
