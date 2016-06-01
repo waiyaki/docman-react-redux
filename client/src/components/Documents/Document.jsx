@@ -76,7 +76,7 @@ const Document = (props) => {
                   }}
                 />
               : <IconMenu
-                  anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                  anchorOrigin={{horizontal: 'right', vertical: 'top'}}
                   iconButtonElement={
                     <IconButton><MoreVertIcon /></IconButton>
                   }
