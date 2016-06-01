@@ -2,6 +2,7 @@ import md5 from 'blueimp-md5';
 import classNames from 'classnames';
 
 import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
 
 import {
   Card, CardHeader, CardText, CardTitle
@@ -56,9 +57,13 @@ const Document = (props) => {
           avatar={ownerGravatar + '&s=40'}
           style={{'paddingBottom': '0.5em'}}
           subtitle={owner && owner.role ? owner.role.title : ''}
-          title={owner.name
-            ? `${owner.name.firstName + ' ' + owner.name.lastName}`
-            : owner.username
+          title={
+            <Link className='username-link' to='/users'>
+              {owner.name
+                ? `${owner.name.firstName + ' ' + owner.name.lastName}`
+                : owner.username
+              }
+            </Link>
           }
         >
           {props.shouldWeAllowEditDocument

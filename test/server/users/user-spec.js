@@ -222,13 +222,13 @@
 
       it('should allow access to requests with valid tokens', function (done) {
         request
-          .get('/some/non-existent/route')
+          .get('/api/some/non-existent/route')
           .set('x-access-token', token)
           .accept('application/json')
           .end(function (err, res) {
             expect(err).to.be.null;
-            expect(res.status).to.equal(404);
-            expect(res.body.message).to.eql('Not Found.');
+            expect(res.status).to.equal(200);
+            expect(res.text).to.match(/<title>DocMan<\/title>/);
             done();
           });
       });
