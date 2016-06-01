@@ -29,10 +29,10 @@
   app.use(express.static(publicPath));
 
   // Routes
-  app.get('/', function (req, res) {
-    return res.sendFile(path.resolve(publicPath, '/index.html'));
-  });
   require('./server/routes')(app);
+  app.get('*', function (req, res) {
+    return res.sendFile(path.join(publicPath, '/index.html'));
+  });
 
   // If we get here, we must have matched nothing... Or we're dying.
   // Shake it off. ¯\_(ツ)_/¯

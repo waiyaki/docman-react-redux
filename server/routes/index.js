@@ -28,7 +28,7 @@
      * Beyond this point, only authenticated users should access the API.
      * Unauthenticated users can only either login or register.
      */
-    app.use(customMiddleware.authenticate);
+    app.use('/api', customMiddleware.authenticate);
 
     // Users Routes.
     require('./users/users')(app);

@@ -124,3 +124,8 @@ body {
 .hidden {
   display: none;
 }
+
+.username-link {
+  color: rgba(0, 0, 0, 0.87);
+  text-decoration: none;
+}
