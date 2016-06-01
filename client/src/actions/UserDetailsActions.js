@@ -3,6 +3,7 @@ import Axios from 'axios';
 import * as actionTypes from '../constants';
 import {logoutUser} from './AuthActions';
 import {showSnackBarMessage} from './UtilityActions';
+import {subscribeToUpdates, registerSockets} from './SocketsActions';
 
 export function requestFetchUserDetails () {
   return {
@@ -37,7 +38,9 @@ export function loadUserDetails () {
   let userToken = localStorage.getItem('token');
 
   if (!userToken) {
-    return;
+    return {
+      type: actionTypes.LOGOUT_REQUEST
+    };
   }
 
   // Get User Payload from the base64 encoded token.
@@ -49,7 +52,11 @@ export function loadUserDetails () {
       .get(`/api/users/${user.username}`, {
         headers: {'x-access-token': userToken}
       })
-      .then((user) => dispatch(fetchUserDetailsSuccess(user)))
+      .then((user) => {
+        dispatch(fetchUserDetailsSuccess(user));
+        dispatch(registerSockets());
+        dispatch(subscribeToUpdates(user.data));
+      })
       .catch((error) => {
         // If we get a 401 while fetching this user's details using the cached
         // token, that token is invalid. Log them out.

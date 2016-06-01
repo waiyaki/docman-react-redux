@@ -163,6 +163,36 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
       }));
 
     /**
+     * Handle document's state update accordingly if the role of a particular
+     * document changed.
+     */
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      const cachedDocIndex = state
+        .get('documents')
+        .findIndex((doc) => doc.get('_id') === action.document._id);
+      if (!action.allowAccess && ~cachedDocIndex) {
+        return state.merge(Map({
+          documents: state.get('documents').splice(cachedDocIndex, 1),
+          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
+            'documentCrudOptions')
+        }));
+      } else if (action.allowAccess && ~cachedDocIndex) {
+        return state.merge(Map({
+          documents: state.get('documents')
+            .splice(cachedDocIndex, 1, fromJS(action.document)),
+          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
+            'documentCrudOptions')
+        }));
+      } else if (action.allowAccess && cachedDocIndex === -1) {
+        return state.merge(Map({
+          documents: state.get('documents').insert(0, fromJS(action.document)),
+          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
+            'documentCrudOptions')
+        }));
+      }
+      return state;
+
+    /**
      * Set the document that we're updating as well as
      * show or hide the create/update document modal.
      */
@@ -214,6 +244,14 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * server-side.
      */
     case actionTypes.DELETE_DOCUMENT_SUCCESS:
+      if (action.docId) { // docId would come from the websocket action.
+        return state.merge(Map({
+          documents: state.get('documents')
+            .filter(doc => doc.get('_id') !== action.docId),
+          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
+            'documentCrudOptions')
+        }));
+      }
       return state.mergeIn(
         ['documentCrudOptions'],
         INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')

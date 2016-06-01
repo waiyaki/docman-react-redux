@@ -13,6 +13,7 @@ import {
 } from '../constants';
 
 import {showSnackBarMessage} from './UtilityActions';
+import {registerSockets, subscribeToUpdates} from './SocketsActions';
 
 /* LOGIN ACTIONS */
 export function loginRequest (credentials) {
@@ -104,6 +105,8 @@ export function signupUser (credentials) {
       .then((user) => {
         window.localStorage.setItem('token', user.data.token);
         dispatch(signupSuccess(user));
+        dispatch(registerSockets());
+        dispatch(subscribeToUpdates(user.data));
         dispatch(showSnackBarMessage("Yay! You've successfully registered!"));
       })
       .catch((error) => {
