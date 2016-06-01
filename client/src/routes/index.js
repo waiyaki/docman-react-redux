@@ -1,11 +1,8 @@
-/* eslint-disable no-unused-vars */
 import React from 'react';
 import {Provider} from 'react-redux';
 import {IndexRoute, Router, Route, browserHistory} from 'react-router';
-/* eslint-enable no-unused-vars */
 
 import configureStore from '../store/configureStore';
-
 import MainContainer from '../containers/Main/MainContainer';
 import HomeContainer from '../containers/Home/HomeContainer';
 

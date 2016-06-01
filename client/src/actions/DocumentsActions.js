@@ -116,8 +116,13 @@ export function createDocument (content) {
       .post('/api/documents', content, {
         headers: {'x-access-token': window.localStorage.getItem('token')}
       })
-      .then((data) => {
-        dispatch(createDocumentSuccess(data));
+      .then((documentData) => {
+        // Dispatch only if we've created a private document. The other types
+        // of documents should be handled by the actions dispatched after
+        // receiving data in the websockets.
+        if (documentData.data.role.title === 'private') {
+          dispatch(createDocumentSuccess(documentData));
+        }
         dispatch(showSnackBarMessage('Successfully created document.'));
       })
       .catch((error) => {
@@ -155,6 +160,9 @@ export function validateDocumentContents (field) {
 
 /**
  * Update a document's details.
+ *
+ * Only dispatch documentUpdateSuccess for private documents. Other documents
+ * updates will be dispatched using websockets.
  */
 export function requestDocumentUpdate (doc) {
   return {
@@ -177,6 +185,30 @@ export function documentUpdateFailure (error) {
   };
 }
 
+/**
+ * If the role of a document we already have in the state changes, determine
+ * whether we still have access to it and update state accordingly.
+ */
+export function documentRoleUpdate (documentData) {
+  return (dispatch, getState) => {
+    const user = getState().getIn(['auth', 'user']);
+    const doc = documentData.data;
+    let allowAccess = (
+      doc.role.title === 'private' && user.username === doc.owner.username ||
+      doc.role.title === 'admin' && user.username === doc.owner.username ||
+      user.role.title === 'admin' ||
+      doc.role.title === 'user' ||
+      doc.role.title === 'public'
+    );
+
+    return dispatch({
+      type: actionTypes.DOCUMENT_ROLE_UPDATE,
+      document: doc,
+      allowAccess
+    });
+  };
+}
+
 export function updateDocument (doc) {
   return (dispatch) => {
     dispatch(requestDocumentUpdate(doc));
@@ -186,7 +218,9 @@ export function updateDocument (doc) {
         headers: {'x-access-token': window.localStorage.getItem('token')}
       })
       .then((updatedDoc) => {
-        dispatch(documentUpdateSuccess(updatedDoc));
+        if (updatedDoc.data.role.title === 'private') {
+          dispatch(documentUpdateSuccess(updatedDoc));
+        }
         dispatch(showSnackBarMessage('Successfully updated document.'));
       })
       .catch((error) => {
@@ -229,9 +263,10 @@ export function documentDeleteRequest (documentId) {
   };
 }
 
-export function documentDeleteSuccess () {
+export function documentDeleteSuccess (docId) {
   return {
-    type: actionTypes.DELETE_DOCUMENT_SUCCESS
+    type: actionTypes.DELETE_DOCUMENT_SUCCESS,
+    docId
   };
 }
 
@@ -251,7 +286,6 @@ export function deleteDocument (docId) {
         headers: {'x-access-token': window.localStorage.getItem('token')}
       })
       .then((success) => {
-        dispatch(documentDeleteSuccess());
         dispatch(showSnackBarMessage('Document deleted successfully.'));
       })
       .catch((error) => {
