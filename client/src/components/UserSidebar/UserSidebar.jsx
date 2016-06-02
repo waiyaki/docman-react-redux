@@ -26,22 +26,25 @@ const UserSidebar = (props) => {
             : user.username
           }
         >
-          <IconMenu
-            anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-            iconButtonElement={
-              <IconButton><MoreVertIcon /></IconButton>
-            }
-            style={{
-              position: 'absolute',
-              right: '4px'
-            }}
-            targetOrigin={{horizontal: 'right', vertical: 'top'}}
-          >
-            <MenuItem
-              onTouchTap={props.handleToggleShowUpdate}
-              primaryText='Edit Profile'
-            />
-          </IconMenu>
+          {props.isOwnProfile
+            ? <IconMenu
+                anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+                iconButtonElement={
+                  <IconButton><MoreVertIcon /></IconButton>
+                }
+                style={{
+                  position: 'absolute',
+                  right: '4px'
+                }}
+                targetOrigin={{horizontal: 'right', vertical: 'top'}}
+              >
+                <MenuItem
+                  onTouchTap={props.handleToggleShowUpdate}
+                  primaryText='Edit Profile'
+                />
+              </IconMenu>
+            : null
+          }
         </CardHeader>
         <CardMedia
           overlay={
@@ -66,6 +69,7 @@ const UserSidebar = (props) => {
 
 UserSidebar.propTypes = {
   handleToggleShowUpdate: PropTypes.func.isRequired,
+  isOwnProfile: PropTypes.bool,
   userDetails: PropTypes.shape({
     user: PropTypes.shape({
       email: PropTypes.string.isRequired,

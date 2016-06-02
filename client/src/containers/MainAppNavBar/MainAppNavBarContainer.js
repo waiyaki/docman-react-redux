@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Map} from 'immutable';
 
 import MainAppNavBar from '../../components/MainAppNavBar/MainAppNavBar';
+import NavigationDrawer from '../../components/MainAppNavBar/NavigationDrawer';
 
 import {logoutUser} from '../../actions/AuthActions';
 import {loadUserDetails} from '../../actions/UserDetailsActions';
@@ -12,6 +13,11 @@ class MainAppNavBarContainer extends React.Component {
   constructor (props) {
     super(props);
 
+    this.state = {
+      isDrawerOpen: false
+    };
+
+    this.handleToggleDrawer = this.handleToggleDrawer.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.updateUserDetailsIfNeeded = this.updateUserDetailsIfNeeded.bind(this);
@@ -43,14 +49,31 @@ class MainAppNavBarContainer extends React.Component {
     this.props.dispatch(changeDocumentsFilter(value));
   }
 
+  handleToggleDrawer () {
+    this.setState({
+      isDrawerOpen: !this.state.isDrawerOpen
+    });
+  }
+
   render () {
     return (
-      <MainAppNavBar
-        onFilterChange={this.handleFilterChange}
-        onLogout={this.handleLogout}
-        userDetails={this.props.userDetails.toJS()}
-        visibleFilter={this.props.visibleFilter}
-      />
+      <span>
+        <MainAppNavBar
+          onDrawerToggle={this.handleToggleDrawer}
+          onFilterChange={this.handleFilterChange}
+          onLogout={this.handleLogout}
+          userDetails={this.props.userDetails.toJS()}
+          visibleFilter={this.props.visibleFilter}
+        />
+        <NavigationDrawer
+          isDrawerOpen={this.state.isDrawerOpen}
+          onDrawerToggle={this.handleToggleDrawer}
+          user={this.props.userDetails.get('user')
+            ? this.props.userDetails.get('user').toJS()
+            : null
+          }
+        />
+      </span>
     );
   }
 }

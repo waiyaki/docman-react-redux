@@ -15,26 +15,12 @@ const NavBar = (props) => {
       <AppBar
         iconElementLeft={
           <span className='hide-gt-sm'>
-            <IconMenu
-              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-              iconButtonElement={
-                <IconButton iconStyle={{fill: 'white'}}>
-                  <MenuIcon />
-                </IconButton>
-              }
-              targetOrigin={{horizontal: 'right', vertical: 'top'}}
+            <IconButton
+              iconStyle={{fill: 'white'}}
+              onTouchTap={props.onDrawerToggle}
             >
-              <MenuItem
-                primaryText={props.userDetails.user && props.userDetails.user.username
-                  ? props.userDetails.user.username
-                  : 'Profile'
-                }
-              />
-              <MenuItem
-                onTouchTap={props.onLogout}
-                primaryText='Logout'
-              />
-            </IconMenu>
+              <MenuIcon />
+            </IconButton>
           </span>
         }
         iconElementRight={
@@ -89,6 +75,7 @@ const NavBar = (props) => {
 };
 
 NavBar.propTypes = {
+  onDrawerToggle: PropTypes.func.isRequired,
   onFilterChange: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
   userDetails: PropTypes.shape({
