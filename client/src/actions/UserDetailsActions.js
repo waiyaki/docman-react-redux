@@ -121,3 +121,86 @@ export function toggleShowUserUpdateView () {
     type: actionTypes.TOGGLE_SHOW_USER_UPDATE_VIEW
   };
 }
+
+/**
+ * Fetch documents belonging to a particular user
+ */
+export function requestFetchUserDocuments () {
+  return {
+    type: actionTypes.USER_DOCUMENTS_FETCH_REQUEST
+  };
+}
+
+export function userDocumentsFetchSuccess (documentsData) {
+  return {
+    type: actionTypes.USER_DOCUMENTS_FETCH_SUCCESS,
+    documents: documentsData.data
+  };
+}
+
+export function userDocumentsFetchFailure (error) {
+  return {
+    type: actionTypes.USER_DOCUMENTS_FETCH_FAILURE,
+    error: error.data || {message: error.message}
+  };
+}
+
+export function fetchUserDocuments (username) {
+  return (dispatch) => {
+    dispatch(requestFetchUserDocuments());
+
+    return Axios
+      .get(`/api/users/${username}/documents`, {
+        headers: {'x-access-token': window.localStorage.getItem('token')}
+      })
+      .then((documentsData) => {
+        dispatch(userDocumentsFetchSuccess(documentsData));
+      })
+      .catch((error) => {
+        dispatch(userDocumentsFetchFailure(error));
+        dispatch(showSnackBarMessage(`Error getting ${username}'s documents.`));
+      });
+  };
+}
+
+/**
+ * Fetch user profile belonging to another user.
+ */
+export function fetchAnotherUsersProfileRequest (username) {
+  return {
+    type: actionTypes.FETCH_ANOTHER_USERS_PROFILE_REQUEST,
+    username
+  };
+}
+
+export function fetchAnotherUsersProfileSuccess (profileData) {
+  return {
+    type: actionTypes.FETCH_ANOTHER_USERS_PROFILE_SUCCESS,
+    profileData: profileData.data
+  };
+}
+
+export function fetchAnotherUsersProfileFailure (error) {
+  return {
+    type: actionTypes.FETCH_ANOTHER_USERS_PROFILE_FAILURE,
+    error: error.data || {message: error.message}
+  };
+}
+
+export function fetchAnotherUsersProfile (username) {
+  return (dispatch) => {
+    dispatch(fetchAnotherUsersProfileRequest(username));
+
+    return Axios
+      .get(`/api/users/${username}`, {
+        headers: {'x-access-token': window.localStorage.getItem('token')}
+      })
+      .then((userProfileData) => {
+        dispatch(fetchAnotherUsersProfileSuccess(userProfileData));
+      })
+      .catch((error) => {
+        dispatch(fetchAnotherUsersProfileFailure(error));
+        dispatch(showSnackBarMessage(`Error fetching ${username}'s profile`));
+      });
+  };
+}

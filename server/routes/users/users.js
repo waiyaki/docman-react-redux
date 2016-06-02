@@ -14,8 +14,7 @@
     /**
      * Get a logged in user's profile.
      */
-    app.get('/api/users/:username',
-      customMiddleware.isAdminOrOwnProfile, usersController.retrieve);
+    app.get('/api/users/:username', usersController.retrieve);
 
     /**
      * Update a user's profile.

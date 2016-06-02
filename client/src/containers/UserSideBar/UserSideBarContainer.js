@@ -54,6 +54,8 @@ class UserSideBarContainer extends React.Component {
   }
 
   render () {
+    // Render the sidebar with the user we got as props from the mounting
+    // component, else use the user we've requested for from the state.
     return (
       this.props.userDetails.get('isShowingUpdate')
         ? <UserSideBarUpdate
@@ -65,7 +67,15 @@ class UserSideBarContainer extends React.Component {
           />
         : <UserSideBar
             handleToggleShowUpdate={this.onToggleShowUpdateView}
-            userDetails={this.props.userDetails.toJS()}
+            isOwnProfile={this.props.selectedUser
+              ? this.props.selectedUser.username === this.props.userDetails
+                  .getIn(['user', 'username'])
+              : true
+            }
+            userDetails={this.props.selectedUser
+              ? {user: this.props.selectedUser}
+              : this.props.userDetails.toJS()
+            }
           />
     );
   }
@@ -73,6 +83,13 @@ class UserSideBarContainer extends React.Component {
 
 UserSideBarContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  selectedUser: PropTypes.shape({
+    username: PropTypes.string,
+    email: PropTypes.string,
+    role: PropTypes.shape({
+      title: PropTypes.string
+    })
+  }),
   userDetails: function (props, propName, componentName) {
     if (!props[propName] instanceof Map) {
       return new Error(

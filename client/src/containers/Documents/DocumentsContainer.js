@@ -17,6 +17,7 @@ class DocumentsContainer extends React.Component {
     };
 
     this.confirmDeleteDocument = this.confirmDeleteDocument.bind(this);
+    this.getDocumentsToShow = this.getDocumentsToShow.bind(this);
     this.getVisibleDocuments = this.getVisibleDocuments.bind(this);
     this.handleDeleteDocument = this.handleDeleteDocument.bind(this);
     this.handleExpandChange = this.handleExpandChange.bind(this);
@@ -80,6 +81,10 @@ class DocumentsContainer extends React.Component {
     );
   }
 
+  /**
+   * Filter out the visible documents based on the value of the currently
+   * applied filter.
+   */
   getVisibleDocuments (documents, filter) {
     if (filter === 'all') {
       return documents;
@@ -90,16 +95,41 @@ class DocumentsContainer extends React.Component {
     });
   }
 
+  /**
+   * Determine which documents we should show when we render.
+   * If we're in the main page, we'll show everything.
+   * If we are in the user profile's page, we'll show that user's documents
+   * fetched from the server so long as the selected user is not the logged in
+   * user.
+   * If the selected user is the one currently logged in, we're going to filter
+   * their documents from the current state.
+   */
+  getDocumentsToShow () {
+    const authenticatedUser = this.props.auth.get('user');
+    const propUser = this.props.selectedUser;
+    if (authenticatedUser && propUser && propUser.username === authenticatedUser.username) {
+      return this.props.docs.documents
+        .filter((doc) => doc.owner.username === authenticatedUser.username);
+    }
+    // Either there's no user passed in as props, in which case we can safely
+    // assume that no documents were passed in as well, or the propUser isn't
+    // the one currently logged in.
+    return this.props.selectedUserDocuments
+      ? this.props.selectedUserDocuments.documents
+      : this.props.docs.documents;
+  }
+
   render () {
+    const selectedUserDocs = this.props.selectedUserDocuments;
     return (
-      this.props.docs.isFetching
+      this.props.docs.isFetching || selectedUserDocs && selectedUserDocs.isFetching
         ? <DocumentsLoading />
         : <Documents
             appliedFilter={this.props.docs.documentViewOptions.visibleFilter}
             confirmDeleteDocument={this.confirmDeleteDocument}
             documentCrudOptions={this.props.docs.documentCrudOptions}
             documents={this.getVisibleDocuments(
-              this.props.docs.documents,
+              this.getDocumentsToShow(),
               this.props.docs.documentViewOptions.visibleFilter
             )}
             expandedDocId={this.props.docs.documentViewOptions.expandedDocId}
@@ -133,7 +163,12 @@ DocumentsContainer.propTypes = {
       expandedDocId: PropTypes.string,
       visibleFilter: PropTypes.string
     })
-  })
+  }),
+  selectedUserDocuments: PropTypes.shape({
+    documents: PropTypes.array,
+    isFetching: PropTypes.bool
+  }),
+  selectedUser: PropTypes.object // eslint-disable-line
 };
 
 function mapStateToProps (state) {

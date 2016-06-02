@@ -129,3 +129,18 @@ body {
   color: rgba(0, 0, 0, 0.87);
   text-decoration: none;
 }
+
+.profile-header {
+  color: rgba(0, 0, 0, 0.870588);
+  display: block;
+  font-size: 2rem;
+  line-height: 36px;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 10px 0;
+  text-align: center;
+}
+
+.active {
+  color: rgb(0, 188, 212);
+}
