@@ -1,11 +1,24 @@
 import {Map} from 'immutable';
 import Validator from 'validator';
 
+/**
+ * Performs validations for various fields.
+ *
+ * Generally, it checks whether the given field meets some criteria.
+ * If it doesn't, an appropriate message is set in the validations state using
+ * that field as the key for that message.
+ * If it does, it checks the validations to see whether there was an error
+ * specific to this field. If there was, it clears that error which signifies
+ * that the field is clean.
+ */
+
+// TODO: Refactor this whole function into composable functions. :cold_sweat:
+
 export default function (state = Map(), action) {
   let newState = state;
 
-  // We need to modify where we get credentials from in the state based on
-  // whether we're validating login/signup fields or user details update fields.
+  // We need to modify where we get field values from in the state based on
+  // the view we're currently validating.
   // We'll use the action.target for this.
   switch (action.type) {
     case 'username':
@@ -120,6 +133,52 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+
+    case 'title':
+      let title = state.getIn([action.target, 'title']);
+      if (!title) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            title: 'This field is required'
+          })
+        }));
+      } else if (title.length < 10) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            title: 'This field field should be at least 10 characters.'
+          })
+        }));
+      } else if (state.getIn(['validations', 'title'])) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            title: null
+          })
+        }));
+      }
+      break;
+
+    case 'content':
+      let content = state.getIn([action.target, 'content']);
+      if (!content) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            content: 'This field is required'
+          })
+        }));
+      } else if (content.length < 10) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            content: 'This field field should be at least 10 characters.'
+          })
+        }));
+      } else if (state.getIn(['validations', 'content'])) {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            content: null
+          })
+        }));
+      }
+      break;
   }
 
   /**
@@ -156,6 +215,11 @@ export default function (state = Map(), action) {
         newState.getIn([action.target, 'confirmPassword']) &&
         !newState.getIn(['validations', 'confirmPassword']);
     }
+  } else if (action.currentView === 'documentContent') {
+    isValid = newState.getIn([action.target], 'title') &&
+      !newState.getIn(['validations', 'title']) &&
+      newState.getIn([action.target, 'content']) &&
+      !newState.getIn(['validations', 'content']);
   }
 
   newState = newState.mergeDeep(Map({

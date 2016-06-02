@@ -3,13 +3,16 @@ import React, {PropTypes} from 'react';
 import MainAppNavBar from './MainAppNavBar';
 import UserSideBarContainer from '../../containers/UserSidebar/UserSideBarContainer';
 import UserSidebarLoading from '../UserSidebar/UserSidebarLoading';
+import DocumentsContainer from '../../containers/Documents/DocumentsContainer';
 
 const Home = (props) => {
   return (
     <div className='main-application__body'>
       <MainAppNavBar
+        onFilterChange={props.onFilterChange}
         onLogout={props.onLogout}
         userDetails={props.userDetails}
+        visibleFilter={props.visibleFilter}
       />
       <div className='main-application__content margin-gt-md'>
         <div className='row'>
@@ -19,8 +22,8 @@ const Home = (props) => {
               : <UserSidebarLoading />
             }
           </div>
-          <div className='col-sm-8 col-lg-9'>
-            Hello World from the home component!
+          <div className='col-xs-12 col-sm-8 col-lg-9'>
+            <DocumentsContainer />
           </div>
         </div>
       </div>
@@ -29,6 +32,7 @@ const Home = (props) => {
 };
 
 Home.propTypes = {
+  onFilterChange: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
   userDetails: PropTypes.shape({
     user: PropTypes.shape({
@@ -39,7 +43,8 @@ Home.propTypes = {
       }),
       username: PropTypes.string
     })
-  })
+  }),
+  visibleFilter: PropTypes.string.isRequired
 };
 
 export default Home;

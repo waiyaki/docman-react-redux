@@ -212,7 +212,31 @@
     });
   }
 
+  /**
+   * Emit a socket event.
+   *
+   * Do not emit socket events when private documents have changed, unless
+   * forced.
+   */
+  function emitSocketEvent (SocketIO, doc, eventType, force) {
+    if (force) {
+      SocketIO.in('public').emit(eventType, doc);
+    } else if (doc.role && doc.role.title !== 'private') {
+      SocketIO.in(doc.role.title).emit(eventType, doc);
+    }
+
+    // If this document has an admin access level, broadcast it to it's owner
+    // as well. Since private documents are not publicly broadcasted, this
+    // selectively broadcasts private documents to admins.
+    if (doc.role && doc.role.title === 'admin') {
+      // BUG: Will potentially broadcast to the owner twice
+      // if the owner is an admin 😕
+      SocketIO.in(doc.owner.username).emit(eventType, doc);
+    }
+  }
+
   module.exports = {
+    emitSocketEvent: emitSocketEvent,
     resolveError: resolveError,
     runQuery: runQuery
   };

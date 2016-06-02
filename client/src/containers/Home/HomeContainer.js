@@ -9,11 +9,13 @@ import UnauthenticatedHomeContainer from '../Auth/UnauthenticatedHomeContainer';
 
 import {logoutUser} from '../../actions/AuthActions';
 import {loadUserDetails} from '../../actions/UserDetailsActions';
+import {changeDocumentsFilter} from '../../actions/DocumentsActions';
 
 class HomeContainer extends React.Component {
   constructor (props) {
     super(props);
 
+    this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
     this.updateUserDetailsIfNeeded = this.updateUserDetailsIfNeeded.bind(this);
   }
@@ -40,10 +42,17 @@ class HomeContainer extends React.Component {
     this.props.dispatch(logoutUser());
   }
 
+  handleFilterChange (event, value) {
+    this.props.dispatch(changeDocumentsFilter(value));
+  }
+
   render () {
     return this.props.auth.get('isAuthenticated')
-      ? <Home onLogout={this.handleLogout}
+      ? <Home
+          onFilterChange={this.handleFilterChange}
+          onLogout={this.handleLogout}
           userDetails={this.props.userDetails.toJS()}
+          visibleFilter={this.props.visibleFilter}
         />
       : <UnauthenticatedHomeContainer />;
   }
@@ -66,17 +75,21 @@ HomeContainer.propTypes = {
         'Expected `Immutable.Map`'
       );
     }
-  }
+  },
+  visibleFilter: PropTypes.string.isRequired
 };
 
 function mapStateToProps (state) {
   const {dispatch} = state;
   const auth = state.get('auth');
   const userDetails = state.get('userDetails');
+  const visibleFilter = state
+    .getIn(['docs', 'documentViewOptions', 'visibleFilter']);
   return {
     dispatch,
     auth,
-    userDetails
+    userDetails,
+    visibleFilter
   };
 };
 

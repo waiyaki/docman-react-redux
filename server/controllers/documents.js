@@ -6,6 +6,7 @@
   var utils = require('../utils');
   var runQuery = utils.runQuery;
   var resolveError = utils.resolveError;
+  var emitSocketEvent = utils.emitSocketEvent;
 
   var documentsController = {
     /**
@@ -35,6 +36,9 @@
                 .exec(function (err, doc) {
                   if (err) {
                     return resolveError(err, res);
+                  }
+                  if (global.io) {
+                    emitSocketEvent(global.io, doc, 'document:create');
                   }
                   return res.status(201).send(doc);
                 });
@@ -97,6 +101,10 @@
               if (err) {
                 return resolveError(err, res);
               }
+
+              // Determine whether we're changing documents role.
+              var roleHasChanged = doc.role.title !== role.title;
+
               doc.role = role._id;
               doc.save(function (err) {
                 if (err) {
@@ -109,6 +117,14 @@
                     if (err) {
                       return resolveError(err, res);
                     }
+                    if (global.io) {
+                      if (roleHasChanged) {
+                        emitSocketEvent(
+                          global.io, doc, 'document:role-update', true);
+                      } else {
+                        emitSocketEvent(global.io, doc, 'document:update');
+                      }
+                    }
                     return res.status(200).send(doc);
                   });
               });
@@ -118,6 +134,7 @@
               if (err) {
                 return resolveError(err, res);
               }
+              emitSocketEvent(global.io, doc, 'document:update');
               return res.status(200).send(doc);
             });
           }
@@ -138,6 +155,10 @@
             return res.status(404).send({
               message: 'Document not found.'
             });
+          }
+          if (global.io) {
+            emitSocketEvent(
+              global.io, req.params.doc_id, 'document:delete', true);
           }
           return res.status(204).send({});
         });

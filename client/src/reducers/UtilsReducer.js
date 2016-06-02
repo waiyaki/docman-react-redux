@@ -32,6 +32,9 @@ export default function (state = INITIAL_UTILITY_STATE, action) {
         snackBarMessage: action.message
       }));
 
+    case actionTypes.LOGOUT_REQUEST:
+      return INITIAL_UTILITY_STATE;
+
     default:
       return state;
   }
