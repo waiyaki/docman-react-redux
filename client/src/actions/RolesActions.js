@@ -1,7 +1,7 @@
 import Axios from 'axios';
 
 import * as actionTypes from '../constants';
-import {getToken} from '../utils';
+import {getAuthToken} from '../utils';
 
 export function fetchRolesRequest () {
   return {
@@ -23,7 +23,7 @@ export function fetchRolesFailure (error) {
   };
 }
 
-export function fetchRoles (token = getToken()) {
+export function fetchRoles (token = getAuthToken()) {
   return function (dispatch) {
     dispatch(fetchRolesRequest());
 
@@ -46,7 +46,7 @@ export function fetchRoles (token = getToken()) {
  * Only do so if we don't already have roles in the state or if we're forcing
  * the fetch.
  */
-export function fetchRolesIfNecessary (token = getToken(), force = false) {
+export function fetchRolesIfNecessary (token = getAuthToken(), force = false) {
   return function (dispatch, getState) {
     const roles = getState().getIn(['roles', 'roles']);
     if (!roles.size || force) {

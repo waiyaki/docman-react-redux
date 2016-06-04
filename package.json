@@ -71,7 +71,8 @@
     ],
     "env": {
       "testing": {
-        "plugins": ["rewire"]
+        "plugins": ["rewire"],
+        "sourceMaps": "inline"
       }
     }
   }
