@@ -1,6 +1,7 @@
 import Axios from 'axios';
 
 import * as actionTypes from '../constants';
+import {getToken} from '../utils';
 
 export function fetchRolesRequest () {
   return {
@@ -22,13 +23,13 @@ export function fetchRolesFailure (error) {
   };
 }
 
-export function fetchRoles () {
+export function fetchRoles (token = getToken()) {
   return function (dispatch) {
     dispatch(fetchRolesRequest());
 
     return Axios
       .get('/api/roles', {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': token}
       })
       .then((rolesData) => {
         dispatch(fetchRolesSuccess(rolesData));
@@ -45,11 +46,14 @@ export function fetchRoles () {
  * Only do so if we don't already have roles in the state or if we're forcing
  * the fetch.
  */
-export function fetchRolesIfNecessary (force = false) {
+export function fetchRolesIfNecessary (token = getToken(), force = false) {
   return function (dispatch, getState) {
     const roles = getState().getIn(['roles', 'roles']);
     if (!roles.size || force) {
-      return dispatch(fetchRoles());
+      return dispatch(fetchRoles(token));
     }
+    return dispatch(fetchRolesSuccess({
+      data: roles.toJS()
+    }));
   };
 }
