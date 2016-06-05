@@ -19,7 +19,7 @@ const mockStore = configureMockStore(middlewares);
 
 // Mock an axios instance to use in the tests and then rewire the imported
 // modules to use the instance with the mocked handler. Also rewire
-// `setAuthToken` to avoid accessing `window.localStorage`.
+// `getAuthToken` to avoid accessing `window.localStorage`.
 let axiosInstance = Axios.create();
 const mockAxios = new AxiosMockAdapter(axiosInstance);
 userActionsRewireAPI.__Rewire__('Axios', axiosInstance);
