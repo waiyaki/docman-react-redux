@@ -2,7 +2,7 @@ import {List, Map, fromJS} from 'immutable';
 
 import * as actionTypes from '../constants';
 
-const INITIAL_ROLES_STATE = Map({
+export const INITIAL_ROLES_STATE = Map({
   roles: List(),
   isFetching: false,
   rolesFetchError: null
