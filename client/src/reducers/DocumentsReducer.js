@@ -3,7 +3,7 @@ import {List, Map, fromJS} from 'immutable';
 import * as actionTypes from '../constants';
 import FieldsValidationReducer from './FieldsValidationReducer';
 
-const INITIAL_DOCUMENTS_STATE = Map({
+export const INITIAL_DOCUMENTS_STATE = Map({
   documents: List(),
   isFetching: false,
   documentsFetchError: null,
@@ -165,11 +165,20 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
     /**
      * Handle document's state update accordingly if the role of a particular
      * document changed.
+     *
+     * If we no longer have access to this doc, remove it from state.
+     *
+     * If we still have access to the document, replace the copy we have with
+     * the new copy that has the updated role permissions.
+     *
+     * If we have access to the document but didn't have it in state, insert it
+     * as the first document.
      */
     case actionTypes.DOCUMENT_ROLE_UPDATE:
       const cachedDocIndex = state
         .get('documents')
         .findIndex((doc) => doc.get('_id') === action.document._id);
+
       if (!action.allowAccess && ~cachedDocIndex) {
         return state.merge(Map({
           documents: state.get('documents').splice(cachedDocIndex, 1),
@@ -197,6 +206,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * show or hide the create/update document modal.
      */
     case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+      // Hide or show the document create/update modal.
       const newState = state.mergeDeepIn(['documentCrudOptions'], Map({
         documentContent: fromJS(action.document),
         isShowingCreateModal: !state.getIn(
@@ -206,6 +216,10 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
           ['documentCrudOptions', 'isUpdatingDocument']
         )
       }));
+
+      // If we are not updating a document, clear out whatever contents we had
+      // cached in documentContent, so that if a user shows the modal again,
+      // it won't have stale content.
       if (!newState.getIn(['documentCrudOptions', 'isUpdatingDocument'])) {
         return newState.mergeDeepIn(
           ['documentCrudOptions', 'documentContent'],
@@ -269,7 +283,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         documents: state
           .get('documents')
           .insert(delDocument.index, fromJS(delDocument.item)),
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
+        documentCrudOptions: state.get('documentCrudOptions').merge(Map({
           deletedDocument: Map(),
           crudError: fromJS(action.error)
         }))
