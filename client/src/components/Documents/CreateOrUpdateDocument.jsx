@@ -52,6 +52,7 @@ const CreateOrUpdateDocument = (props) => {
       </div>
       <Dialog
         actions={actions}
+        autoScrollBodyContent
         modal
         open={props.isShowingCreateModal}
         title={props.isUpdatingDocument
@@ -87,6 +88,7 @@ const CreateOrUpdateDocument = (props) => {
             multiLine
             name='content'
             onBlur={props.onFieldUpdate}
+            onMouseLeave={props.onFieldUpdate}
             required
             rows={3}
             type='text'

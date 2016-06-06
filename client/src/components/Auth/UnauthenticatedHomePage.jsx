@@ -11,14 +11,22 @@ const UnauthenticatedHomePage = (props) => {
   return (
     <div className='main-application__unauthed'>
       <div className='main-application__unauthed-navbar'>
-          <AppBar zDepth={0} title='Authentication' iconElementLeft={<span></span>}></AppBar>
+          <AppBar
+            iconElementLeft={<span></span>}
+            style={{position: 'fixed', top: 0}}
+            title='DocMan'
+          />
       </div>
-      <div className='auth-container'>
-        <div className='box center'>
-          {props.auth.isShowingLogin
-            ? <LoginPage {...props} />
-          : <SignupPage {...props} />
-          }
+      <div className='main-application__content'>
+        <div className='center row auth-container auth-container__margin-gt-sm'>
+          <div className='col-xs-12 col-sm-12 auth-contents__margin-gt-sm auth-contents__margin-sm'>
+            <div className='box center'>
+              {props.auth.isShowingLogin
+                ? <LoginPage {...props} />
+                : <SignupPage {...props} />
+              }
+            </div>
+          </div>
         </div>
       </div>
     </div>

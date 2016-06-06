@@ -47,7 +47,6 @@ table {
 	border-spacing: 0;
 }
 body, html {
-  height: 100%;
   margin: 0;
   min-height: 100%;
   min-width: 100%;
@@ -71,7 +70,7 @@ body {
 }
 
 .main-application__content {
-  margin: 1em;
+  margin: 5em 1em 1em 1em;
 }
 
 @media (min-width: 1024px) {
@@ -82,7 +81,7 @@ body {
 
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .hide-sm-xs {
     display: none;
   }
@@ -94,11 +93,32 @@ body {
   }
 }
 
+@media (min-width: 768px) {
+  .auth-container__margin-gt-sm {
+    margin: 0 3em;
+  }
+}
+
+@media (max-width: 768px) {
+  .auth-contents__margin-sm {
+    margin: 0.5em;
+  }
+}
+
+@media (min-width: 768px) {
+  .auth-contents__margin-gt-sm {
+    margin: 1em 3em;
+  }
+}
+
+@media (min-width: 768px) {
+  .auth-container {
+    float: right;
+  }
+}
+
 .auth-container {
-  float: right;
   height: 100%;
-  width: 30%;
-  margin: 20px 40px 0;
 }
 
 .sidebar {
