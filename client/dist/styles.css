@@ -60,6 +60,10 @@ body, html {
 body {
   background-color: #F5F8FA;
   font-family: 'Roboto';
+  /*background: linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('img-bg.jpg');
+  background-size: cover;
+  height: 100%;
+  width: 100%;*/
 }
 
 .main-application,
@@ -68,6 +72,13 @@ body {
   height: 100%;
   width: 100%;
 }
+
+/*.auth-wrapper {
+  background: linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('./img-bg.jpg');
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}*/
 
 .main-application__content {
   margin: 5em 1em 1em 1em;
@@ -162,5 +173,10 @@ body {
 }
 
 .active {
-  color: rgb(0, 188, 212);
+  color: #0055FF;
+}
+
+.primary-btn {
+  background-color: #0055FF;
+  color: #FFF;
 }

@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import React, {PropTypes} from 'react';
 
 import {Card, CardActions, CardTitle, CardText} from 'material-ui/Card';
-import RaisedButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import CircularProgress from 'material-ui/CircularProgress';
 
@@ -64,27 +65,28 @@ const Login = (props) => {
       {props.auth.isFetching
         ? <CircularProgress size={0.5}/>
         : <CardActions>
-          {props.errors
-            ? props.errors.map(item => (
-                <p key={item}>
-                  <ValidationError error={item} />
-                </p>
-              ))
-            : null
-          }
-          <RaisedButton
-            backgroundColor='#00BCD4'
-            label='Login'
-            onClick={props.onAuthAction}
-            disabled={!props.auth.validations.isValid}
-            />
-          <p>
-            Not Registered? <br />
+            {props.errors
+              ? props.errors.map(item => (
+                  <p key={item}>
+                    <ValidationError error={item} />
+                  </p>
+                ))
+              : null
+            }
             <RaisedButton
-              label='Register'
-              onClick={props.toggleView}
+              disabled={!props.auth.validations.isValid}
+              label='Login'
+              onClick={props.onAuthAction}
+              style={{zIndex: 6}}
+              primary
             />
-          </p>
+            <div>
+              Not Registered? <br />
+              <FlatButton
+                label='Register'
+                onClick={props.toggleView}
+              />
+            </div>
           </CardActions>
       }
     </Card>

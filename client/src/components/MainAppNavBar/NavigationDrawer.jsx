@@ -17,7 +17,7 @@ const NavigationDrawer = (props) => {
     >
       <MenuItem leftIcon={<HomeIcon />} onTouchTap={props.onDrawerToggle}>
         <Link
-          activeStyle={{color: 'rgb(0, 188, 212)'}}
+          activeStyle={{color: '#0055FF'}}
           className='username-link'
           to='/'
         >
@@ -28,7 +28,7 @@ const NavigationDrawer = (props) => {
       <MenuItem leftIcon={<AccountCircle />} onTouchTap={props.onDrawerToggle}>
         {props.user
           ? <Link
-              activeStyle={{color: 'rgb(0, 188, 212)'}}
+              activeStyle={{color: '#0055FF'}}
               className='username-link' to={`/@${props.user.username}`}
             >
                 Your Profile

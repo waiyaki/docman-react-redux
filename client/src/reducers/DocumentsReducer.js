@@ -214,7 +214,10 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         ),
         isUpdatingDocument: !state.getIn(
           ['documentCrudOptions', 'isUpdatingDocument']
-        )
+        ),
+        validations: Map({
+          isValid: false
+        })
       }));
 
       // If we are not updating a document, clear out whatever contents we had
