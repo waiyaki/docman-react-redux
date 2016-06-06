@@ -2,11 +2,7 @@ var webpack = require('webpack');
 
 var config = {
   devtool: 'eval-source-map',
-  entry: [
-    'webpack-dev-server/client?http://localhost:8080',
-    'webpack/hot/only-dev-server',
-    './client/index.jsx'
-  ],
+  entry: './client/index.jsx',
   module: {
     loaders: [{
       test: /\.jsx?$/,
