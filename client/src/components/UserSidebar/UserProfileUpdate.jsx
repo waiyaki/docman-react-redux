@@ -6,7 +6,7 @@ import React, {PropTypes} from 'react';
 import {Card, CardActions, CardHeader, CardText, CardTitle} from 'material-ui/Card';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import ValidationError from '../Auth/ValidationError';
 
@@ -144,10 +144,10 @@ const UserSideBarUpdate = (props) => {
                 : null
               }
               <RaisedButton
-                backgroundColor='#00BCD4'
                 disabled={!props.userDetails.validations.isValid}
                 label='Update'
                 onClick={props.handleProfileUpdate}
+                primary
               />
               <RaisedButton
                 label='Cancel'

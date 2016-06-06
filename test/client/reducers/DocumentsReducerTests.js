@@ -288,7 +288,10 @@ describe('Documents Reducer', () => {
           role: ''
         }),
         isShowingCreateModal: false,
-        isUpdatingDocument: false
+        isUpdatingDocument: false,
+        validations: Map({
+          isValid: false
+        })
       })
     }));
   });

@@ -9,22 +9,24 @@ import SignupPage from './SignupPage';
 
 const UnauthenticatedHomePage = (props) => {
   return (
-    <div className='main-application__unauthed'>
-      <div className='main-application__unauthed-navbar'>
+    <div className='auth-wrapper'>
+      <div className='main-application__unauthed'>
+        <div className='main-application__unauthed-navbar'>
           <AppBar
             iconElementLeft={<span></span>}
             style={{position: 'fixed', top: 0}}
             title='DocMan'
           />
-      </div>
-      <div className='main-application__content'>
-        <div className='center row auth-container auth-container__margin-gt-sm'>
-          <div className='col-xs-12 col-sm-12 auth-contents__margin-gt-sm auth-contents__margin-sm'>
-            <div className='box center'>
-              {props.auth.isShowingLogin
-                ? <LoginPage {...props} />
-                : <SignupPage {...props} />
-              }
+        </div>
+        <div className='main-application__content'>
+          <div className='center row auth-container auth-container__margin-gt-sm'>
+            <div className='col-xs-12 col-sm-12 auth-contents__margin-gt-sm auth-contents__margin-sm'>
+              <div className='box center'>
+                {props.auth.isShowingLogin
+                  ? <LoginPage {...props} />
+                  : <SignupPage {...props} />
+                }
+              </div>
             </div>
           </div>
         </div>
