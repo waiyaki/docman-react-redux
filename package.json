@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "npm run webpack:prod",
+    "prestart": "npm run build",
     "start": "NODE_ENV=production node bin/www",
     "start:dev": "NODE_ENV=development nodemon bin/www",
     "test": "NODE_ENV=testing istanbul cover _mocha -- --compilers js:babel-core/register --require ./test/helpers/fend-test-setup.js 'test/**/*@(.js|.jsx)'",
@@ -10,7 +12,10 @@
     "test:fend": "NODE_ENV=testing istanbul cover _mocha -- --compilers js:babel-core/register --require ./test/helpers/fend-test-setup.js 'test/client/**/*@(.js|.jsx)'",
     "test:fend:watch": "npm run test:fend -- --watch --watch-extensions jsx",
     "posttest": "npm run coverage",
-    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "webpack": "./node_modules/.bin/webpack --progress --devtool eval -w",
+    "webpack:dev": "./node_modules/.bin/webpack-dev-server --devtool eval --progress --colors --hot --inline --content-base build",
+    "webpack:prod": "export NODE_ENV=production && ./node_modules/.bin/webpack --progress -p"
   },
   "dependencies": {
     "axios": "^0.11.1",
