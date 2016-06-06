@@ -51,7 +51,7 @@ const Document = (props) => {
       <Card
         expanded={props.expandedDocId === props.document._id}
         style={{marginBottom: '0.5em'}}
-        zDepth={props.expandedDocId === props.document._id ? 3 : 0}
+        zDepth={props.expandedDocId === props.document._id ? 3 : 1}
       >
         <CardHeader
           avatar={ownerGravatar + '&s=40'}

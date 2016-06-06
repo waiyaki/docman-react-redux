@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {Link} from 'react-router';
 
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
@@ -54,12 +55,17 @@ const NavBar = (props) => {
               }
               targetOrigin={{horizontal: 'right', vertical: 'top'}}
             >
-              <MenuItem
-                primaryText={props.userDetails.user && props.userDetails.user.username
-                  ? props.userDetails.user.username
-                  : 'Profile'
+                {props.userDetails.user && props.userDetails.user.username
+                  ? <MenuItem>
+                      <Link
+                        activeStyle={{color: 'rgb(0, 188, 212)'}}
+                        className='username-link' to={`/@${props.userDetails.user.username}`}
+                      >
+                        {props.userDetails.user.username}
+                      </Link>
+                    </MenuItem>
+                  : null
                 }
-              />
               <MenuItem
                 onTouchTap={props.onLogout}
                 primaryText='Logout'
@@ -67,8 +73,8 @@ const NavBar = (props) => {
             </IconMenu>
           </span>
         }
-        title='Home'
-        zDepth={0}
+        style={{position: 'fixed', top: 0}}
+        title='DocMan'
       />
     </div>
   );
