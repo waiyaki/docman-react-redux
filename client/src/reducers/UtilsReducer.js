@@ -8,7 +8,7 @@ import {Map} from 'immutable';
 
 import * as actionTypes from '../constants';
 
-const INITIAL_UTILITY_STATE = Map({
+export const INITIAL_UTILITY_STATE = Map({
   isShowingSnackBar: false,
   snackBarMessage: null
 });

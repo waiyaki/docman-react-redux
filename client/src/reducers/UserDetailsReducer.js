@@ -3,7 +3,7 @@ import {Map, fromJS} from 'immutable';
 import * as actionTypes from '../constants';
 import FieldsValidationReducer from './FieldsValidationReducer';
 
-const INITIAL_USER_DETAILS_STATE = Map({
+export const INITIAL_USER_DETAILS_STATE = Map({
   isFetching: false,
   isShowingUpdate: false,
   user: null,
@@ -29,7 +29,7 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
       }));
 
     case actionTypes.FETCH_USER_DETAILS_ERROR:
-      if (actionTypes.authError) {
+      if (action.authError) {
         return state.merge(INITIAL_USER_DETAILS_STATE);
       }
       return state.merge({

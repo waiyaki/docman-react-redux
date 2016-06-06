@@ -1,5 +1,7 @@
 export function getAuthToken () {
-  return window.localStorage.getItem('token');
+  return window && window.localStorage
+    ? window.localStorage.getItem('token')
+    : null;
 }
 
 export function setAuthToken (token) {

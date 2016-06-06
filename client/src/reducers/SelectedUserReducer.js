@@ -2,7 +2,7 @@ import {List, Map, fromJS} from 'immutable';
 
 import * as actionTypes from '../constants';
 
-const INITIAL_SELECTED_USER_STATE = Map({
+export const INITIAL_SELECTED_USER_STATE = Map({
   docs: Map({
     isFetching: false,
     documents: List(),
