@@ -31,9 +31,7 @@ class ProfilePageContainer extends React.Component {
   }
   render () {
     return (
-      <ProfilePage
-        selectedUser={this.props.selectedUser.toJS()}
-      />
+      <ProfilePage selectedUser={this.props.selectedUser.toJS()} />
     );
   }
 }

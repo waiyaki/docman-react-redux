@@ -3,15 +3,12 @@ import {connect} from 'react-redux';
 import {Map} from 'immutable';
 
 import Home from '../../components/Home/Home.jsx';
-import UnauthenticatedHomeContainer from '../Auth/UnauthenticatedHomeContainer';
 
 class HomeContainer extends React.Component {
   render () {
-    return this.props.auth.get('isAuthenticated')
-      ? <Home
-          userDetails={this.props.userDetails.toJS()}
-        />
-      : <UnauthenticatedHomeContainer />;
+    return (
+      <Home userDetails={this.props.userDetails.toJS()}/>
+    );
   }
 }
 
