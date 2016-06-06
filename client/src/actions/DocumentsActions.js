@@ -6,6 +6,7 @@ import Axios from 'axios';
 
 import * as actionTypes from '../constants';
 import {showSnackBarMessage} from './UtilityActions';
+import {getAuthToken} from '../utils';
 
 /**
  * Document fetching actions
@@ -33,13 +34,13 @@ export function fetchDocumentsFailure (error) {
 /**
  * Fetch documents from the server asynchronously.
  */
-export function fetchDocumentsFromServer () {
+export function fetchDocumentsFromServer (authToken = getAuthToken()) {
   return function (dispatch) {
     dispatch(fetchDocumentsRequest());
 
     return Axios
       .get('/api/documents', {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': authToken}
       })
       .then((documents) => {
         dispatch(fetchDocumentsSuccess(documents));
@@ -98,7 +99,7 @@ export function createDocumentFailure (error) {
  * fake the document's details so that we can perform an optimistic update
  * without breaking the application's functionality.
  */
-export function createDocument (content) {
+export function createDocument (content, authToken = getAuthToken()) {
   return (dispatch, getState) => {
     // Get the authenticated user's details.
     const auth = getState().get('auth').toJS();
@@ -114,7 +115,7 @@ export function createDocument (content) {
 
     return Axios
       .post('/api/documents', content, {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': authToken}
       })
       .then((documentData) => {
         // Dispatch only if we've created a private document. The other types
@@ -209,13 +210,13 @@ export function documentRoleUpdate (documentData) {
   };
 }
 
-export function updateDocument (doc) {
+export function updateDocument (doc, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(requestDocumentUpdate(doc));
 
     return Axios
       .put(`/api/documents/${doc._id}`, doc, {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': authToken}
       })
       .then((updatedDoc) => {
         if (updatedDoc.data.role.title === 'private') {
@@ -277,13 +278,13 @@ export function deleteDocumentFailure (error) {
   };
 }
 
-export function deleteDocument (docId) {
+export function deleteDocument (docId, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(documentDeleteRequest(docId));
 
     return Axios
       .delete(`/api/documents/${docId}`, {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': authToken}
       })
       .then((success) => {
         dispatch(showSnackBarMessage('Document deleted successfully.'));

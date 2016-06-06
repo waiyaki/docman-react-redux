@@ -2,9 +2,10 @@ import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
 import FieldsValidationReducer from './FieldsValidationReducer';
+import {getAuthToken} from '../utils';
 
-const INITIAL_AUTH_STATE = Map({
-  isAuthenticated: !!localStorage.getItem('token'),
+export const INITIAL_AUTH_STATE = Map({
+  isAuthenticated: !!getAuthToken(),
   isFetching: false,
   credentials: Map({
     username: '',
@@ -54,7 +55,9 @@ export default function (state = INITIAL_AUTH_STATE, action) {
       }));
 
     case actionTypes.LOGOUT_REQUEST:
-      return INITIAL_AUTH_STATE;
+      return INITIAL_AUTH_STATE.merge({
+        isAuthenticated: false
+      });
 
     case actionTypes.CREDENTIALS_UPDATE:
       return state.merge(Map({
@@ -84,7 +87,7 @@ export default function (state = INITIAL_AUTH_STATE, action) {
 
     case actionTypes.FETCH_USER_DETAILS_SUCCESS:
       return state.merge(Map({
-        user: action.user
+        user: action.user // BUG: This should be fromJS(action.user)
       }));
 
     default:

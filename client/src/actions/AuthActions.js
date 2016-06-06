@@ -14,6 +14,7 @@ import {
 
 import {showSnackBarMessage} from './UtilityActions';
 import {registerSockets, subscribeToUpdates} from './SocketsActions';
+import {setAuthToken, removeAuthToken} from '../utils';
 
 /* LOGIN ACTIONS */
 export function loginRequest (credentials) {
@@ -45,7 +46,7 @@ export function loginUser (credentials) {
     return Axios
       .post('/api/users/login', credentials)
       .then((user) => {
-        window.localStorage.setItem('token', user.data.token);
+        setAuthToken(user.data.token);
         dispatch(loginSuccess(user));
         dispatch(showSnackBarMessage('Successfully logged in.'));
       })
@@ -65,8 +66,10 @@ export function performUserLogout () {
 
 export function logoutUser (message) {
   return function (dispatch) {
-    window.localStorage.removeItem('token');
+    removeAuthToken();
     dispatch(performUserLogout());
+
+    // use message !== false to avoid failing if message === undefined
     if (message !== false) {
       dispatch(showSnackBarMessage('Successfully logged out.'));
     }
@@ -103,7 +106,7 @@ export function signupUser (credentials) {
     return Axios
       .post('/api/users', credentials)
       .then((user) => {
-        window.localStorage.setItem('token', user.data.token);
+        setAuthToken(user.data.token);
         dispatch(signupSuccess(user));
         dispatch(registerSockets());
         dispatch(subscribeToUpdates(user.data));

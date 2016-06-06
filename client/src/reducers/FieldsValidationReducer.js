@@ -224,7 +224,7 @@ export default function (state = Map(), action) {
 
   newState = newState.mergeDeep(Map({
     validations: Map({
-      isValid: isValid
+      isValid: !!isValid
     })
   }));
 

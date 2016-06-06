@@ -4,6 +4,7 @@ import * as actionTypes from '../constants';
 import {logoutUser} from './AuthActions';
 import {showSnackBarMessage} from './UtilityActions';
 import {subscribeToUpdates, registerSockets} from './SocketsActions';
+import {getAuthToken, parseUserFromToken} from '../utils';
 
 export function requestFetchUserDetails () {
   return {
@@ -34,23 +35,19 @@ export function fetchUserDetailsError (error, authError = false) {
  * Called when a user comes back to the application acts as a means
  * of token validation.
  */
-export function loadUserDetails () {
-  let userToken = localStorage.getItem('token');
-
-  if (!userToken) {
-    return {
-      type: actionTypes.LOGOUT_REQUEST
-    };
-  }
-
-  // Get User Payload from the base64 encoded token.
-  let user = JSON.parse(window.atob(userToken.split('.')[1]));
+export function loadUserDetails (authToken = getAuthToken()) {
   return function (dispatch) {
+    if (!authToken) {
+      return dispatch(logoutUser(false));
+    }
+
+    // Get User Payload from the base64 encoded token.
+    let user = parseUserFromToken();
     dispatch(requestFetchUserDetails());
 
     return Axios
       .get(`/api/users/${user.username}`, {
-        headers: {'x-access-token': userToken}
+        headers: {'x-access-token': authToken}
       })
       .then((user) => {
         dispatch(fetchUserDetailsSuccess(user));
@@ -91,13 +88,13 @@ export function userDetailsUpdateFailure (error) {
   };
 }
 
-export function updateUserDetails (userUpdate) {
+export function updateUserDetails (updatedUserObject, authToken = getAuthToken()) {
   return (dispatch) => {
-    dispatch(requestUserDetailsUpdate(userUpdate));
+    dispatch(requestUserDetailsUpdate(updatedUserObject));
 
     return Axios
-      .put(`/api/users/${userUpdate.username}`, userUpdate, {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+      .put(`/api/users/${updatedUserObject.username}`, updatedUserObject, {
+        headers: {'x-access-token': authToken}
       })
       .then((updatedUser) => {
         dispatch(userDetailsUpdateSuccess(updatedUser));
@@ -145,13 +142,13 @@ export function userDocumentsFetchFailure (error) {
   };
 }
 
-export function fetchUserDocuments (username) {
+export function fetchUserDocuments (username, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(requestFetchUserDocuments());
 
     return Axios
       .get(`/api/users/${username}/documents`, {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': authToken}
       })
       .then((documentsData) => {
         dispatch(userDocumentsFetchSuccess(documentsData));
@@ -187,13 +184,13 @@ export function fetchAnotherUsersProfileFailure (error) {
   };
 }
 
-export function fetchAnotherUsersProfile (username) {
+export function fetchAnotherUsersProfile (username, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(fetchAnotherUsersProfileRequest(username));
 
     return Axios
       .get(`/api/users/${username}`, {
-        headers: {'x-access-token': window.localStorage.getItem('token')}
+        headers: {'x-access-token': authToken}
       })
       .then((userProfileData) => {
         dispatch(fetchAnotherUsersProfileSuccess(userProfileData));
