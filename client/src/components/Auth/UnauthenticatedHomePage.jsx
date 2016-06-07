@@ -29,6 +29,25 @@ const UnauthenticatedHomePage = (props) => {
               </div>
             </div>
           </div>
+          <div className='row center hide-sm-xs'>
+            <div className='col-xs-12'>
+              <div className='box landing'>
+                <h1>DocMan</h1>
+                <p className='first-p'>Share Your Thoughts With The World.</p>
+                <p>
+                  With DocMan Document Manager, you can easily share what's on your mind with the world,
+                </p>
+                <p>
+                  while maintaining fine-grained control over who has access
+                  to the content you share.
+                </p>
+                <p>
+                  Give it a whirl by logging in or signing up using the text box
+                  to your right!
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -41,3 +41,4 @@ node_modules
 !dist/bundle.js
 !dist/index.html
 !dist/styles.css
+dist/
