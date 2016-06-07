@@ -20,7 +20,7 @@ import Chip from './Chip';
 const Document = (props) => {
   // Construct a url for this document owner's gravatar.
   const owner = props.document.owner;
-  const ownerGravatar = `http://www.gravatar.com/avatar/${owner
+  const ownerGravatar = `https://www.gravatar.com/avatar/${owner
     ? md5(owner.email) : ''}?d=identicon`;
 
   const updatedAt = new Date(props.document.updatedAt);

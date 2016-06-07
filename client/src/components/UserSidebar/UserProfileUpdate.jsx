@@ -13,7 +13,7 @@ import ValidationError from '../Auth/ValidationError';
 const UserSideBarUpdate = (props) => {
   const user = props.userDetails.user;
   const userGravatar =
-    `http://www.gravatar.com/avatar/${user ? md5(user.email) : ''}?d=identicon`;
+    `https://www.gravatar.com/avatar/${user ? md5(user.email) : ''}?d=identicon`;
 
   let hideComponent = (item) => {
     return classNames({

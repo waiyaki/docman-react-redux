@@ -84,8 +84,6 @@ div#app {
 
 .main-application__content {
   margin: 5em auto;
-  height: 100%;
-  width: 100%;
 }
 
 @media (min-width: 1024px) {

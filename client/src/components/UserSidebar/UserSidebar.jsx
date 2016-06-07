@@ -13,7 +13,7 @@ import MenuItem from 'material-ui/MenuItem';
 const UserSidebar = (props) => {
   const user = props.userDetails.user;
   const userGravatar =
-    `http://www.gravatar.com/avatar/${user ? md5(user.email) : ''}?d=identicon`;
+    `https://www.gravatar.com/avatar/${user ? md5(user.email) : ''}?d=identicon`;
 
   return (
     <div className='sidebar'>
