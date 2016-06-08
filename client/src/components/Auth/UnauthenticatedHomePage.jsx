@@ -54,6 +54,15 @@ const UnauthenticatedHomePage = (props) => {
   );
 };
 
+UnauthenticatedHomePage.defaultProps = {
+  auth: {
+    isShowingLogin: true,
+    isFetching: false,
+    credentials: {},
+    validations: {}
+  }
+};
+
 UnauthenticatedHomePage.propTypes = {
   onAuthAction: PropTypes.func.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,

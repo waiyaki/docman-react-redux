@@ -74,6 +74,7 @@ const Login = (props) => {
               : null
             }
             <RaisedButton
+              className='login-btn'
               disabled={!props.auth.validations.isValid}
               label='Login'
               onClick={props.onAuthAction}
@@ -83,6 +84,7 @@ const Login = (props) => {
             <div>
               Not Registered? <br />
               <FlatButton
+                className='toggle-register'
                 label='Register'
                 onClick={props.toggleView}
               />
@@ -91,6 +93,14 @@ const Login = (props) => {
       }
     </Card>
   );
+};
+
+Login.defaultProps = {
+  auth: {
+    isFetching: false,
+    credentials: {},
+    validations: {}
+  }
 };
 
 Login.propTypes = {

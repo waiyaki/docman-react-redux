@@ -127,6 +127,14 @@ const Signup = (props) => {
   );
 };
 
+Signup.defaultProps = {
+  auth: {
+    isFetching: false,
+    credentials: {},
+    validations: {}
+  }
+};
+
 Signup.propTypes = {
   onAuthAction: PropTypes.func.isRequired,
   onFieldUpdate: PropTypes.func.isRequired,
