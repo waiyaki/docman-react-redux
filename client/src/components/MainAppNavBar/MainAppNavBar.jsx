@@ -1,5 +1,5 @@
 import React, {PropTypes} from 'react';
-import {Link} from 'react-router';
+import {Link, browserHistory} from 'react-router';
 
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
@@ -73,8 +73,12 @@ const NavBar = (props) => {
             </IconMenu>
           </span>
         }
+        onTitleTouchTap={function () {
+          browserHistory.push('/');
+        }}
         style={{position: 'fixed', top: 0}}
         title='DocMan'
+        titleStyle={{cursor: 'pointer'}}
       />
     </div>
   );
