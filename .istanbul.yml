@@ -1,3 +1,4 @@
 instrumentation:
     root: .
     extensions: ['.js', '.jsx']
+    excludes: ['**/containers/**']
