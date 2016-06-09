@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import {shallow} from 'enzyme';
 import TestUtils from 'react-addons-test-utils';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -23,4 +24,8 @@ export function getContexts () {
       muiTheme: getMuiTheme
     }
   };
+}
+
+export function shallowWithContext (node) {
+  return shallow(node, getContexts());
 }
