@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import {shallow} from 'enzyme';
+import {shallow, mount} from 'enzyme';
 import TestUtils from 'react-addons-test-utils';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -28,4 +28,8 @@ export function getContexts () {
 
 export function shallowWithContext (node) {
   return shallow(node, getContexts());
+}
+
+export function mountWithContext (node) {
+  return mount(node, getContexts());
 }
