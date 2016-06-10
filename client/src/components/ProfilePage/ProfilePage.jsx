@@ -3,7 +3,7 @@ import React, {PropTypes} from 'react';
 import CircularProgress from 'material-ui/CircularProgress';
 
 import MainAppNavBarContainer from '../../containers/MainAppNavBar/MainAppNavBarContainer';
-import UserSideBarContainer from '../../containers/UserSidebar/UserSideBarContainer';
+import UserSideBarContainer from '../../containers/UserSideBar/UserSideBarContainer';
 import UserSidebarLoading from '../UserSidebar/UserSidebarLoading';
 import DocumentsContainer from '../../containers/Documents/DocumentsContainer';
 

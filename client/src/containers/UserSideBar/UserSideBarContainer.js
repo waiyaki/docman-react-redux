@@ -7,7 +7,7 @@ import {
   toggleShowUserUpdateView, userDetailsFieldUpdate, updateUserDetails
 } from '../../actions/UserDetailsActions';
 import {validateUserDetailsField} from '../../actions/ValidationActions';
-import UserSideBar from '../../components/UserSidebar/UserSideBar';
+import UserSideBar from '../../components/UserSidebar/UserSidebar';
 import UserSideBarUpdate from '../../components/UserSidebar/UserProfileUpdate';
 
 class UserSideBarContainer extends React.Component {
