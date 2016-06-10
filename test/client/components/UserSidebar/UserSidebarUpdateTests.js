@@ -3,7 +3,7 @@ import {shallowWithContext} from '../utils';
 import {expect} from 'chai';
 import sinon from 'sinon';
 
-import UserSideBarUpdate from '../../../../client/src/components/UserSideBar/UserProfileUpdate';
+import UserSideBarUpdate from '../../../../client/src/components/UserSidebar/UserProfileUpdate';
 
 describe('UserSideBarUpdate', () => {
   const props = {
