@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import {expect} from 'chai';
+import {Map} from 'immutable';
 
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
@@ -117,7 +118,7 @@ describe('UserDetailsActions', () => {
       'WEBSOCKET_UPDATES_SUBSCRIPTION actions on loadUserDetails success',
       () => {
         mockAxios
-          .onGet(`/api/users/${userData.username}`)
+          .onGet(/api\/users\/.*/)
           .reply(200, userData);
 
         const expectedActions = [{
@@ -159,7 +160,7 @@ describe('UserDetailsActions', () => {
       };
 
       mockAxios
-        .onGet(`/api/users/${userData.username}`)
+        .onGet(/api\/users\/.*/)
         .reply(401, error.data);
 
       const expectedActions = [{
@@ -187,7 +188,7 @@ describe('UserDetailsActions', () => {
       };
 
       mockAxios
-        .onGet(`/api/users/${userData.username}`)
+        .onGet(/api\/users\/.*/)
         .reply(400, error.data);
 
       const expectedActions = [{
@@ -240,6 +241,16 @@ describe('UserDetailsActions', () => {
   });
 
   describe('.updateUserDetails()', () => {
+    const getState = () => {
+      return Map({
+        auth: Map({
+          user: Map({
+            _id: 'testID123'
+          })
+        })
+      });
+    };
+
     afterEach(() => {
       mockAxios.reset();
     });
@@ -250,7 +261,7 @@ describe('UserDetailsActions', () => {
           updated: true
         });
         mockAxios
-          .onPut(`/api/users/${userData.username}`)
+          .onPut('/api/users/testID123')
           .reply(200, updatedUser);
 
         const expectedActions = [{
@@ -264,7 +275,7 @@ describe('UserDetailsActions', () => {
           message: 'Successfully updated profile.'
         }];
 
-        const store = mockStore();
+        const store = mockStore(getState);
         return store.dispatch(userActions.updateUserDetails(updatedUser))
           .then(() => {
             expect(store.getActions()).to.eql(expectedActions);
@@ -280,7 +291,7 @@ describe('UserDetailsActions', () => {
           message: 'Bad Request.'
         };
         mockAxios
-          .onPut(`/api/users/${userData.username}`)
+          .onPut('/api/users/testID123')
           .reply(400, error);
 
         const expectedActions = [{
@@ -294,7 +305,7 @@ describe('UserDetailsActions', () => {
           message: 'Oops! An error occurred.'
         }];
 
-        const store = mockStore();
+        const store = mockStore(getState);
         return store.dispatch(userActions.updateUserDetails(updatedUser))
           .then(() => {
             expect(store.getActions()).to.eql(expectedActions);

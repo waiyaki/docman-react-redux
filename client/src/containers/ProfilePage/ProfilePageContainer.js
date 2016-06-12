@@ -12,23 +12,31 @@ class ProfilePageContainer extends React.Component {
     super(props);
 
     this.dispatchFetchData = this.dispatchFetchData.bind(this);
+    this.getUsernameOrId = this.getUsernameOrId.bind(this);
   }
 
   componentDidMount () {
-    this.dispatchFetchData(this.props.params.username.slice(1));
+    this.dispatchFetchData(this.getUsernameOrId(this.props));
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.params.username !== this.props.params.username) {
-      this.dispatchFetchData(nextProps.params.username.slice(1));
+      this.dispatchFetchData(this.getUsernameOrId(nextProps));
     }
   }
 
-  dispatchFetchData (username) {
-    this.props.dispatch(fetchAnotherUsersProfile(username));
+  dispatchFetchData (usernameOrId) {
+    this.props.dispatch(fetchAnotherUsersProfile(usernameOrId));
 
-    this.props.dispatch(fetchUserDocuments(username));
+    this.props.dispatch(fetchUserDocuments(usernameOrId));
   }
+
+  getUsernameOrId (props) {
+    return props.location.state
+      ? props.location.state._id
+      : props.params.username.slice(1);
+  }
+
   render () {
     return (
       <ProfilePage selectedUser={this.props.selectedUser.toJS()} />
@@ -38,6 +46,12 @@ class ProfilePageContainer extends React.Component {
 
 ProfilePageContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    state: PropTypes.shape({
+      _id: PropTypes.string,
+      username: PropTypes.string
+    })
+  }).isRequired,
   params: PropTypes.shape({
     username: PropTypes.string.isRequired
   }),

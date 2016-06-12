@@ -58,7 +58,13 @@ const Document = (props) => {
           style={{'paddingBottom': '0.5em'}}
           subtitle={owner && owner.role ? owner.role.title : ''}
           title={
-            <Link className='username-link' to={`/@${owner.username}`}>
+            <Link
+              className='username-link'
+              to={{
+                pathname: `/@${owner.username}`,
+                state: {username: owner.username, _id: owner._id}
+              }}
+            >
               {owner.name
                 ? `${owner.name.firstName + ' ' + owner.name.lastName}`
                 : owner.username
