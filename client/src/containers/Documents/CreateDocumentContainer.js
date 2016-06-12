@@ -39,7 +39,7 @@ class CreateDocumentContainer extends React.Component {
    */
   handleFieldUpdate (event) {
     event.preventDefault();
-    this.updateDocumentContent(event.target.name, event.target.value);
+    this.updateDocumentContent(event.target.name, event.target.value.trim());
   }
 
   /**

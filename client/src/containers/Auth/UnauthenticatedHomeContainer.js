@@ -58,7 +58,7 @@ class UnauthenticatedHomeContainer extends React.Component {
   handleFieldUpdate (event) {
     event.preventDefault();
     let credentials = this.props.auth.get('credentials');
-    credentials = credentials.set(event.target.name, event.target.value);
+    credentials = credentials.set(event.target.name, event.target.value.trim());
     this.props.dispatch(credentialsUpdate(credentials.toJS()));
     this.props.dispatch(validateAuthField(event.target.name));
   }
