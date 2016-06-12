@@ -14,23 +14,23 @@
     /**
      * Get a logged in user's profile.
      */
-    app.get('/api/users/:username', usersController.retrieve);
+    app.get('/api/users/:usernameOrId', usersController.retrieve);
 
     /**
      * Update a user's profile.
      */
-    app.put('/api/users/:username',
+    app.put('/api/users/:usernameOrId',
       customMiddleware.isAdminOrOwnProfile, usersController.update);
 
     /**
      * Delete a user account.
      */
-    app.delete('/api/users/:username',
+    app.delete('/api/users/:usernameOrId',
       customMiddleware.isAdminOrOwnProfile, usersController.delete);
 
     /**
      * Get a user's documents.
      */
-    app.get('/api/users/:username/documents', usersController.documents);
+    app.get('/api/users/:usernameOrId/documents', usersController.documents);
   };
 })();

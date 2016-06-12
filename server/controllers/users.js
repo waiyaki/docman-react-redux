@@ -6,6 +6,7 @@
   var Document = require('../models').Document;
   var resolveError = require('../utils').resolveError;
   var runQuery = require('../utils').runQuery;
+  var castToObjectID = require('../utils').castToObjectID;
 
   var usersController = {
     /**
@@ -83,7 +84,12 @@
      */
     retrieve: function (req, res) {
       return User
-        .findOne({username: req.params.username}, '-__v')
+        .findOne({
+          $or: [
+            {username: req.params.usernameOrId},
+            {_id: castToObjectID(req.params.usernameOrId)}
+          ]
+        }, '-__v')
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -96,8 +102,41 @@
      * Update the logged in user's details.
      */
     update: function (req, res) {
+      function saveUser (user) {
+        user.save(function (err, user) {
+          if (err) {
+            if (err.code === 11000) {
+              if (/email/.test(err.errmsg)) {
+                return resolveError({
+                  message: 'A user with this email already exists'
+                }, res, 409);
+              } else if (/username/.test(err.errmsg)) {
+                return resolveError({
+                  message: 'A user with this username already exists'
+                }, res, 409);
+              }
+            }
+            return resolveError(err, res, 409);
+          }
+
+          return User
+            .findOne({ _id: user._id }, '-__v')
+            .exec(function (err, user) {
+              if (err) {
+                return resolveError(err, res);
+              }
+              return res.status(200).send(user);
+            });
+        });
+      }
+
       return User
-        .findOne({username: req.params.username})
+        .findOne({
+          $or: [
+            {username: req.params.usernameOrId},
+            {_id: castToObjectID(req.params.usernameOrId)}
+          ]
+        })
         .exec(function (err, user) {
           if (err) {
             return resolveError(err, res);
@@ -115,29 +154,24 @@
           if (req.body.email) user.email = req.body.email;
           if (req.body.fullName) {
             user.name.fullName = req.body.fullName;
-          } else if (req.body.firstName || req.body.lastName) {
-            user.name.firstName = req.body.firstName || user.name.firstName;
-            user.name.lastName = req.body.lastName || user.name.lastName;
+          } else {
+            if (req.body.firstName) user.name.firstName = req.body.firstName;
+            if (req.body.lastName) user.name.lastName = req.body.lastName;
           }
 
-          user.save(function (err, user) {
-            if (err) {
-              if (err.code === 11000) {
-                if (/email/.test(err.errmsg)) {
-                  return resolveError({
-                    message: 'A user with this email already exists'
-                  }, res, 409);
-                } else if (/username/.test(err.errmsg)) {
-                  return resolveError({
-                    message: 'A user with this username already exists'
-                  }, res, 409);
+          if (req.body.role && typeof req.body.role === 'string') {
+            Role
+              .findOne({ title: req.body.role })
+              .exec(function (err, role) {
+                if (err) {
+                  return resolveError(err, res);
                 }
-              }
-              return resolveError(err, res, 409);
-            }
-            user.password = null;
-            return res.status(200).send(user);
-          });
+                user.role = role._id;
+                saveUser(user);
+              });
+          } else {
+            saveUser(user);
+          }
         });
     },
 
@@ -146,7 +180,10 @@
      */
     delete: function (req, res) {
       return User.findOneAndRemove({
-        username: req.params.username
+        $or: [
+          {username: req.params.usernameOrId},
+          {_id: castToObjectID(req.params.usernameOrId)}
+        ]
       }, function (err) {
         if (err) {
           return resolveError(err, res);
@@ -190,7 +227,12 @@
      * Get the specified user's documents.
      */
     documents: function (req, res) {
-      User.findOne({username: req.params.username}, function (err, user) {
+      User.findOne({
+        $or: [
+          {username: req.params.usernameOrId},
+          {_id: castToObjectID(req.params.usernameOrId)}
+        ]
+      }, function (err, user) {
         if (err) {
           return resolveError(err, res);
         }

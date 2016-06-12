@@ -2,6 +2,7 @@
   'use strict';
 
   var Role = require('../models').Role;
+  var ObjectId = require('mongoose').Types.ObjectId;
 
   /**
    * Give users helpful error messages.
@@ -235,9 +236,20 @@
     }
   }
 
+  /**
+   * Cast some string value to MongoDB ObjectId
+   *
+   * The `01234567890123` ensures MongoDB won't error out as it tries to cast
+   * `value` into an ObjectId while the value is less than 12 characters.
+   */
+  function castToObjectID (value) {
+    return new ObjectId(value.length >= 12 ? value : '012345678901');
+  }
+
   module.exports = {
     emitSocketEvent: emitSocketEvent,
     resolveError: resolveError,
-    runQuery: runQuery
+    runQuery: runQuery,
+    castToObjectID: castToObjectID
   };
 })();

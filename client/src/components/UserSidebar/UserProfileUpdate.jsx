@@ -39,21 +39,22 @@ const UserSideBarUpdate = (props) => {
         <CardText className='center'>
           <div>
             <TextField
-              disabled
+              defaultValue={user.username}
               floatingLabelText='Username'
               name='username'
+              onBlur={props.handleValidateFieldOnBlur}
+              onChange={props.handleFieldUpdate}
               type='text'
-              value={user.username}
             />
           </div>
           <div>
             <TextField
+              defaultValue={user.email}
               floatingLabelText='Email'
               name='email'
               onBlur={props.handleValidateFieldOnBlur}
               onChange={props.handleFieldUpdate}
               type='email'
-              value={props.userDetails.updatedUser.email || user.email}
             />
             <span>
               <br />
@@ -65,13 +66,11 @@ const UserSideBarUpdate = (props) => {
           </div>
           <div>
             <TextField
+              defaultValue={user.name ? user.name.firstName : ''}
               floatingLabelText='First Name'
               name='firstName'
               onChange={props.handleFieldUpdate}
               type='text'
-              value={props.userDetails.updatedUser.firstName || (user.name
-                ? user.name.firstName : '')
-              }
             />
             <span>
               <br />
@@ -83,13 +82,11 @@ const UserSideBarUpdate = (props) => {
           </div>
           <div>
             <TextField
+              defaultValue={user.name ? user.name.lastName : ''}
               floatingLabelText='Last Name'
               name='lastName'
               onChange={props.handleFieldUpdate}
               type='text'
-              value={props.userDetails.updatedUser.lastName || (user.name
-                ? user.name.lastName : '')
-              }
             />
             <span>
               <br />

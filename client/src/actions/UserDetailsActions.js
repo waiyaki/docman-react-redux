@@ -46,7 +46,7 @@ export function loadUserDetails (authToken = getAuthToken()) {
     dispatch(requestFetchUserDetails());
 
     return Axios
-      .get(`/api/users/${user.username}`, {
+      .get(`/api/users/${user._id}`, {
         headers: {'x-access-token': authToken}
       })
       .then((user) => {
@@ -89,11 +89,11 @@ export function userDetailsUpdateFailure (error) {
 }
 
 export function updateUserDetails (updatedUserObject, authToken = getAuthToken()) {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch(requestUserDetailsUpdate(updatedUserObject));
-
+    const auth = getState().get('auth').toJS();
     return Axios
-      .put(`/api/users/${updatedUserObject.username}`, updatedUserObject, {
+      .put(`/api/users/${auth.user._id}`, updatedUserObject, {
         headers: {'x-access-token': authToken}
       })
       .then((updatedUser) => {
@@ -142,12 +142,12 @@ export function userDocumentsFetchFailure (error) {
   };
 }
 
-export function fetchUserDocuments (username, authToken = getAuthToken()) {
+export function fetchUserDocuments (usernameOrId, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(requestFetchUserDocuments());
 
     return Axios
-      .get(`/api/users/${username}/documents`, {
+      .get(`/api/users/${usernameOrId}/documents`, {
         headers: {'x-access-token': authToken}
       })
       .then((documentsData) => {
@@ -155,7 +155,9 @@ export function fetchUserDocuments (username, authToken = getAuthToken()) {
       })
       .catch((error) => {
         dispatch(userDocumentsFetchFailure(error));
-        dispatch(showSnackBarMessage(`Error getting ${username}'s documents.`));
+        dispatch(showSnackBarMessage(
+          `Error getting ${usernameOrId}'s documents.`
+        ));
       });
   };
 }

@@ -25,7 +25,10 @@ const ProfilePage = (props) => {
             <div className='profile-header' zDepth={0}>
               {props.selectedUser.profile.isFetchingProfile
                 ? <CircularProgress size={0.5} />
-                : `${props.selectedUser.profile.user.username}'s Documents`
+              : `${props.selectedUser.profile.user
+                    ? props.selectedUser.profile.user.username
+                    : props.selectedUser.username
+                  }'s Documents`
               }
             </div>
             <DocumentsContainer
@@ -55,7 +58,8 @@ ProfilePage.propTypes = {
         }),
         username: PropTypes.string
       })
-    })
+    }),
+    username: PropTypes.string.isRequired
   })
 };
 

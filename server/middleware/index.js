@@ -85,7 +85,10 @@
           if (user.role && user.role.title === 'admin') {
             // Allow admins access to all profiles.
             return next();
-          } else if (req.params && req.params.username === user.username) {
+          } else if (req.params && (
+              req.params.usernameOrId === user.username ||
+              req.params.usernameOrId === user._id.toString()
+            )) {
             // Allow users access to their own profiles.
             return next();
           }
