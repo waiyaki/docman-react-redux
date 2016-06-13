@@ -116,9 +116,15 @@ const Document = (props) => {
               <Chip content={props.document.role.title}/>
             </span>
           }
-          title={props.document.title}
+          title={props.document.title.length > 64 &&
+              props.expandedDocId !== props.document._id
+            ? `${props.document.title.slice(0, 64)}...`
+            : props.document.title
+          }
         />
-        {props.document.content.length > 250 && props.expandedDocId !== props.document._id
+        {(props.document.content.length > 250 ||
+          props.document.title.length > 64) &&
+          props.expandedDocId !== props.document._id
           ? <CardText>
               <span>{props.document.content.slice(0, 250)}</span><br/>
               <IconButton

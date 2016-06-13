@@ -90,7 +90,7 @@ const CreateOrUpdateDocument = (props) => {
             onBlur={props.onFieldUpdate}
             onMouseLeave={props.onFieldUpdate}
             required
-            rows={3}
+            rows={2}
             type='text'
           />
           <span>

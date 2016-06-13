@@ -142,10 +142,10 @@ export default function (state = Map(), action) {
             title: 'This field is required'
           })
         }));
-      } else if (title.length < 10) {
+      } else if (title.length > 144) {
         newState = state.mergeDeep(Map({
           validations: Map({
-            title: 'This field field should be at least 10 characters.'
+            title: 'This field should not be more than 144 characters.'
           })
         }));
       } else if (state.getIn(['validations', 'title'])) {
