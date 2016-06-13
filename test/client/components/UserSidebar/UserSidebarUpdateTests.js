@@ -52,7 +52,7 @@ describe('UserSideBarUpdate', () => {
           role: {}
         },
         validations: {
-          email: 'This field is required.'
+          username: 'This field is required.'
         }
       }
     });

@@ -24,8 +24,7 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
     case actionTypes.FETCH_USER_DETAILS_SUCCESS:
       return state.merge(Map({
         isFetching: false,
-        user: fromJS(action.user),
-        updatedUser: fromJS(action.user)
+        user: fromJS(action.user)
       }));
 
     case actionTypes.FETCH_USER_DETAILS_ERROR:

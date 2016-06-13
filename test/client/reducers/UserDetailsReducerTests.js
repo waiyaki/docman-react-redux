@@ -37,9 +37,6 @@ describe('User Details Reducer', () => {
       isFetching: false,
       user: Map({
         username: 'test'
-      }),
-      updatedUser: Map({
-        username: 'test'
       })
     }));
   });

@@ -41,16 +41,14 @@ class UserSideBarContainer extends React.Component {
   }
 
   /**
-   * Validate input fields on blur. Only run the validation if the field was
-   * not valid even after having run the validations when something changed in
-   * that field.
-   *
-   * This method also enables us to validate the fields after a user enters
-   * the field then leaves without entering anything (touched field).
+   * Validate input fields on blur. Only run the validation if the field
+   * has a value in it.
    */
   onValidateFieldOnBlur (event) {
     event.preventDefault();
-    this.props.dispatch(validateUserDetailsField(event.target.name));
+    if (event.target.value) {
+      this.props.dispatch(validateUserDetailsField(event.target.name));
+    }
   }
 
   render () {

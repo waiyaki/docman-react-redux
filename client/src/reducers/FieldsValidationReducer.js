@@ -74,7 +74,8 @@ export default function (state = Map(), action) {
      * not required when updating a user's details.
      */
     case 'password':
-      let password = state.getIn([action.target, 'password']);
+      const password = state.getIn([action.target, 'password']);
+      const password2 = state.getIn([action.target, 'confirmPassword']);
       if (!password && action.currentView === 'auth') {
         newState = state.mergeDeep(Map({
           validations: Map({
@@ -85,6 +86,23 @@ export default function (state = Map(), action) {
         newState = state.mergeDeep(Map({
           validations: Map({
             password: 'Password should be 6 or more characters long.'
+          })
+        }));
+      } else if (password && password.length >= 6 && !password2 && action.currentView === 'userDetails') {
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            confirmPassword: 'Please confirm your password',
+            password: null
+          })
+        }));
+      } else if (!password && state.getIn(['validations', 'confirmPassword'])) {
+        /**
+         * If the user just deleted their new password, remove any validations
+         * that may have been there for the confirmPassword field.
+         */
+        newState = state.mergeDeep(Map({
+          validations: Map({
+            confirmPassword: null
           })
         }));
       } else if (state.getIn(['validations', 'password'])) {
@@ -206,7 +224,10 @@ export default function (state = Map(), action) {
     }
   } else if (action.currentView === 'userDetails') {
     // Validation state based on fields specific to user profile update.
-    isValid = !newState.getIn(['validations', 'email']);
+
+    // Ensure there are no validation errors for either the username or email
+    isValid = !newState.getIn(['validations', 'email']) &&
+      !newState.getIn(['validations', 'username']);
 
     // If the user is changing their password, make sure we validate that we
     // have a corresponding password confirmation and that it is valid.
@@ -215,6 +236,13 @@ export default function (state = Map(), action) {
         newState.getIn([action.target, 'confirmPassword']) &&
         !newState.getIn(['validations', 'confirmPassword']);
     }
+
+    // Valid only if there are values in the input fields.
+    isValid = isValid && (newState.getIn([action.target, 'email']) ||
+      newState.getIn([action.target, 'username']) ||
+      newState.getIn([action.target, 'password']) ||
+      newState.getIn([action.target, 'firstName']) ||
+      newState.getIn([action.target, 'lastName']));
   } else if (action.currentView === 'documentContent') {
     isValid = newState.getIn([action.target], 'title') &&
       !newState.getIn(['validations', 'title']) &&
