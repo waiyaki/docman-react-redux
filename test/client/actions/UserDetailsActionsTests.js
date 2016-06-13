@@ -130,7 +130,14 @@ describe('UserDetailsActions', () => {
           type: actionTypes.WEBSOCKET_UPDATES_SUBSCRIPTION
         }];
 
-        const store = mockStore();
+        const getState = () => Map({
+          auth: Map({
+            user: {
+              _id: 123
+            }
+          })
+        });
+        const store = mockStore(getState);
 
         return store.dispatch(userActions.loadUserDetails())
           .then(() => {

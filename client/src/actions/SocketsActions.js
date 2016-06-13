@@ -11,11 +11,22 @@ import * as documentsActions from './DocumentsActions';
  * later via `subscribeToUpdates`.
  */
 export function registerSockets () {
+  socket.emit('role:join', 'user');
   socket.emit('role:join', 'public');
 
-  return (dispatch) => {
+  return (dispatch, getState) => {
     socket.on('document:create', (data) => {
-      dispatch(documentsActions.createDocumentSuccess({data}));
+      /**
+       * If this is our document, flag it so the reducer will know to reduce
+       * it differently.
+       */
+      const user = getState().get('auth').toJS().user;
+      let documentData = {
+        data,
+        own: user._id === data.owner._id
+      };
+
+      dispatch(documentsActions.createDocumentSuccess(documentData));
     });
 
     socket.on('document:update', (data) => {

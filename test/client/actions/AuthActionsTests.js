@@ -1,5 +1,6 @@
 import Axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
+import {Map} from 'immutable';
 import {expect} from 'chai';
 
 import thunk from 'redux-thunk';
@@ -204,7 +205,14 @@ describe('AuthActions', () => {
         message: "Yay! You've successfully registered!"
       }];
 
-      const store = mockStore();
+      const getState = () => Map({
+        auth: Map({
+          user: {
+            _id: 123
+          }
+        })
+      });
+      const store = mockStore(getState);
       return store.dispatch(authActions.signupUser(credentials))
         .then(() => {
           expect(store.getActions()).to.eql(expectedActions);

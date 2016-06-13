@@ -224,15 +224,19 @@
       SocketIO.in('public').emit(eventType, doc);
     } else if (doc.role && doc.role.title !== 'private') {
       SocketIO.in(doc.role.title).emit(eventType, doc);
+
+      // Send even admin docs to their owners.
+      if (doc.role.title === 'admin') {
+        SocketIO.in(doc.owner.username).emit(eventType, doc);
+      }
     }
 
-    // If this document has an admin access level, broadcast it to it's owner
-    // as well. Since private documents are not publicly broadcasted, this
+    // Since private documents are not publicly broadcasted, this
     // selectively broadcasts private documents to admins.
-    if (doc.role && doc.role.title === 'admin') {
+    if (doc.role && doc.role.title === 'private') {
       // BUG: Will potentially broadcast to the owner twice
       // if the owner is an admin 😕
-      SocketIO.in(doc.owner.username).emit(eventType, doc);
+      SocketIO.in('admin').emit(eventType, doc);
     }
   }
 
