@@ -46,6 +46,13 @@ const UserSideBarUpdate = (props) => {
               onChange={props.handleFieldUpdate}
               type='text'
             />
+            <span>
+              <br />
+              <ValidationError
+                error={props.userDetails.validations.username}
+                style={hideComponent('username')}
+              />
+            </span>
           </div>
           <div>
             <TextField
