@@ -78,19 +78,29 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * Set a newly created document into the state.
      *
      * This newly created document replaces the document we'd earlier used
-     * when performing the optimistic update.
+     * when performing the optimistic update, if we're the ones that created it.
+     * Otherwise, we insert it at the beginning of our documents list in the
+     * state.
      */
-
-    // TODO: Check the possibility of a bug here: The .slice assumes that the
-    // last document to be added to the list was the document from the
-    // request document creation action.
-    // Need a better way to handle this update. :/
     case actionTypes.CREATE_DOCUMENT_SUCCESS:
+      if (action.own) {
+        const optimisticDocIndex = state
+          .get('documents')
+          .findIndex((doc) => {
+            return doc.get('_id') === state.getIn(
+              ['documentCrudOptions', 'documentContent', '_id']);
+          });
+        return state.merge(Map({
+          documents: state.get('documents')
+            .splice(optimisticDocIndex, 1, fromJS(action.documentContent)),
+          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+        }));
+      }
+
       return state.merge(Map({
-        documents: state.get('documents')
-          .slice(1)
-          .unshift(fromJS(action.documentContent)),
-        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+        documents: state
+          .get('documents')
+          .insert(0, fromJS(action.documentContent))
       }));
 
     /**

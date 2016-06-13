@@ -180,7 +180,8 @@ describe('DocumentsActions', () => {
           documentContent
         }, {
           type: actionTypes.CREATE_DOCUMENT_SUCCESS,
-          documentContent
+          documentContent,
+          own: true
         }, {
           type: actionTypes.SHOW_SNACKBAR_MESSAGE,
           message: 'Successfully created document.'

@@ -84,16 +84,49 @@ describe('Documents Reducer', () => {
     }));
   });
 
-  it('handles CREATE_DOCUMENT_SUCCESS', () => {
+  it('handles CREATE_DOCUMENT_SUCCESS for other peoples documents', () => {
     const state = Map({
       documents: fromJS([{
-        title: 'This should change'
+        title: 'This should not change'
       }, {
         title: 'This should not.'
+      }])
+    });
+
+    const action = {
+      type: actionTypes.CREATE_DOCUMENT_SUCCESS,
+      documentContent: {
+        _id: 123,
+        title: 'This did get added!',
+        content: 'Yay!'
+      }
+    };
+
+    expect(DocumentsReducer(state, action)).to.eql(Map({
+      documents: fromJS([action.documentContent].concat([{
+        title: 'This should not change'
+      }, {
+        title: 'This should not.'
+      }]))
+    }));
+  });
+
+  it('handles CREATE_DOCUMENT_SUCCESS for own documents', () => {
+    const state = Map({
+      documents: fromJS([{
+        _id: '1',
+        title: 'This should not change.'
+      }, {
+        _id: '2',
+        title: 'This should not change.'
+      }, {
+        _id: '3',
+        title: 'This should change.'
       }]),
       documentCrudOptions: Map({
         documentContent: Map({
-          title: 'This should change'
+          _id: '3',
+          title: 'This should change.'
         })
       })
     });
@@ -102,15 +135,24 @@ describe('Documents Reducer', () => {
       type: actionTypes.CREATE_DOCUMENT_SUCCESS,
       documentContent: {
         _id: 123,
-        title: 'This did change',
+        title: 'This did change!',
         content: 'Yay!'
-      }
+      },
+      own: true
     };
 
     expect(DocumentsReducer(state, action)).to.eql(Map({
-      documents: fromJS(
-        [action.documentContent].concat([{title: 'This should not.'}])
-      ),
+      documents: fromJS([{
+        _id: '1',
+        title: 'This should not change.'
+      }, {
+        _id: '2',
+        title: 'This should not change.'
+      }, {
+        _id: 123,
+        title: 'This did change!',
+        content: 'Yay!'
+      }]),
       documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
     }));
   });

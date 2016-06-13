@@ -77,7 +77,10 @@ export function createDocumentRequest (documentContent) {
 export function createDocumentSuccess (documentData) {
   return {
     type: actionTypes.CREATE_DOCUMENT_SUCCESS,
-    documentContent: documentData.data
+    documentContent: documentData.data,
+    own: documentData.own !== undefined
+      ? documentData.own
+      : documentData.data.role.title === 'private' || false
   };
 }
 
@@ -110,7 +113,7 @@ export function createDocument (content, authToken = getAuthToken()) {
       owner: auth.user,
       updatedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
-      _id: Math.floor(Math.random()).toString(32)
+      _id: Math.floor(Math.random() * 1000000).toString(32)
     })));
 
     return Axios
