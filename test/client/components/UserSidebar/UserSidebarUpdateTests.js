@@ -73,17 +73,6 @@ describe('UserSideBarUpdate', () => {
     expect(handleFieldUpdate.calledOnce).to.be.true;
   });
 
-  it('validates on blur', () => {
-    const handleValidateFieldOnBlur = sinon.spy();
-    const wrapper = shallowWithContext(<UserSideBarUpdate {...props} />);
-    wrapper.setProps({
-      handleValidateFieldOnBlur: handleValidateFieldOnBlur
-    });
-    const textField = wrapper.find('TextField').last();
-    textField.simulate('blur');
-    expect(handleValidateFieldOnBlur.calledOnce).to.be.true;
-  });
-
   it('has a disabled Update button if the data is invalid', () => {
     const wrapper = shallowWithContext(<UserSideBarUpdate {...props} />);
     const updateButton = wrapper.find('RaisedButton').first();

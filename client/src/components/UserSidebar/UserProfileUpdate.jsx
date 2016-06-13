@@ -42,7 +42,6 @@ const UserSideBarUpdate = (props) => {
               defaultValue={user.username}
               floatingLabelText='Username'
               name='username'
-              onBlur={props.handleValidateFieldOnBlur}
               onChange={props.handleFieldUpdate}
               type='text'
             />
@@ -59,7 +58,6 @@ const UserSideBarUpdate = (props) => {
               defaultValue={user.email}
               floatingLabelText='Email'
               name='email'
-              onBlur={props.handleValidateFieldOnBlur}
               onChange={props.handleFieldUpdate}
               type='email'
             />
@@ -107,7 +105,6 @@ const UserSideBarUpdate = (props) => {
             <TextField
               floatingLabelText='Password'
               name='password'
-              onBlur={props.handleValidateFieldOnBlur}
               onChange={props.handleFieldUpdate}
               type='password'
             />
@@ -123,7 +120,6 @@ const UserSideBarUpdate = (props) => {
             <TextField
               floatingLabelText='Confirm Password'
               name='confirmPassword'
-              onBlur={props.handleValidateFieldOnBlur}
               onChange={props.handleFieldUpdate}
               type='password'
             />
@@ -169,7 +165,6 @@ UserSideBarUpdate.propTypes = {
   handleFieldUpdate: PropTypes.func.isRequired,
   handleProfileUpdate: PropTypes.func.isRequired,
   handleToggleShowUpdate: PropTypes.func.isRequired,
-  handleValidateFieldOnBlur: PropTypes.func.isRequired,
   userDetails: PropTypes.shape({
     isFetching: PropTypes.bool.isRequired,
     updatedUser: PropTypes.object,
