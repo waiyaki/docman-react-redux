@@ -43,7 +43,7 @@ class UserSideBarContainer extends React.Component {
     // Render the sidebar with the user we got as props from the mounting
     // component, else use the user we've requested for from the state.
     return (
-      this.props.userDetails.get('isShowingUpdate')
+      this.props.userDetails.get('isShowingUpdate') && !this.props.selectedUser
         ? <UserSideBarUpdate
             handleFieldUpdate={this.onFieldUpdate}
             handleProfileUpdate={this.onSubmit}
