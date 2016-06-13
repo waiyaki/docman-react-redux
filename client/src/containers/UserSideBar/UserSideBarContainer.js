@@ -17,7 +17,6 @@ class UserSideBarContainer extends React.Component {
     this.onFieldUpdate = this.onFieldUpdate.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
     this.onToggleShowUpdateView = this.onToggleShowUpdateView.bind(this);
-    this.onValidateFieldOnBlur = this.onValidateFieldOnBlur.bind(this);
   }
 
   onFieldUpdate (event) {
@@ -40,17 +39,6 @@ class UserSideBarContainer extends React.Component {
     this.props.dispatch(toggleShowUserUpdateView());
   }
 
-  /**
-   * Validate input fields on blur. Only run the validation if the field
-   * has a value in it.
-   */
-  onValidateFieldOnBlur (event) {
-    event.preventDefault();
-    if (event.target.value) {
-      this.props.dispatch(validateUserDetailsField(event.target.name));
-    }
-  }
-
   render () {
     // Render the sidebar with the user we got as props from the mounting
     // component, else use the user we've requested for from the state.
@@ -60,7 +48,6 @@ class UserSideBarContainer extends React.Component {
             handleFieldUpdate={this.onFieldUpdate}
             handleProfileUpdate={this.onSubmit}
             handleToggleShowUpdate={this.onToggleShowUpdateView}
-            handleValidateFieldOnBlur={this.onValidateFieldOnBlur}
             userDetails={this.props.userDetails.toJS()}
           />
         : <UserSideBar
