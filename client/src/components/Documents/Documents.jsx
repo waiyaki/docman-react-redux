@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import Document from './Document';
 import CreateDocumentContainer from '../../containers/Documents/CreateDocumentContainer';
@@ -18,45 +18,47 @@ const noDocsFoundStyles = {
   }
 };
 
-const Documents = (props) => {
-  return (
-    <div className='row'>
-      {props.documents && props.documents.length
-        ? props.documents.map((doc) => (
-            <Document
-              document={doc}
-              documentCrudOptions={props.documentCrudOptions}
-              expandedDocId={props.expandedDocId}
-              key={doc._id}
-              onDeleteDocument={props.onDeleteDocument}
-              onExpandChange={props.onExpandChange}
-              onUpdateThisDocument={props.onUpdateThisDocument}
-              shouldWeAllowEditDocument={props.shouldWeAllowEditDocument(doc)}
-            />
-          ))
-        : <div className='col-xs-12'>
-            <div className='box' style={noDocsFoundStyles.box}>
-              {props.appliedFilter === 'all'
-                ? <span style={noDocsFoundStyles.containerSpan}>
-                    No Documents Found.
-                  </span>
-                : <span style={noDocsFoundStyles.containerSpan}>
-                    {
-                      `No Documents Matching Role '${props.appliedFilter}' Were Found.`
-                    }
-                  </span>
+const Documents = (props) => (
+  <div className='row'>
+    {props.documents && props.documents.length
+    ?
+      props.documents.map((doc) => (
+        <Document
+          document={doc}
+          documentCrudOptions={props.documentCrudOptions}
+          expandedDocId={props.expandedDocId}
+          key={doc._id}
+          onDeleteDocument={props.onDeleteDocument}
+          onExpandChange={props.onExpandChange}
+          onUpdateThisDocument={props.onUpdateThisDocument}
+          shouldWeAllowEditDocument={props.shouldWeAllowEditDocument(doc)}
+        />
+      ))
+    :
+      <div className='col-xs-12'>
+        <div className='box' style={noDocsFoundStyles.box}>
+          {props.appliedFilter === 'all'
+          ?
+            <span style={noDocsFoundStyles.containerSpan}>
+              No Documents Found.
+            </span>
+          :
+            <span style={noDocsFoundStyles.containerSpan}>
+              {
+                `No Documents Matching Role '${props.appliedFilter}' Were Found.`
               }
-            </div>
-          </div>
-      }
-      <CreateDocumentContainer />
-      <ConfirmDeleteDocument
-        confirmDeleteDocument={props.confirmDeleteDocument}
-        isShowingConfirmDialog={props.isShowingConfirmDialog}
-      />
-    </div>
-  );
-};
+            </span>
+          }
+        </div>
+      </div>
+    }
+    <CreateDocumentContainer />
+    <ConfirmDeleteDocument
+      confirmDeleteDocument={props.confirmDeleteDocument}
+      isShowingConfirmDialog={props.isShowingConfirmDialog}
+    />
+  </div>
+);
 
 Documents.propTypes = {
   appliedFilter: PropTypes.string.isRequired,

@@ -1,6 +1,6 @@
 import React from 'react';
-import {shallowWithContext} from '../utils';
-import {expect} from 'chai';
+import { shallowWithContext } from '../utils';
+import { expect } from 'chai';
 import sinon from 'sinon';
 
 import UserSidebar from '../../../../client/src/components/UserSidebar/UserSidebar';
@@ -40,7 +40,7 @@ describe('UserSidebar', () => {
     const wrapper = shallowWithContext(<UserSidebar {...props} />);
     wrapper.setProps({
       isOwnProfile: true,
-      handleToggleShowUpdate: handleToggleShowUpdate
+      handleToggleShowUpdate
     });
     const MenuItem = wrapper.find('MenuItem');
     MenuItem.simulate('touchTap');

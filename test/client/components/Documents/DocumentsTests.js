@@ -1,6 +1,6 @@
 import React from 'react';
-import {shallowWithContext} from '../utils';
-import {expect} from 'chai';
+import { shallowWithContext } from '../utils';
+import { expect } from 'chai';
 
 import Documents from '../../../../client/src/components/Documents/Documents';
 

@@ -1,19 +1,19 @@
-import {fromJS, Map, List} from 'immutable';
-import {expect} from 'chai';
+import { fromJS, Map, List } from 'immutable';
+import { expect } from 'chai';
 
 import * as actionTypes from '../../../client/src/constants';
 
-import DocumentsReducer, {
+import documentsReducer, {
   INITIAL_DOCUMENTS_STATE
 } from '../../../client/src/reducers/DocumentsReducer';
 
 describe('Documents Reducer', () => {
   it('return the initial state', () => {
-    expect(DocumentsReducer(undefined, {})).to.eql(INITIAL_DOCUMENTS_STATE);
+    expect(documentsReducer(undefined, {})).to.eql(INITIAL_DOCUMENTS_STATE);
   });
 
   it('handles FETCH_DOCUMENTS_REQUEST', () => {
-    expect(DocumentsReducer(Map(), {type: actionTypes.FETCH_DOCUMENTS_REQUEST}))
+    expect(documentsReducer(Map(), { type: actionTypes.FETCH_DOCUMENTS_REQUEST }))
       .to.eql(Map({
         isFetching: true
       }));
@@ -25,7 +25,7 @@ describe('Documents Reducer', () => {
       documents: 'Dummy docs'.split()
     };
 
-    expect(DocumentsReducer(Map(), action)).to.eql(Map({
+    expect(documentsReducer(Map(), action)).to.eql(Map({
       isFetching: false,
       documents: List('Dummy docs'.split())
     }));
@@ -37,7 +37,7 @@ describe('Documents Reducer', () => {
       error: 'Nyet'
     };
 
-    expect(DocumentsReducer(Map(), action)).to.eql(Map({
+    expect(documentsReducer(Map(), action)).to.eql(Map({
       isFetching: false,
       documentsFetchError: 'Nyet'
     }));
@@ -54,7 +54,7 @@ describe('Documents Reducer', () => {
       docId: 123
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentViewOptions: Map({
         expandedDocId: 123
       })
@@ -73,7 +73,7 @@ describe('Documents Reducer', () => {
         content: 'content'
       }
     };
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS(
         [action.documentContent].concat(['these', 'documents'])
       ),
@@ -102,7 +102,7 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS([action.documentContent].concat([{
         title: 'This should not change'
       }, {
@@ -141,7 +141,7 @@ describe('Documents Reducer', () => {
       own: true
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS([{
         _id: '1',
         title: 'This should not change.'
@@ -174,8 +174,8 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
-      documents: fromJS([{title: 'This should not.'}]),
+    expect(documentsReducer(state, action)).to.eql(Map({
+      documents: fromJS([{ title: 'This should not.' }]),
       documentCrudOptions: Map({
         isFetching: false,
         isShowingCreateModal: true,
@@ -199,7 +199,7 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentCrudOptions: Map({
         documentContent: fromJS(action.documentContent)
       })
@@ -215,7 +215,7 @@ describe('Documents Reducer', () => {
     const action = {
       type: actionTypes.TOGGLE_CREATE_MODAL
     };
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentCrudOptions: Map({
         isShowingCreateModal: true
       })
@@ -232,7 +232,7 @@ describe('Documents Reducer', () => {
         title: 'test'
       }
     };
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentCrudOptions: Map({
         documentContent: Map({
           title: 'test'
@@ -263,7 +263,7 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS([{
         _id: 1,
         title: 'This should remain unchanged.'
@@ -288,7 +288,7 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentCrudOptions: Map({
         documentContent: Map(),
         isFetching: false,
@@ -322,7 +322,7 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentCrudOptions: Map({
         documentContent: Map({
           title: '',
@@ -355,7 +355,7 @@ describe('Documents Reducer', () => {
       documentId: 2
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS([{
         _id: 1,
         title: 'This should remain unchanged.'
@@ -388,7 +388,7 @@ describe('Documents Reducer', () => {
       type: actionTypes.DELETE_DOCUMENT_SUCCESS
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
     }));
   });
@@ -410,7 +410,7 @@ describe('Documents Reducer', () => {
       docId: 1
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS([{
         _id: 2,
         title: 'This should not.'
@@ -440,7 +440,7 @@ describe('Documents Reducer', () => {
       error: 'Network Error'
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documents: fromJS([{
         _id: 1,
         title: 'This should remain unchanged.'
@@ -466,7 +466,7 @@ describe('Documents Reducer', () => {
       field: 'title'
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentContent: Map({
         title: null
       }),
@@ -490,7 +490,7 @@ describe('Documents Reducer', () => {
       filter: 'private'
     };
 
-    expect(DocumentsReducer(state, action)).to.eql(Map({
+    expect(documentsReducer(state, action)).to.eql(Map({
       documentViewOptions: Map({
         visibleFilter: 'private'
       })
@@ -498,7 +498,7 @@ describe('Documents Reducer', () => {
   });
 
   it('handles LOGOUT_REQUEST', () => {
-    expect(DocumentsReducer(Map(), {type: actionTypes.LOGOUT_REQUEST}))
+    expect(documentsReducer(Map(), { type: actionTypes.LOGOUT_REQUEST }))
       .to.eql(INITIAL_DOCUMENTS_STATE);
   });
 });

@@ -1,8 +1,8 @@
 import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
-import FieldsValidationReducer from './FieldsValidationReducer';
-import {getAuthToken} from '../utils';
+import fieldsValidationReducer from './FieldsValidationReducer';
+import { getAuthToken } from '../utils';
 
 export const INITIAL_AUTH_STATE = Map({
   isAuthenticated: !!getAuthToken(),
@@ -79,7 +79,7 @@ export default function (state = INITIAL_AUTH_STATE, action) {
      * fact that we're validating auth fields.
      */
     case actionTypes.VALIDATE_AUTH_FIELD:
-      return state.merge(FieldsValidationReducer(state, {
+      return state.merge(fieldsValidationReducer(state, {
         type: action.field,
         target: 'credentials',
         currentView: 'auth'

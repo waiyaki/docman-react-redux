@@ -1,17 +1,17 @@
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 
-import React, {PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import {
   createDocument, toggleCreateModal, updateNewDocumentContents,
   validateDocumentContents, updateDocument, toggleDocumentUpdate
 } from '../../actions/DocumentsActions';
 import CreateOrUpdateDocument from '../../components/Documents/CreateOrUpdateDocument';
-import {fetchRolesIfNecessary} from '../../actions/RolesActions';
+import { fetchRolesIfNecessary } from '../../actions/RolesActions';
 
 class CreateDocumentContainer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.handleFieldUpdate = this.handleFieldUpdate.bind(this);
@@ -22,11 +22,11 @@ class CreateDocumentContainer extends React.Component {
     this.handleValidateFieldOnBlur = this.handleValidateFieldOnBlur.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.props.dispatch(fetchRolesIfNecessary());
   }
 
-  updateDocumentContent (field, value) {
+  updateDocumentContent(field, value) {
     let documentContent = this.props.documentCrudOptions.get('documentContent');
     documentContent =
       documentContent.set(field, value);
@@ -37,7 +37,7 @@ class CreateDocumentContainer extends React.Component {
   /**
    * Grab new document field updates from the UI and set them to the state.
    */
-  handleFieldUpdate (event) {
+  handleFieldUpdate(event) {
     event.preventDefault();
     this.updateDocumentContent(event.target.name, event.target.value.trim());
   }
@@ -48,7 +48,7 @@ class CreateDocumentContainer extends React.Component {
    * Handled differently from the other fields due to a discrepancy between
    * the select field's event API and that of the text fields.
    */
-  handleRoleFieldUpdate (event, index, value) {
+  handleRoleFieldUpdate(event, index, value) {
     event.preventDefault();
     this.updateDocumentContent('role', value);
   }
@@ -57,7 +57,7 @@ class CreateDocumentContainer extends React.Component {
    * Dispatch an action to create/update a document in the server using the
    * details in the new document's state.
    */
-  handleSubmit () {
+  handleSubmit() {
     if (this.props.documentCrudOptions.getIn(['validations', 'isValid'])) {
       const documentContent =
         this.props.documentCrudOptions.get('documentContent').toJS();
@@ -74,7 +74,7 @@ class CreateDocumentContainer extends React.Component {
   /**
    * Show or hide the create new document modal.
    */
-  handleToggleShowModal () {
+  handleToggleShowModal() {
     if (this.props.documentCrudOptions.get('isUpdatingDocument')) {
       this.props.dispatch(toggleDocumentUpdate());
     } else {
@@ -82,11 +82,11 @@ class CreateDocumentContainer extends React.Component {
     }
   }
 
-  handleValidateFieldOnBlur (field) {
+  handleValidateFieldOnBlur(field) {
     this.props.dispatch(validateDocumentContents(field));
   }
 
-  render () {
+  render() {
     return (
       <CreateOrUpdateDocument
         documentContent={
@@ -110,26 +110,28 @@ class CreateDocumentContainer extends React.Component {
 
 CreateDocumentContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  documentCrudOptions: function (props, propName, componentName) {
+  documentCrudOptions: (props, propName, componentName) => {
     if (!props[propName] instanceof Map) {
       return new Error(
         `Invalid prop ${propName} supplied to ${componentName}. ` +
         `Expected 'Immutable.Map', got ${typeof props[propName]}`
       );
     }
+    return undefined;
   },
-  roles: function (props, propName, componentName) {
+  roles: (props, propName, componentName) => {
     if (!props[propName] instanceof Map) {
       return new Error(
         `Invalid prop ${propName} supplied to ${componentName}. ` +
         `Expected 'Immutable.Map', got ${typeof props[propName]}`
       );
     }
+    return undefined;
   }
 };
 
-function mapStateToProps (state) {
-  const {dispatch} = state;
+function mapStateToProps(state) {
+  const { dispatch } = state;
   const documentCrudOptions = state.getIn(['docs', 'documentCrudOptions']);
   const roles = state.getIn(['roles', 'roles']);
 

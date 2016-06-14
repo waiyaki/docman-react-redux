@@ -1,17 +1,17 @@
 import React from 'react';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 import {
   loginUser, signupUser, credentialsUpdate, toggleLoginView
 } from '../../actions/AuthActions';
-import {validateAuthField} from '../../actions/ValidationActions';
+import { validateAuthField } from '../../actions/ValidationActions';
 
 /* eslint-disable no-unused-vars */
 import UnauthenticatedHomePage from '../../components/Auth/UnauthenticatedHomePage';
 /* eslint-disable no-unused-vars */
 
 class UnauthenticatedHomeContainer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       errors: null
@@ -23,15 +23,18 @@ class UnauthenticatedHomeContainer extends React.Component {
     this.toggleView = this.toggleView.bind(this);
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     let errors = nextProps.auth.get('error');
     errors = errors ? errors.toJS() : null;
     if (errors) {
       let messages = [];
       if (Array.isArray(errors)) {
-        messages = errors.map(error => {
-          return Object.keys(error).map(key => `${key}: ${error[key]}`);
-        }).toString().split(',');
+        messages = errors
+          .map(error => Object
+            .keys(error)
+            .map(key => `${key}: ${error[key]}`))
+          .toString()
+          .split(',');
       } else {
         messages.push(errors.message);
       }
@@ -45,7 +48,7 @@ class UnauthenticatedHomeContainer extends React.Component {
     }
   }
 
-  handleAuthAction () {
+  handleAuthAction() {
     if (this.props.auth.get('isShowingLogin')) {
       this.props.dispatch(loginUser(
         this.props.auth.get('credentials').toJS()));
@@ -55,7 +58,7 @@ class UnauthenticatedHomeContainer extends React.Component {
     }
   }
 
-  handleFieldUpdate (event) {
+  handleFieldUpdate(event) {
     event.preventDefault();
     let credentials = this.props.auth.get('credentials');
     credentials = credentials.set(event.target.name, event.target.value.trim());
@@ -63,32 +66,47 @@ class UnauthenticatedHomeContainer extends React.Component {
     this.props.dispatch(validateAuthField(event.target.name));
   }
 
-  handleValidateField (event) {
+  handleValidateField(event) {
     event.preventDefault();
-    let validations = this.props.auth.get('validations').toJS();
+    const validations = this.props.auth.get('validations').toJS();
     if (!validations.isValid) {
       this.props.dispatch(validateAuthField(event.target.name));
     }
   }
 
-  toggleView () {
+  toggleView() {
     this.props.dispatch(toggleLoginView());
   }
 
-  render () {
-    return <UnauthenticatedHomePage
-      auth={this.props.auth.toJS()}
-      errors={this.state.errors}
-      onAuthAction={this.handleAuthAction}
-      onFieldUpdate={this.handleFieldUpdate}
-      toggleView={this.toggleView}
-      onValidateField={this.handleValidateField}
-      />;
+  render() {
+    return (
+      <UnauthenticatedHomePage
+        auth={this.props.auth.toJS()}
+        errors={this.state.errors}
+        handleToggleView={this.toggleView}
+        onAuthAction={this.handleAuthAction}
+        onFieldUpdate={this.handleFieldUpdate}
+        onValidateField={this.handleValidateField}
+      />
+    );
   }
 }
 
-function mapStateToProps (state) {
-  const {dispatch} = state;
+UnauthenticatedHomeContainer.propTypes = {
+  auth: (props, propName, componentName) => {
+    if (!props[propName] instanceof Map) {
+      return new Error(
+        `Invalid prop ${propName} supplied to ${componentName}.` +
+        'Expected `Immutable.Map`'
+      );
+    }
+    return undefined;
+  },
+  dispatch: React.PropTypes.func.isRequired
+};
+
+function mapStateToProps(state) {
+  const { dispatch } = state;
   const auth = state.get('auth');
   return {
     dispatch,

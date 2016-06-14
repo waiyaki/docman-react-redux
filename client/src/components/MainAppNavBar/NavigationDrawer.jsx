@@ -1,5 +1,5 @@
-import React, {PropTypes} from 'react';
-import {Link} from 'react-router';
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import Drawer from 'material-ui/Drawer';
 import MenuItem from 'material-ui/MenuItem';
@@ -7,39 +7,38 @@ import Divider from 'material-ui/Divider';
 import HomeIcon from 'material-ui/svg-icons/action/home';
 import AccountCircle from 'material-ui/svg-icons/action/account-circle';
 
-const NavigationDrawer = (props) => {
-  return (
-    <Drawer
-      docked={false}
-      onRequestChange={props.onDrawerToggle}
-      open={props.isDrawerOpen}
-      width={200}
-    >
-      <MenuItem leftIcon={<HomeIcon />} onTouchTap={props.onDrawerToggle}>
+const NavigationDrawer = (props) => (
+  <Drawer
+    docked={false}
+    onRequestChange={props.onDrawerToggle}
+    open={props.isDrawerOpen}
+    width={200}
+  >
+    <MenuItem leftIcon={<HomeIcon />} onTouchTap={props.onDrawerToggle}>
+      <Link
+        activeStyle={{ color: '#0055FF' }}
+        className='username-link'
+        to='/'
+      >
+        Home Page
+      </Link>
+    </MenuItem>
+    <Divider />
+    <MenuItem leftIcon={<AccountCircle />} onTouchTap={props.onDrawerToggle}>
+      {props.user
+      ?
         <Link
-          activeStyle={{color: '#0055FF'}}
-          className='username-link'
-          to='/'
+          activeStyle={{ color: '#0055FF' }}
+          className='username-link' to={`/@${props.user.username}`}
         >
-          Home Page
+            Your Profile
         </Link>
-      </MenuItem>
-      <Divider />
-      <MenuItem leftIcon={<AccountCircle />} onTouchTap={props.onDrawerToggle}>
-        {props.user
-          ? <Link
-              activeStyle={{color: '#0055FF'}}
-              className='username-link' to={`/@${props.user.username}`}
-            >
-                Your Profile
-            </Link>
-          : 'Your Profile'
-        }
-      </MenuItem>
-      <Divider />
-    </Drawer>
-  );
-};
+      : 'Your Profile'
+      }
+    </MenuItem>
+    <Divider />
+  </Drawer>
+);
 
 NavigationDrawer.propTypes = {
   isDrawerOpen: PropTypes.bool.isRequired,

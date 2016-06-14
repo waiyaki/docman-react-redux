@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom';
-import {shallow, mount} from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import TestUtils from 'react-addons-test-utils';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
-export function simulateEvent (wrappedTarget, eventType) {
+export function simulateEvent(wrappedTarget, eventType) {
   if (wrappedTarget.node) {
     // wrappedTarget was obtained using enzyme's mount()
     const domNode = ReactDOM.findDOMNode(wrappedTarget.node);
@@ -15,7 +15,7 @@ export function simulateEvent (wrappedTarget, eventType) {
   }
 }
 
-export function getContexts () {
+export function getContexts() {
   return {
     context: {
       muiTheme: getMuiTheme()
@@ -26,10 +26,10 @@ export function getContexts () {
   };
 }
 
-export function shallowWithContext (node) {
+export function shallowWithContext(node) {
   return shallow(node, getContexts());
 }
 
-export function mountWithContext (node) {
+export function mountWithContext(node) {
   return mount(node, getContexts());
 }

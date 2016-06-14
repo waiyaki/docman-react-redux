@@ -1,7 +1,8 @@
 import React from 'react';
-import {expect} from 'chai';
+import { expect } from 'chai';
 
-import {shallowWithContext} from '../utils';
+import { shallowWithContext } from '../utils';
+// eslint-disable-next-line
 import ConfirmDeleteDocument from '../../../../client/src/components/Documents/ConfirmDeleteDocument';
 
 describe('ConfirmDeleteDocument', () => {

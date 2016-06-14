@@ -1,6 +1,6 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {Map} from 'immutable';
+import { connect } from 'react-redux';
+import { Map } from 'immutable';
 
 import UnauthenticatedHomeContainer from './UnauthenticatedHomeContainer';
 
@@ -9,27 +9,27 @@ import UnauthenticatedHomeContainer from './UnauthenticatedHomeContainer';
  * If the user is not logged in, render the UnauthenticatedHomeContainer,
  * otherwise, render the protected component.
  */
-function RequireAuthentication (Component) {
-  class AuthenticationRequired extends React.Component {
-    render () {
-      return this.props.auth.get('isAuthenticated')
-        ? <Component {...this.props}/>
-        : <UnauthenticatedHomeContainer />;
+function RequireAuthentication(Component) {
+  const AuthenticationRequired = (props) => {
+    if (props.auth.get('isAuthenticated')) {
+      return <Component {...props} />;
     }
-  }
+    return <UnauthenticatedHomeContainer />;
+  };
 
   AuthenticationRequired.propTypes = {
-    auth: function (props, propName, componentName) {
+    auth: (props, propName, componentName) => {
       if (!props[propName] instanceof Map) {
         return new Error(
           `Invalid prop ${propName} supplied to ${componentName}.` +
           'Expected `Immutable.Map`'
         );
       }
+      return undefined;
     }
   };
 
-  function mapStateToProps (state) {
+  function mapStateToProps(state) {
     const auth = state.get('auth');
     return {
       auth

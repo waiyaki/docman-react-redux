@@ -10,7 +10,7 @@ import * as documentsActions from './DocumentsActions';
  * If the user is an admin, they will be registered to the admin documents room
  * later via `subscribeToUpdates`.
  */
-export function registerSockets () {
+export function registerSockets() {
   socket.emit('role:join', 'user');
   socket.emit('role:join', 'public');
 
@@ -21,7 +21,7 @@ export function registerSockets () {
        * it differently.
        */
       const user = getState().get('auth').toJS().user;
-      let documentData = {
+      const documentData = {
         data,
         own: user._id === data.owner._id
       };
@@ -30,11 +30,11 @@ export function registerSockets () {
     });
 
     socket.on('document:update', (data) => {
-      dispatch(documentsActions.documentUpdateSuccess({data}));
+      dispatch(documentsActions.documentUpdateSuccess({ data }));
     });
 
     socket.on('document:role-update', (data) => {
-      dispatch(documentsActions.documentRoleUpdate({data}));
+      dispatch(documentsActions.documentRoleUpdate({ data }));
     });
 
     socket.on('document:delete', (docId) => {
@@ -47,7 +47,7 @@ export function registerSockets () {
   };
 }
 
-export function subscribeToUpdates (userDetails) {
+export function subscribeToUpdates(userDetails) {
   socket.emit('role:join', userDetails.role.title);
   socket.emit('role:join', userDetails.username);
 

@@ -1,17 +1,18 @@
 import Axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import {expect} from 'chai';
-import {Map} from 'immutable';
+import { expect } from 'chai';
+import { Map } from 'immutable';
 
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 
 import * as actionTypes from '../../../client/src/constants';
+/* eslint-disable no-duplicate-imports,import/no-duplicates */
 import * as documentActions from '../../../client/src/actions/DocumentsActions';
-// eslint-disable-next-line
 import {
   __RewireAPI__ as docsActionsRewireAPI
 } from '../../../client/src/actions/DocumentsActions';
+/* eslint-enable no-duplicate-imports,import/no-duplicates */
 
 const TOKEN = 'test.auth.token';
 
@@ -22,7 +23,7 @@ const mockStore = configureMockStore(middlewares);
 // Mock an axios instance to use in the tests and then rewire the imported
 // modules to use the instance with the mocked handler. Also rewire
 // `getAuthToken` to avoid accessing `window.localStorage`.
-let axiosInstance = Axios.create();
+const axiosInstance = Axios.create();
 const mockAxios = new AxiosMockAdapter(axiosInstance);
 
 docsActionsRewireAPI.__Rewire__('Axios', axiosInstance);
@@ -34,8 +35,8 @@ describe('DocumentsActions', () => {
       mockAxios.reset();
     });
 
-    it('creates FETCH_DOCUMENTS_REQUEST and FETCH_DOCUMENTS_SUCCESS actions' +
-       'on successful documents fetch',
+    it('creates FETCH_DOCUMENTS_REQUEST and FETCH_DOCUMENTS_SUCCESS actions ' +
+      'on successful documents fetch',
       () => {
         const documents = 'this is a list of dummy things'.split();
         mockAxios
@@ -58,7 +59,7 @@ describe('DocumentsActions', () => {
     );
 
     it('creates FETCH_DOCUMENTS_REQUEST and FETCH_DOCUMENTS_FAILURE on error ' +
-       'while fetching documents from server',
+      'while fetching documents from server',
       () => {
         const error = {
           message: 'That was unexpected.'
@@ -105,15 +106,13 @@ describe('DocumentsActions', () => {
   });
 
   describe('.createDocument()', () => {
-    const getState = () => {
-      return Map({
-        auth: Map({
-          user: {
-            username: 'test'
-          }
-        })
-      });
-    };
+    const getState = () => Map({
+      auth: Map({
+        user: {
+          username: 'test'
+        }
+      })
+    });
 
     afterEach(() => {
       mockAxios.reset();

@@ -1,6 +1,6 @@
 import React from 'react';
-import {shallowWithContext} from '../utils';
-import {expect} from 'chai';
+import { shallowWithContext } from '../utils';
+import { expect } from 'chai';
 
 import ProfilePage from '../../../../client/src/components/ProfilePage/ProfilePage';
 
@@ -14,17 +14,17 @@ describe('Profile Page', () => {
   };
 
   it('renders a user sidebar', () => {
-    const wrapper = shallowWithContext(<ProfilePage {...props}/>);
+    const wrapper = shallowWithContext(<ProfilePage {...props} />);
     expect(wrapper.find('Connect(UserSideBarContainer)')).to.have.length(1);
   });
 
   it('renders a documents container', () => {
-    const wrapper = shallowWithContext(<ProfilePage {...props}/>);
+    const wrapper = shallowWithContext(<ProfilePage {...props} />);
     expect(wrapper.find('Connect(DocumentsContainer)')).to.have.length(1);
   });
 
   it('renders a loading animation on the user sidebar while fetching', () => {
-    const wrapper = shallowWithContext(<ProfilePage {...props}/>);
+    const wrapper = shallowWithContext(<ProfilePage {...props} />);
     wrapper.setProps({
       selectedUser: {
         profile: {

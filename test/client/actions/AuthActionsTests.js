@@ -1,17 +1,17 @@
 import Axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import {Map} from 'immutable';
-import {expect} from 'chai';
+import { Map } from 'immutable';
+import { expect } from 'chai';
 
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 
+/* eslint-disable no-duplicate-imports,import/no-duplicates */
 import * as authActions from '../../../client/src/actions/AuthActions';
-// eslint-disable-next-line
 import {
   __RewireAPI__ as authActionsRewireAPI
 } from '../../../client/src/actions/AuthActions';
-
+/* eslint-enable no-duplicate-imports,import/no-duplicates */
 import * as actionTypes from '../../../client/src/constants';
 
 // Set up mocks for async actions
@@ -21,7 +21,7 @@ const mockStore = configureMockStore(middlewares);
 // Mock an axios instance to use in the tests and then rewire the imported
 // modules to use the instance with the mocked handler. Also rewire
 // `setAuthToken` to avoid accessing `window.localStorage`.
-let axiosInstance = Axios.create();
+const axiosInstance = Axios.create();
 const mockAxios = new AxiosMockAdapter(axiosInstance);
 authActionsRewireAPI.__Rewire__('Axios', axiosInstance);
 authActionsRewireAPI.__Rewire__('setAuthToken', () => {});
@@ -48,7 +48,7 @@ describe('AuthActions', () => {
       user: credentials
     };
 
-    expect(authActions.loginSuccess({data: credentials}))
+    expect(authActions.loginSuccess({ data: credentials }))
       .to.eql(expectedAction);
   });
 
@@ -70,54 +70,58 @@ describe('AuthActions', () => {
       mockAxios.reset();
     });
 
-    it('creates LOGIN_REQUEST, LOGIN_SUCCESS and SHOW_SNACKBAR_MESSAGE actions on login success', () => {
-      mockAxios
-        .onPost('/api/users/login')
-        .reply(200, credentials);
+    it('creates LOGIN_REQUEST, LOGIN_SUCCESS and SHOW_SNACKBAR_MESSAGE' +
+      'actions on login success',
+      () => {
+        mockAxios
+          .onPost('/api/users/login')
+          .reply(200, credentials);
 
-      const expectedActions = [{
-        type: actionTypes.LOGIN_REQUEST,
-        credentials
-      }, {
-        type: actionTypes.LOGIN_SUCCESS,
-        user: credentials
-      }, {
-        type: actionTypes.SHOW_SNACKBAR_MESSAGE,
-        message: 'Successfully logged in.'
-      }];
+        const expectedActions = [{
+          type: actionTypes.LOGIN_REQUEST,
+          credentials
+        }, {
+          type: actionTypes.LOGIN_SUCCESS,
+          user: credentials
+        }, {
+          type: actionTypes.SHOW_SNACKBAR_MESSAGE,
+          message: 'Successfully logged in.'
+        }];
 
-      const store = mockStore();
+        const store = mockStore();
 
-      return store.dispatch(authActions.loginUser(credentials))
-        .then(() => {
-          expect(store.getActions()).to.eql(expectedActions);
-        });
-    });
+        return store.dispatch(authActions.loginUser(credentials))
+          .then(() => {
+            expect(store.getActions()).to.eql(expectedActions);
+          });
+      });
 
-    it('creates LOGIN_REQUEST, LOGIN_FAILURE and SHOW_SNACKBAR_MESSAGE actions if login fails', () => {
-      const error = new Error('Invalid credentials');
-      mockAxios
-        .onPost('/api/users/login')
-        .reply(401, error);
+    it('creates LOGIN_REQUEST, LOGIN_FAILURE and SHOW_SNACKBAR_MESSAGE' +
+      'actions if login fails',
+      () => {
+        const error = new Error('Invalid credentials');
+        mockAxios
+          .onPost('/api/users/login')
+          .reply(401, error);
 
-      const expectedActions = [{
-        type: actionTypes.LOGIN_REQUEST,
-        credentials
-      }, {
-        type: actionTypes.LOGIN_FAILURE,
-        error: error
-      }, {
-        type: actionTypes.SHOW_SNACKBAR_MESSAGE,
-        message: 'Oops! An error occurred.'
-      }];
+        const expectedActions = [{
+          type: actionTypes.LOGIN_REQUEST,
+          credentials
+        }, {
+          type: actionTypes.LOGIN_FAILURE,
+          error
+        }, {
+          type: actionTypes.SHOW_SNACKBAR_MESSAGE,
+          message: 'Oops! An error occurred.'
+        }];
 
-      const store = mockStore();
+        const store = mockStore();
 
-      return store.dispatch(authActions.loginUser(credentials))
-        .then(() => {
-          expect(store.getActions()).to.eql(expectedActions);
-        });
-    });
+        return store.dispatch(authActions.loginUser(credentials))
+          .then(() => {
+            expect(store.getActions()).to.eql(expectedActions);
+          });
+      });
   });
 
   it('create a LOGOUT_REQUEST action on logout', () => {
@@ -158,7 +162,7 @@ describe('AuthActions', () => {
       user: credentials
     };
 
-    expect(authActions.signupSuccess({data: credentials}))
+    expect(authActions.signupSuccess({ data: credentials }))
       .to.eql(expectedAction);
   });
 
@@ -219,30 +223,32 @@ describe('AuthActions', () => {
         });
     });
 
-    it('creates SIGNUP_REQUEST, SIGNUP_FAILURE and SHOW_SNACKBAR_MESSAGE actions if login fails', () => {
-      const error = new Error('Invalid credentials');
-      mockAxios
-        .onPost('/api/users')
-        .reply(401, error);
+    it('creates SIGNUP_REQUEST, SIGNUP_FAILURE and SHOW_SNACKBAR_MESSAGE' +
+      'actions if login fails',
+      () => {
+        const error = new Error('Invalid credentials');
+        mockAxios
+          .onPost('/api/users')
+          .reply(401, error);
 
-      const expectedActions = [{
-        type: actionTypes.SIGNUP_REQUEST,
-        credentials
-      }, {
-        type: actionTypes.SIGNUP_FAILURE,
-        error
-      }, {
-        type: actionTypes.SHOW_SNACKBAR_MESSAGE,
-        message: 'Oops! An error occurred.'
-      }];
+        const expectedActions = [{
+          type: actionTypes.SIGNUP_REQUEST,
+          credentials
+        }, {
+          type: actionTypes.SIGNUP_FAILURE,
+          error
+        }, {
+          type: actionTypes.SHOW_SNACKBAR_MESSAGE,
+          message: 'Oops! An error occurred.'
+        }];
 
-      const store = mockStore();
+        const store = mockStore();
 
-      return store.dispatch(authActions.signupUser(credentials))
-        .then(() => {
-          expect(store.getActions()).to.eql(expectedActions);
-        });
-    });
+        return store.dispatch(authActions.signupUser(credentials))
+          .then(() => {
+            expect(store.getActions()).to.eql(expectedActions);
+          });
+      });
   });
 
   it('create a CREDENTIALS_UPDATE action with new credentials', () => {

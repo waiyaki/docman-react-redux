@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 
@@ -7,17 +7,13 @@ const ConfirmDeleteDocument = (props) => {
     <FlatButton
       key='Cancel'
       label='Cancel'
-      onTouchTap={function () {
-        props.confirmDeleteDocument(false);
-      }}
+      onTouchTap={() => props.confirmDeleteDocument(false)}
       primary
     />,
     <FlatButton
       key='Delete'
       label='Delete'
-      onTouchTap={function () {
-        props.confirmDeleteDocument(true);
-      }}
+      onTouchTap={() => props.confirmDeleteDocument(true)}
       primary
     />
   ];

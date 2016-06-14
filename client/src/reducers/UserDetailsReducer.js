@@ -1,7 +1,7 @@
-import {Map, fromJS} from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
-import FieldsValidationReducer from './FieldsValidationReducer';
+import fieldsValidationReducer from './FieldsValidationReducer';
 
 export const INITIAL_USER_DETAILS_STATE = Map({
   isFetching: false,
@@ -83,7 +83,7 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
      * that we're validating user details fields.
      */
     case actionTypes.VALIDATE_USER_DETAILS_FIELD:
-      return state.merge(FieldsValidationReducer(state, {
+      return state.merge(fieldsValidationReducer(state, {
         type: action.field,
         target: 'updatedUser',
         currentView: 'userDetails'

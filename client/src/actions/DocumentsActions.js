@@ -5,42 +5,42 @@
 import Axios from 'axios';
 
 import * as actionTypes from '../constants';
-import {showSnackBarMessage} from './UtilityActions';
-import {getAuthToken} from '../utils';
+import { showSnackBarMessage } from './UtilityActions';
+import { getAuthToken } from '../utils';
 
 /**
  * Document fetching actions
  */
-export function fetchDocumentsRequest () {
+export function fetchDocumentsRequest() {
   return {
     type: actionTypes.FETCH_DOCUMENTS_REQUEST
   };
 }
 
-export function fetchDocumentsSuccess (documentsResponse) {
+export function fetchDocumentsSuccess(documentsResponse) {
   return {
     type: actionTypes.FETCH_DOCUMENTS_SUCCESS,
     documents: documentsResponse.data
   };
 }
 
-export function fetchDocumentsFailure (error) {
+export function fetchDocumentsFailure(error) {
   return {
     type: actionTypes.FETCH_DOCUMENTS_FAILURE,
-    error: error.data || {message: error.message}
+    error: error.data || { message: error.message }
   };
 }
 
 /**
  * Fetch documents from the server asynchronously.
  */
-export function fetchDocumentsFromServer (authToken = getAuthToken()) {
-  return function (dispatch) {
+export function fetchDocumentsFromServer(authToken = getAuthToken()) {
+  return (dispatch) => {
     dispatch(fetchDocumentsRequest());
 
     return Axios
       .get('/api/documents', {
-        headers: {'x-access-token': authToken}
+        headers: { 'x-access-token': authToken }
       })
       .then((documents) => {
         dispatch(fetchDocumentsSuccess(documents));
@@ -54,7 +54,7 @@ export function fetchDocumentsFromServer (authToken = getAuthToken()) {
 /**
  * Expand a single document.
  */
-export function expandDocument (docId) {
+export function expandDocument(docId) {
   return {
     type: actionTypes.EXPAND_DOCUMENT,
     docId: docId || ''
@@ -64,7 +64,7 @@ export function expandDocument (docId) {
 /**
  * Create a document.
  */
-export function createDocumentRequest (documentContent) {
+export function createDocumentRequest(documentContent) {
   return {
     type: actionTypes.CREATE_DOCUMENT_REQUEST,
     documentContent
@@ -74,7 +74,7 @@ export function createDocumentRequest (documentContent) {
 /**
  * Perform this action once the creation is successful.
  */
-export function createDocumentSuccess (documentData) {
+export function createDocumentSuccess(documentData) {
   return {
     type: actionTypes.CREATE_DOCUMENT_SUCCESS,
     documentContent: documentData.data,
@@ -87,10 +87,10 @@ export function createDocumentSuccess (documentData) {
 /**
  * Handle create document failure.
  */
-export function createDocumentFailure (error) {
+export function createDocumentFailure(error) {
   return {
     type: actionTypes.CREATE_DOCUMENT_FAILURE,
-    error: error.data || {message: error.message}
+    error: error.data || { message: error.message }
   };
 }
 
@@ -102,7 +102,7 @@ export function createDocumentFailure (error) {
  * fake the document's details so that we can perform an optimistic update
  * without breaking the application's functionality.
  */
-export function createDocument (content, authToken = getAuthToken()) {
+export function createDocument(content, authToken = getAuthToken()) {
   return (dispatch, getState) => {
     // Get the authenticated user's details.
     const auth = getState().get('auth').toJS();
@@ -118,7 +118,7 @@ export function createDocument (content, authToken = getAuthToken()) {
 
     return Axios
       .post('/api/documents', content, {
-        headers: {'x-access-token': authToken}
+        headers: { 'x-access-token': authToken }
       })
       .then((documentData) => {
         // Dispatch only if we've created a private document. The other types
@@ -139,7 +139,7 @@ export function createDocument (content, authToken = getAuthToken()) {
 /**
  * Show or hide the new document modal.
  */
-export function toggleCreateModal () {
+export function toggleCreateModal() {
   return {
     type: actionTypes.TOGGLE_CREATE_MODAL
   };
@@ -148,14 +148,14 @@ export function toggleCreateModal () {
 /**
  * Update the content (in the state) of the document being created.
  */
-export function updateNewDocumentContents (documentContent) {
+export function updateNewDocumentContents(documentContent) {
   return {
     type: actionTypes.UPDATE_NEW_DOCUMENT_CONTENTS,
     documentContent
   };
 }
 
-export function validateDocumentContents (field) {
+export function validateDocumentContents(field) {
   return {
     type: actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS,
     field
@@ -168,24 +168,24 @@ export function validateDocumentContents (field) {
  * Only dispatch documentUpdateSuccess for private documents. Other documents
  * updates will be dispatched using websockets.
  */
-export function requestDocumentUpdate (doc) {
+export function requestDocumentUpdate(doc) {
   return {
     type: actionTypes.DOCUMENT_UPDATE_REQUEST,
     document: doc
   };
 }
 
-export function documentUpdateSuccess (documentData) {
+export function documentUpdateSuccess(documentData) {
   return {
     type: actionTypes.DOCUMENT_UPDATE_SUCCESS,
     document: documentData.data
   };
 }
 
-export function documentUpdateFailure (error) {
+export function documentUpdateFailure(error) {
   return {
     type: actionTypes.DOCUMENT_UPDATE_FAILURE,
-    error: error.data || {message: error.message}
+    error: error.data || { message: error.message }
   };
 }
 
@@ -193,11 +193,11 @@ export function documentUpdateFailure (error) {
  * If the role of a document we already have in the state changes, determine
  * whether we still have access to it and update state accordingly.
  */
-export function documentRoleUpdate (documentData) {
+export function documentRoleUpdate(documentData) {
   return (dispatch, getState) => {
     const user = getState().getIn(['auth', 'user']);
     const doc = documentData.data;
-    let allowAccess = (
+    const allowAccess = (
       doc.role.title === 'private' && user.username === doc.owner.username ||
       doc.role.title === 'admin' && user.username === doc.owner.username ||
       user.role.title === 'admin' ||
@@ -213,13 +213,13 @@ export function documentRoleUpdate (documentData) {
   };
 }
 
-export function updateDocument (doc, authToken = getAuthToken()) {
+export function updateDocument(doc, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(requestDocumentUpdate(doc));
 
     return Axios
       .put(`/api/documents/${doc._id}`, doc, {
-        headers: {'x-access-token': authToken}
+        headers: { 'x-access-token': authToken }
       })
       .then((updatedDoc) => {
         if (updatedDoc.data.role.title === 'private') {
@@ -240,56 +240,57 @@ export function updateDocument (doc, authToken = getAuthToken()) {
  * Given this is a toggle function, we handle case where we're hiding the
  * document update view, in which we won't have a document passed to us.
  */
-export function toggleDocumentUpdate (doc) {
+export function toggleDocumentUpdate(doc) {
   return (dispatch, getState) => {
-    if (!doc) {
-      doc = getState()
+    let documentObject = doc;
+    if (!documentObject) {
+      documentObject = getState()
         .getIn(['docs', 'documentCrudOptions', 'documentContent'])
         .toJS();
     }
 
     // Decompose the role to just it's title.
-    doc = Object.assign({}, doc, {
-      role: doc.role.title
+    documentObject = Object.assign({}, documentObject, {
+      role: documentObject.role.title
     });
 
     return dispatch({
       type: actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE,
-      document: doc
+      document: documentObject
     });
   };
 }
 
-export function documentDeleteRequest (documentId) {
+export function documentDeleteRequest(documentId) {
   return {
     type: actionTypes.DELETE_DOCUMENT_REQUEST,
     documentId
   };
 }
 
-export function documentDeleteSuccess (docId) {
+export function documentDeleteSuccess(docId) {
   return {
     type: actionTypes.DELETE_DOCUMENT_SUCCESS,
     docId
   };
 }
 
-export function deleteDocumentFailure (error) {
+export function deleteDocumentFailure(error) {
   return {
     type: actionTypes.DELETE_DOCUMENT_FAILURE,
-    error: error.data || {message: error.message}
+    error: error.data || { message: error.message }
   };
 }
 
-export function deleteDocument (docId, authToken = getAuthToken()) {
+export function deleteDocument(docId, authToken = getAuthToken()) {
   return (dispatch) => {
     dispatch(documentDeleteRequest(docId));
 
     return Axios
       .delete(`/api/documents/${docId}`, {
-        headers: {'x-access-token': authToken}
+        headers: { 'x-access-token': authToken }
       })
-      .then((success) => {
+      .then(() => {
         dispatch(showSnackBarMessage('Document deleted successfully.'));
       })
       .catch((error) => {
@@ -300,7 +301,7 @@ export function deleteDocument (docId, authToken = getAuthToken()) {
   };
 }
 
-export function changeDocumentsFilter (filter) {
+export function changeDocumentsFilter(filter) {
   return {
     type: actionTypes.CHANGE_DOCUMENTS_FILTER,
     filter
