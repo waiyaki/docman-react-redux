@@ -1,37 +1,33 @@
-(function () {
-  'use strict';
+const customMiddleware = require('../../middleware');
+const docsController = require('../../controllers').documentsController;
 
-  var docsController = require('../../controllers').documentsController;
-  var customMiddleware = require('../../middleware');
+module.exports = (app) => {
+  /**
+   * List all documents accessible by this user.
+   */
+  app.get('/api/documents', docsController.list);
 
-  module.exports = function (app) {
-    /**
-     * List all documents accessible by this user.
-     */
-    app.get('/api/documents', docsController.list);
+  /**
+   * Create a new document.
+   */
+  app.post('/api/documents', (req, res, next) => customMiddleware
+    .validatePost(req, res, next, {
+      requiredFields: ['title', 'content']
+    }
+  ), docsController.create);
 
-    /**
-     * Create a new document.
-     */
-    app.post('/api/documents', function (req, res, next) {
-      return customMiddleware.validatePost(req, res, next, {
-        required_fields: ['title', 'content']
-      });
-    }, docsController.create);
+  /**
+   * Fetch a single document.
+   */
+  app.get('/api/documents/:doc_id', docsController.retrieve);
 
-    /**
-     * Fetch a single document.
-     */
-    app.get('/api/documents/:doc_id', docsController.retrieve);
+  /**
+   * Update a document.
+   */
+  app.put('/api/documents/:doc_id', docsController.update);
 
-    /**
-     * Update a document.
-     */
-    app.put('/api/documents/:doc_id', docsController.update);
-
-    /**
-     * Delete a single document.
-     */
-    app.delete('/api/documents/:doc_id', docsController.delete);
-  };
-})();
+  /**
+   * Delete a single document.
+   */
+  app.delete('/api/documents/:doc_id', docsController.deleteDocument);
+};

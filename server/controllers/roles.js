@@ -1,17 +1,15 @@
-(function () {
-  'use strict';
+const Role = require('../models').Role;
+const resolveError = require('../utils').resolveError;
 
-  var Role = require('../models').Role;
-  var resolveError = require('../utils').resolveError;
-
-  module.exports = {
-    list: function (req, res) {
-      Role.all(function (err, roles) {
-        if (err) {
-          return resolveError(err, res);
-        }
-        return res.status(200).send(roles);
-      });
+function list(req, res) {
+  Role.all((err, roles) => {
+    if (err) {
+      return resolveError(err, res);
     }
-  };
-})();
+    return res.status(200).send(roles);
+  });
+}
+
+module.exports = {
+  list
+};

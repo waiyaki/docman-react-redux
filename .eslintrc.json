@@ -32,6 +32,10 @@
       "error",
       { "capIsNewExceptions": ["Map", "List"] }
     ],
+    "no-shadow": [
+      "error",
+      { "allow": ["done", "err"] }
+    ],
     "no-unused-expressions": ["off"],
     "react/display-name": 0,
     "react/forbid-prop-types": 1,
