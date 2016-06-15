@@ -1,13 +1,14 @@
-var webpack = require('webpack');
+const webpack = require('webpack');
+const HappyPack = require('happypack');
 
-var config = {
+const config = {
   devtool: 'eval-source-map',
   entry: './client/index.jsx',
   module: {
     loaders: [{
       test: /\.jsx?$/,
       exclude: /node_modules/,
-      loader: 'react-hot!babel'
+      loader: 'happypack/loader'
     }]
   },
   resolve: {
@@ -21,10 +22,7 @@ var config = {
   devServer: {
     contentBase: './client/dist',
     hot: true
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin()
-  ]
+  }
 };
 
 /*
@@ -34,9 +32,12 @@ if (process.env.NODE_ENV === 'production') {
   config.devtool = false;
   config.plugins = [
     new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({comments: false}),
+    new webpack.optimize.UglifyJsPlugin({ comments: false }),
     new webpack.DefinePlugin({
-      'process.env': {NODE_ENV: JSON.stringify('production')}
+      'process.env': { NODE_ENV: JSON.stringify('production') }
+    }),
+    new HappyPack({
+      loaders: ['babel']
     })
   ];
 }
