@@ -1,22 +1,31 @@
-# docman
+# DocMan
 
-[![Coverage Status](https://coveralls.io/repos/github/andela-jmuturi/docman/badge.svg?branch=master)](https://coveralls.io/github/andela-jmuturi/docman?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/andela-jmuturi/docman/badge.svg?branch=develop)](https://coveralls.io/github/andela-jmuturi/docman-react-redux?branch=develop)
+[![Build Status](https://travis-ci.org/andela-jmuturi/docman-react-redux.svg?branch=develop)](https://travis-ci.org/andela-jmuturi/docman-react-redux)
 
-[![Build Status](https://travis-ci.org/andela-jmuturi/docman.svg?branch=master)](https://travis-ci.org/andela-jmuturi/docman)
-
-Andela JS Curriculum Checkpoint 3 - Document Manager.
+Andela JavaScript Curriculum Checkpoint 4 - Document Manager.
 
 ## Description
-This is a simple API that allows authenticated users to create and manage
-simple documents. `Document` here is used with a grain of salt to mean any kind
+This is a simple web application that allows users to create accounts
+and manage simple documents.
+`Document` here is used with a grain of salt to mean any kind
 of object with a string title and a string body content.
 
+It allows users to register and create such kinds of documents. Users can
+assign access permissions to documents, which will restrict that document's
+audience.
+
 # Installation
-Make sure you have [NodeJS](https://nodejs.org/en/download/) and [MongoDB](https://docs.mongodb.org/manual/installation/) installed, then:
+You can find this project hosted on Heroku at [https://docman-cp4-staging.herokuapp.com](https://docman-cp4-staging.herokuapp.com)
+
+Alternatively, you can run it locally as follows:
+
+
+First, make sure you have [NodeJS](https://nodejs.org/en/download/) and [MongoDB](https://docs.mongodb.org/manual/installation/) installed, then:
 
 1. Clone this repository
     ```
-    $ git clone https://github.com/andela-jmuturi/docman.git && cd docman
+    $ git clone https://github.com/andela-jmuturi/docman-react-redux.git && cd docman-react-redux
     ```
 2. Install the project's dependencies
     ```
@@ -30,95 +39,20 @@ project everytime it starts up by running:
     ```
 Replace "yoursecretkeyhere" with any random string.
 
-4. Run a development server
+4. Run the development server
     ```
     $ npm run start:dev
     ```
-The server will run at [http://localhost:3000](http://localhost:3000)
+The server will run at [http://localhost:8000](http://localhost:8000)
 
-# API endpoints.
-
-## Users
-
-* `/users`
-
-    Send a POST request with an object containing a `username`, `password` and
-    `email` to signup.
-
-* `/users/login`
-
-    Send a POST request with an object containing a `username` and `password`
-    to login. The API will give you an authentication token if the credentials
-    are valid
-
-* `/users/profile` [GET|PUT|DELETE]
-
-    Send requests to this endpoint with an `x-access-token` header containing
-    the authentication token obtained from `/users/login`.
-    - `GET` - Get the authenticated user's profile.
-
-    - `PUT` - Update the authenticated user's profile.
-
-    - `DELETE` - Delete the authenticated user's profile.
-
-
-* `/users/:username/documents` [GET]
-    - `HEADER` - `x-access-token`
-
-    Returns documents created by the user with this username. These documents can be filtered against all filters described in the `/documents [GET]` route.
-
-* `/users` [GET]
-    - `HEADER` - `x-access-token`
-
-    Returns all users in the system. This route is restricted to admin users only.
-
-## Documents
-* `/documents` [POST]
-
-     Create a new document.
-     - `HEADER` - `x-access-token`
-
-     - `title` - Document title. Required.
-
-     - `content` - Document content. Required.
-
-     - `role` - Role that can access this document. Options are `public`, `private`, `admin` and `user`. Defaults to `public`.
-
-    Returns the created document.
-
-* `/documents/:document_id` [GET|PUT|DELETE]
-    - `HEADER` - `x-access-token`
-
-    - `GET` - Get the document with this document_id.
-
-    - `PUT` - Update the document with this document_id.
-
-    - `DELETE` - Delete the document with this document_id.
-
-
-* `/documents` [GET]
-
-    Get all documents accessible to you, based on your permissions.
-    By default, it will return all documents belonging to the authenticated user
-    as well as any other public documents.
-
-    You can filter the documents to return only the ones that matter to you.
-    - `/documents?limit=2` - Returns the accessible documents limited to the latest 2.
-
-    - `/documents?role=public` - Returns all documents accessible to the authenticated user that are public (whether the user owns them or not).
-
-    - `/documents?created=2016-04-25` - Returns the documents created on the
-    25th of April, 2016.
-
-    - `/documents?created_min=2016-04-25&created_max=2016-04-27` - Returns the accessible documents created between the 25th and 27th of April, 2016. The `created_max` date is inclusive.
-
-    The filters can be mixed and matched to fit the specific need at that moment. For example:
-    - `/documents?created_min=2016-04-24&created_max=2016-04-28&role=public&limit=2` - Will return the latest `2` documents created `between` the 24th and 28th of April 2016, inclusive, and are accessible by the `public`.
 
 # Testing
 You can run tests by ensuring you have the project set up then running:
 
     $ npm test
 
-
-*Cheers*
+### Made Using
+This web application is made using [NodeJS](https://nodejs.org/en/download/),
+[MongoDB](https://docs.mongodb.org/manual/installation/), [SocketIO](socket.io)
+and [ReactJS](facebook.github.io/react) with [Redux](http://redux.js.org/) and
+[ImmutableJS](https://facebook.github.io/immutable-js/).
