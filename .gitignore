@@ -38,7 +38,8 @@ node_modules
 # Finder stuff
 .DS_Store
 
-!dist/bundle.js
 !dist/index.html
 !dist/styles.css
 dist/
+
+.happypack
