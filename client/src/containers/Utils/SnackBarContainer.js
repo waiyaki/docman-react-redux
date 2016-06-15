@@ -1,15 +1,15 @@
-import React, {PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import Snackbar from 'material-ui/Snackbar';
-import {clearToastMessage} from '../../actions/UtilityActions';
+import { clearToastMessage } from '../../actions/UtilityActions';
 
 const snackBarStyle = {
   bottom: '2%'
 };
 
 class SnackBarContainer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.handleRequestClose = this.handleRequestClose.bind(this);
@@ -18,11 +18,11 @@ class SnackBarContainer extends React.Component {
   /**
    * Clear the snackbar message in the state when we hide the snackbar.
    */
-  handleRequestClose () {
+  handleRequestClose() {
     this.props.dispatch(clearToastMessage());
   }
 
-  render () {
+  render() {
     return (
       <Snackbar
         autoHideDuration={3000}
@@ -35,8 +35,8 @@ class SnackBarContainer extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
-  const {dispatch} = state;
+function mapStateToProps(state) {
+  const { dispatch } = state;
   const utils = state.get('utils').toJS();
 
   return {

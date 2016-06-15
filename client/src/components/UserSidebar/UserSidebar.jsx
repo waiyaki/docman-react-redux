@@ -1,6 +1,6 @@
 import md5 from 'blueimp-md5';
 
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import {
   Card, CardHeader, CardMedia, CardTitle
@@ -19,44 +19,45 @@ const UserSidebar = (props) => {
     <div className='sidebar'>
       <Card className='sidebar-card' zDepth={0}>
         <CardHeader
-          avatar={userGravatar + '&s=40'}
+          avatar={`${userGravatar}&s=40`}
           subtitle={user && user.role ? user.role.title : ''}
           title={user.name
-            ? `${user.name.firstName + ' ' + user.name.lastName}`
+            ? `${user.name.firstName} ${user.name.lastName}`
             : user.username
           }
         >
           {props.isOwnProfile
-            ? <IconMenu
-                anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-                iconButtonElement={
-                  <IconButton><MoreVertIcon /></IconButton>
-                }
-                style={{
-                  position: 'absolute',
-                  right: '4px'
-                }}
-                targetOrigin={{horizontal: 'right', vertical: 'top'}}
-              >
-                <MenuItem
-                  onTouchTap={props.handleToggleShowUpdate}
-                  primaryText='Edit Profile'
-                />
-              </IconMenu>
-            : null
+          ?
+            <IconMenu
+              anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+              iconButtonElement={
+                <IconButton><MoreVertIcon /></IconButton>
+              }
+              style={{
+                position: 'absolute',
+                right: '4px'
+              }}
+              targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+            >
+              <MenuItem
+                onTouchTap={props.handleToggleShowUpdate}
+                primaryText='Edit Profile'
+              />
+            </IconMenu>
+          : null
           }
         </CardHeader>
         <CardMedia
           overlay={
             <CardTitle
               subtitle={user.name
-                ? `${user.name.firstName + ' ' + user.name.lastName}`
+                ? `${user.name.firstName} ${user.name.lastName}`
                 : user.username
               }
             />
           }
         >
-          <img src={userGravatar + '&s=300'} />
+          <img role='presentation' src={`${userGravatar}&s=300`} />
         </CardMedia>
         <CardTitle
           subtitle={user ? user.email : ''}

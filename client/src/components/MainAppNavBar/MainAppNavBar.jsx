@@ -1,5 +1,5 @@
-import React, {PropTypes} from 'react';
-import {Link, browserHistory} from 'react-router';
+import React, { PropTypes } from 'react';
+import { Link, browserHistory } from 'react-router';
 
 import AppBar from 'material-ui/AppBar';
 import IconMenu from 'material-ui/IconMenu';
@@ -17,7 +17,7 @@ const NavBar = (props) => {
         iconElementLeft={
           <span className='hide-gt-sm'>
             <IconButton
-              iconStyle={{fill: 'white'}}
+              iconStyle={{ fill: 'white' }}
               onTouchTap={props.onDrawerToggle}
             >
               <MenuIcon />
@@ -29,7 +29,7 @@ const NavBar = (props) => {
             <IconMenu
               iconButtonElement={
                 <IconButton
-                  iconStyle={{fill: 'white'}}
+                  iconStyle={{ fill: 'white' }}
                   tooltip='Documents Filter'
                 >
                   <ContentFilter />
@@ -47,24 +47,25 @@ const NavBar = (props) => {
               ))}
             </IconMenu>
             <IconMenu
-              anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+              anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
               iconButtonElement={
-                <IconButton iconStyle={{fill: 'white'}}>
+                <IconButton iconStyle={{ fill: 'white' }}>
                   <MoreVertIcon />
                 </IconButton>
               }
-              targetOrigin={{horizontal: 'right', vertical: 'top'}}
+              targetOrigin={{ horizontal: 'right', vertical: 'top' }}
             >
                 {props.userDetails.user && props.userDetails.user.username
-                  ? <MenuItem>
-                      <Link
-                        activeStyle={{color: 'rgb(0, 188, 212)'}}
-                        className='username-link' to={`/@${props.userDetails.user.username}`}
-                      >
-                        {props.userDetails.user.username}
-                      </Link>
-                    </MenuItem>
-                  : null
+                ?
+                  <MenuItem>
+                    <Link
+                      activeStyle={{ color: 'rgb(0, 188, 212)' }}
+                      className='username-link' to={`/@${props.userDetails.user.username}`}
+                    >
+                      {props.userDetails.user.username}
+                    </Link>
+                  </MenuItem>
+                : null
                 }
               <MenuItem
                 onTouchTap={props.onLogout}
@@ -73,12 +74,10 @@ const NavBar = (props) => {
             </IconMenu>
           </span>
         }
-        onTitleTouchTap={function () {
-          browserHistory.push('/');
-        }}
-        style={{position: 'fixed', top: 0}}
+        onTitleTouchTap={() => browserHistory.push('/')}
+        style={{ position: 'fixed', top: 0 }}
         title='DocMan'
-        titleStyle={{cursor: 'pointer'}}
+        titleStyle={{ cursor: 'pointer' }}
       />
     </div>
   );

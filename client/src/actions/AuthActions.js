@@ -12,34 +12,34 @@ import {
   CREDENTIALS_UPDATE, TOGGLE_LOGIN_VIEW
 } from '../constants';
 
-import {showSnackBarMessage} from './UtilityActions';
-import {registerSockets, subscribeToUpdates} from './SocketsActions';
-import {setAuthToken, removeAuthToken} from '../utils';
+import { showSnackBarMessage } from './UtilityActions';
+import { registerSockets, subscribeToUpdates } from './SocketsActions';
+import { setAuthToken, removeAuthToken } from '../utils';
 
 /* LOGIN ACTIONS */
-export function loginRequest (credentials) {
+export function loginRequest(credentials) {
   return {
     type: LOGIN_REQUEST,
     credentials
   };
 }
 
-export function loginSuccess (user) {
+export function loginSuccess(user) {
   return {
     type: LOGIN_SUCCESS,
     user: user.data
   };
 }
 
-export function loginFailure (error) {
+export function loginFailure(error) {
   return {
     type: LOGIN_FAILURE,
-    error: error.data || {message: error.message}
+    error: error.data || { message: error.message }
   };
 }
 
-export function loginUser (credentials) {
-  return function (dispatch) {
+export function loginUser(credentials) {
+  return (dispatch) => {
     // Announce to the application that we're performing login
     dispatch(loginRequest(credentials));
 
@@ -58,14 +58,14 @@ export function loginUser (credentials) {
 }
 
 /* LOGOUT ACTION */
-export function performUserLogout () {
+export function performUserLogout() {
   return {
     type: LOGOUT_REQUEST
   };
 }
 
-export function logoutUser (message) {
-  return function (dispatch) {
+export function logoutUser(message) {
+  return (dispatch) => {
     removeAuthToken();
     dispatch(performUserLogout());
 
@@ -77,29 +77,29 @@ export function logoutUser (message) {
 }
 
 /* REGISTRATION ACTIONS  */
-export function requestSignup (credentials) {
+export function requestSignup(credentials) {
   return {
     type: SIGNUP_REQUEST,
     credentials
   };
 }
 
-export function signupSuccess (user) {
+export function signupSuccess(user) {
   return {
     type: SIGNUP_SUCCESS,
     user: user.data
   };
 }
 
-export function signupFailure (error) {
+export function signupFailure(error) {
   return {
     type: SIGNUP_FAILURE,
-    error: error.data || {message: error.message}
+    error: error.data || { message: error.message }
   };
 }
 
-export function signupUser (credentials) {
-  return function (dispatch) {
+export function signupUser(credentials) {
+  return (dispatch) => {
     // Announce that we're beginning signup.
     dispatch(requestSignup(credentials));
 
@@ -120,7 +120,7 @@ export function signupUser (credentials) {
 }
 
 /* USER DETAILS ACTIONS */
-export function credentialsUpdate (credentials) {
+export function credentialsUpdate(credentials) {
   return {
     type: CREDENTIALS_UPDATE,
     credentials
@@ -128,7 +128,7 @@ export function credentialsUpdate (credentials) {
 }
 
 /* MISCELLANEOUS ACTIONS */
-export function toggleLoginView () {
+export function toggleLoginView() {
   return {
     type: TOGGLE_LOGIN_VIEW
   };

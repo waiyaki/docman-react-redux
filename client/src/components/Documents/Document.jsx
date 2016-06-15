@@ -1,8 +1,8 @@
 import md5 from 'blueimp-md5';
 import classNames from 'classnames';
 
-import React, {PropTypes} from 'react';
-import {Link} from 'react-router';
+import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 
 import {
   Card, CardHeader, CardText, CardTitle
@@ -40,80 +40,74 @@ const Document = (props) => {
   };
 
   // Determine whether we are updating this document and show a spinner
-  const updatingSelf = (doc) => {
-    return props.documentCrudOptions.isFetching &&
-      props.documentCrudOptions.isUpdatingDocument &&
-      props.documentCrudOptions.documentContent._id === doc._id;
-  };
+  const updatingSelf = (doc) => props.documentCrudOptions.isFetching &&
+    props.documentCrudOptions.isUpdatingDocument &&
+    props.documentCrudOptions.documentContent._id === doc._id;
 
   return (
     <div className={cardClasses(props.document, props.expandedDocId)}>
       <Card
         expanded={props.expandedDocId === props.document._id}
-        style={{marginBottom: '0.5em'}}
+        style={{ marginBottom: '0.5em' }}
         zDepth={props.expandedDocId === props.document._id ? 3 : 1}
       >
         <CardHeader
-          avatar={ownerGravatar + '&s=40'}
-          style={{'paddingBottom': '0.5em'}}
+          avatar={`${ownerGravatar}&s=40`}
+          style={{ paddingBottom: '0.5em' }}
           subtitle={owner && owner.role ? owner.role.title : ''}
           title={
             <Link
               className='username-link'
               to={{
                 pathname: `/@${owner.username}`,
-                state: {username: owner.username, _id: owner._id}
+                state: { username: owner.username, _id: owner._id }
               }}
             >
               {owner.name
-                ? `${owner.name.firstName + ' ' + owner.name.lastName}`
+                ? `${owner.name.firstName} ${owner.name.lastName}`
                 : owner.username
               }
             </Link>
           }
         >
-          {props.shouldWeAllowEditDocument
+          {props.shouldWeAllowEditDocument // eslint-disable-line
             ? updatingSelf(props.document)
               ? <CircularProgress
-                  size={0.5}
-                  style={{
-                    position: 'absolute',
-                    right: '4px'
-                  }}
-                />
+                size={0.5}
+                style={{
+                  position: 'absolute',
+                  right: '4px'
+                }}
+              />
               : <IconMenu
-                  anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-                  iconButtonElement={
-                    <IconButton><MoreVertIcon /></IconButton>
-                  }
-                  style={{
-                    position: 'absolute',
-                    right: '4px'
-                  }}
-                  targetOrigin={{horizontal: 'right', vertical: 'top'}}
-                >
-                  <MenuItem
-                    onTouchTap={function () {
-                      props.onUpdateThisDocument(props.document);
-                    }}
-                    primaryText='Edit Document'
-                  />
-                  <MenuItem
-                    onTouchTap={function () {
-                      props.onDeleteDocument(props.document._id);
-                    }}
-                    primaryText='Delete Document'
-                  />
-                </IconMenu>
+                anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+                iconButtonElement={
+                  <IconButton><MoreVertIcon /></IconButton>
+                }
+                style={{
+                  position: 'absolute',
+                  right: '4px'
+                }}
+                targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+              >
+                <MenuItem
+                  onTouchTap={() => props.onUpdateThisDocument(props.document)}
+                  primaryText='Edit Document'
+                />
+                <MenuItem
+                  onTouchTap={() => props.onDeleteDocument(props.document._id)}
+                  primaryText='Delete Document'
+                />
+              </IconMenu>
             : null
           }
         </CardHeader>
         <CardTitle
-          style={{'paddingTop': '0.5em'}}
+          style={{ paddingTop: '0.5em' }}
           subtitle={
             <span>
-              {updatedAt.toDateString()}, {updatedAt.toLocaleTimeString()} <br/>
-              <Chip content={props.document.role.title}/>
+              {updatedAt.toDateString()}, {updatedAt.toLocaleTimeString()} <br />
+              <Chip content={props.document.role.title} />
             </span>
           }
           title={props.document.title.length > 64 &&
@@ -125,29 +119,27 @@ const Document = (props) => {
         {(props.document.content.length > 250 ||
           props.document.title.length > 64) &&
           props.expandedDocId !== props.document._id
-          ? <CardText>
-              <span>{props.document.content.slice(0, 250)}</span><br/>
-              <IconButton
-                onClick={function () {
-                  props.onExpandChange(props.document._id);
-                }}
-                tooltip='View More'
-              >
-                <MoreHorizIcon/>
-              </IconButton>
-            </CardText>
-          : <CardText>
-              {props.document.content}
-            </CardText>
+        ?
+          <CardText>
+            <span>{props.document.content.slice(0, 250)}</span><br />
+            <IconButton
+              onClick={() => props.onExpandChange(props.document._id)}
+              tooltip='View More'
+            >
+              <MoreHorizIcon />
+            </IconButton>
+          </CardText>
+        :
+          <CardText>
+            {props.document.content}
+          </CardText>
         }
         <CardText expandable>
           <IconButton
-            onClick={function () {
-              props.onExpandChange();
-            }}
+            onClick={() => props.onExpandChange()}
             tooltip='View Less'
           >
-            <ExpandLess/>
+            <ExpandLess />
           </IconButton>
         </CardText>
       </Card>
@@ -160,6 +152,9 @@ Document.propTypes = {
     _id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
+    role: PropTypes.shape({
+      title: PropTypes.string.isRequired
+    }).isRequired,
     owner: PropTypes.shape({
       _id: PropTypes.string.isRequired,
       username: PropTypes.string.isRequired,

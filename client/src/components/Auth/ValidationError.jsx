@@ -5,10 +5,12 @@ const errorStyle = {
   color: 'red'
 };
 
-const ValidationError = (props) => {
-  return (
-    <span style={errorStyle}>{props.error}</span>
-  );
+const ValidationError = (props) => (
+  <span style={errorStyle}>{props.error}</span>
+);
+
+ValidationError.propTypes = {
+  error: React.PropTypes.string
 };
 
 export default ValidationError;

@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
@@ -19,11 +19,10 @@ const createButtonStyles = {
 };
 
 const CreateOrUpdateDocument = (props) => {
-  let hideComponent = (item) => {
-    return classNames({
-      hidden: true
-    });
-  };
+  const hideComponent = () => classNames({
+    hidden: true
+  });
+
   const actions = [
     <FlatButton
       key='Cancel'

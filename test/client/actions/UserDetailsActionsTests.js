@@ -1,17 +1,19 @@
 import Axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
-import {expect} from 'chai';
-import {Map} from 'immutable';
+import { expect } from 'chai';
+import { Map } from 'immutable';
 
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 
 import * as actionTypes from '../../../client/src/constants';
+/* eslint-disable no-duplicate-imports,import/no-duplicates */
 import * as userActions from '../../../client/src/actions/UserDetailsActions';
-// eslint-disable-next-line
 import {
   __RewireAPI__ as userActionsRewireAPI
 } from '../../../client/src/actions/UserDetailsActions';
+/* eslint-enable no-duplicate-imports,import/no-duplicates */
+
 const TOKEN = 'test.auth.token';
 
 // Set up mocks for async actions
@@ -21,7 +23,7 @@ const mockStore = configureMockStore(middlewares);
 // Mock an axios instance to use in the tests and then rewire the imported
 // modules to use the instance with the mocked handler. Also rewire
 // `getAuthToken` to avoid accessing `window.localStorage`.
-let axiosInstance = Axios.create();
+const axiosInstance = Axios.create();
 const mockAxios = new AxiosMockAdapter(axiosInstance);
 userActionsRewireAPI.__Rewire__('Axios', axiosInstance);
 userActionsRewireAPI.__Rewire__('getAuthToken', () => TOKEN);
@@ -50,7 +52,7 @@ describe('UserDetailsActions', () => {
       user: userData
     }];
     const store = mockStore();
-    store.dispatch(userActions.fetchUserDetailsSuccess({data: userData}));
+    store.dispatch(userActions.fetchUserDetailsSuccess({ data: userData }));
     expect(store.getActions()).to.eql(expectedAction);
   });
 
@@ -159,33 +161,35 @@ describe('UserDetailsActions', () => {
       expect(store.getActions()).to.eql(expectedAction);
     });
 
-    it('creates FETCH_USER_DETAILS_ERROR and LOGOUT_REQUEST actions if server responds with a 401', () => {
-      const error = {
-        data: {
-          message: 'Unauthorized.'
-        }
-      };
+    it('creates FETCH_USER_DETAILS_ERROR and LOGOUT_REQUEST actions if ' +
+      'server responds with a 401',
+      () => {
+        const error = {
+          data: {
+            message: 'Unauthorized.'
+          }
+        };
 
-      mockAxios
-        .onGet(/api\/users\/.*/)
-        .reply(401, error.data);
+        mockAxios
+          .onGet(/api\/users\/.*/)
+          .reply(401, error.data);
 
-      const expectedActions = [{
-        type: actionTypes.FETCH_USER_DETAILS_REQUEST
-      }, {
-        type: actionTypes.FETCH_USER_DETAILS_ERROR,
-        authError: true,
-        error: error.data
-      }, {
-        type: actionTypes.LOGOUT_REQUEST
-      }];
+        const expectedActions = [{
+          type: actionTypes.FETCH_USER_DETAILS_REQUEST
+        }, {
+          type: actionTypes.FETCH_USER_DETAILS_ERROR,
+          authError: true,
+          error: error.data
+        }, {
+          type: actionTypes.LOGOUT_REQUEST
+        }];
 
-      const store = mockStore();
-      return store.dispatch(userActions.loadUserDetails())
-        .then(() => {
-          expect(store.getActions()).to.eql(expectedActions);
-        });
-    });
+        const store = mockStore();
+        return store.dispatch(userActions.loadUserDetails())
+          .then(() => {
+            expect(store.getActions()).to.eql(expectedActions);
+          });
+      });
 
     it('creates FETCH_USER_DETAILS_ERROR on fetch user details failure', () => {
       const error = {
@@ -230,7 +234,7 @@ describe('UserDetailsActions', () => {
       user: userData
     }];
     const store = mockStore();
-    store.dispatch(userActions.userDetailsUpdateSuccess({data: userData}));
+    store.dispatch(userActions.userDetailsUpdateSuccess({ data: userData }));
     expect(store.getActions()).to.eql(expectedAction);
   });
 
@@ -248,15 +252,13 @@ describe('UserDetailsActions', () => {
   });
 
   describe('.updateUserDetails()', () => {
-    const getState = () => {
-      return Map({
-        auth: Map({
-          user: Map({
-            _id: 'testID123'
-          })
+    const getState = () => Map({
+      auth: Map({
+        user: Map({
+          _id: 'testID123'
         })
-      });
-    };
+      })
+    });
 
     afterEach(() => {
       mockAxios.reset();
@@ -355,7 +357,7 @@ describe('UserDetailsActions', () => {
       documents
     }];
     const store = mockStore();
-    store.dispatch(userActions.userDocumentsFetchSuccess({data: documents}));
+    store.dispatch(userActions.userDocumentsFetchSuccess({ data: documents }));
     expect(store.getActions()).to.eql(expectedAction);
   });
 
@@ -448,7 +450,7 @@ describe('UserDetailsActions', () => {
     }];
     const store = mockStore();
     store.dispatch(
-      userActions.fetchAnotherUsersProfileSuccess({data: profileData}));
+      userActions.fetchAnotherUsersProfileSuccess({ data: profileData }));
     expect(store.getActions()).to.eql(expectedAction);
   });
 

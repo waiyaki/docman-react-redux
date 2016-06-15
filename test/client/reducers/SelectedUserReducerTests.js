@@ -1,15 +1,15 @@
-import {Map, List} from 'immutable';
-import {expect} from 'chai';
+import { Map, List } from 'immutable';
+import { expect } from 'chai';
 
 import * as actionTypes from '../../../client/src/constants';
 
-import SelectedUserReducer, {
+import selectedUserReducer, {
   INITIAL_SELECTED_USER_STATE
 } from '../../../client/src/reducers/SelectedUserReducer';
 
 describe('Selected User Reducer', () => {
   it('should return the initial state', () => {
-    expect(SelectedUserReducer(undefined, {}))
+    expect(selectedUserReducer(undefined, {}))
       .to.eql(INITIAL_SELECTED_USER_STATE);
   });
 
@@ -19,8 +19,8 @@ describe('Selected User Reducer', () => {
       username: 'test'
     };
 
-    expect(SelectedUserReducer(Map(), action))
-      .to.eql(INITIAL_SELECTED_USER_STATE.merge({username: action.username}));
+    expect(selectedUserReducer(Map(), action))
+      .to.eql(INITIAL_SELECTED_USER_STATE.merge({ username: action.username }));
   });
 
   it('should handle FETCH_ANOTHER_USERS_PROFILE_SUCCESS', () => {
@@ -34,7 +34,7 @@ describe('Selected User Reducer', () => {
       }
     };
 
-    expect(SelectedUserReducer(state, action)).to.eql(Map({
+    expect(selectedUserReducer(state, action)).to.eql(Map({
       profile: Map({
         isFetchingProfile: false,
         user: Map({
@@ -55,7 +55,7 @@ describe('Selected User Reducer', () => {
       }
     };
 
-    expect(SelectedUserReducer(state, action)).to.eql(Map({
+    expect(selectedUserReducer(state, action)).to.eql(Map({
       profile: Map({
         isFetchingProfile: false,
         profileFetchError: Map({
@@ -73,7 +73,7 @@ describe('Selected User Reducer', () => {
       type: actionTypes.USER_DOCUMENTS_FETCH_REQUEST
     };
 
-    expect(SelectedUserReducer(state, action)).to.eql(Map({
+    expect(selectedUserReducer(state, action)).to.eql(Map({
       docs: Map({
         isFetching: true
       })
@@ -89,7 +89,7 @@ describe('Selected User Reducer', () => {
       documents: 'Dummy dummy documents'.split()
     };
 
-    expect(SelectedUserReducer(state, action)).to.eql(Map({
+    expect(selectedUserReducer(state, action)).to.eql(Map({
       docs: Map({
         isFetching: false,
         documents: List(action.documents)
@@ -108,7 +108,7 @@ describe('Selected User Reducer', () => {
       }
     };
 
-    expect(SelectedUserReducer(state, action)).to.eql(Map({
+    expect(selectedUserReducer(state, action)).to.eql(Map({
       docs: Map({
         isFetching: false,
         documentsFetchError: Map({

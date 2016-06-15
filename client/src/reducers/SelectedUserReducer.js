@@ -1,4 +1,4 @@
-import {List, Map, fromJS} from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
 
@@ -52,7 +52,7 @@ export default function (state = INITIAL_SELECTED_USER_STATE, action) {
         documentsFetchError: fromJS(action.error)
       }));
 
-    case actionTypes.USER_DETAILS_UPDATE_SUCCESS:
+    case actionTypes.USER_DETAILS_UPDATE_SUCCESS: {
       const selectedUser = state.getIn(['profile', 'user']).toJS();
       if (selectedUser._id === action.user._id) {
         return state.mergeIn(['profile'], Map({
@@ -61,6 +61,7 @@ export default function (state = INITIAL_SELECTED_USER_STATE, action) {
       }
 
       return state;
+    }
 
     default:
       return state;

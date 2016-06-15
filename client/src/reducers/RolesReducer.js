@@ -1,4 +1,4 @@
-import {List, Map, fromJS} from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
 

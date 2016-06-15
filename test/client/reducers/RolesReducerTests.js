@@ -1,15 +1,15 @@
-import {Map, List} from 'immutable';
-import {expect} from 'chai';
+import { Map, List } from 'immutable';
+import { expect } from 'chai';
 
 import * as actionTypes from '../../../client/src/constants';
 
-import RolesReducer, {
+import rolesReducer, {
   INITIAL_ROLES_STATE
 } from '../../../client/src/reducers/RolesReducer';
 
 describe('Roles Reducer', () => {
   it('should return the initial state', () => {
-    expect(RolesReducer(undefined, {})).to.eql(INITIAL_ROLES_STATE);
+    expect(rolesReducer(undefined, {})).to.eql(INITIAL_ROLES_STATE);
   });
 
   it('should handle FETCH_ROLES_REQUEST', () => {
@@ -17,7 +17,7 @@ describe('Roles Reducer', () => {
     const action = {
       type: actionTypes.FETCH_ROLES_REQUEST
     };
-    expect(RolesReducer(state, action)).to.eql(Map({isFetching: true}));
+    expect(rolesReducer(state, action)).to.eql(Map({ isFetching: true }));
   });
 
   it('should handle FETCH_ROLES_SUCCESS', () => {
@@ -27,7 +27,7 @@ describe('Roles Reducer', () => {
       roles: 'these are some roles'.split()
     };
 
-    expect(RolesReducer(state, action)).to.eql(Map({
+    expect(rolesReducer(state, action)).to.eql(Map({
       isFetching: false,
       roles: List(action.roles)
     }));
@@ -42,7 +42,7 @@ describe('Roles Reducer', () => {
       }
     };
 
-    expect(RolesReducer(state, action)).to.eql(Map({
+    expect(rolesReducer(state, action)).to.eql(Map({
       isFetching: false,
       rolesFetchError: Map({
         message: 'Bad Request'
@@ -56,6 +56,6 @@ describe('Roles Reducer', () => {
       type: actionTypes.LOGOUT_REQUEST
     };
 
-    expect(RolesReducer(state, action)).to.eql(INITIAL_ROLES_STATE);
+    expect(rolesReducer(state, action)).to.eql(INITIAL_ROLES_STATE);
   });
 });

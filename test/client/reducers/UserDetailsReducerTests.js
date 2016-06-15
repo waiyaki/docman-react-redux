@@ -1,15 +1,15 @@
-import {Map, fromJS} from 'immutable';
-import {expect} from 'chai';
+import { Map, fromJS } from 'immutable';
+import { expect } from 'chai';
 
 import * as actionTypes from '../../../client/src/constants';
 
-import UserDetailsReducer, {
+import userDetailsReducer, {
   INITIAL_USER_DETAILS_STATE
 } from '../../../client/src/reducers/UserDetailsReducer';
 
 describe('User Details Reducer', () => {
   it('should return the initial state', () => {
-    expect(UserDetailsReducer(undefined, {}))
+    expect(userDetailsReducer(undefined, {}))
       .to.eql(INITIAL_USER_DETAILS_STATE);
   });
 
@@ -19,7 +19,7 @@ describe('User Details Reducer', () => {
       type: actionTypes.FETCH_USER_DETAILS_REQUEST
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       isFetching: true
     }));
   });
@@ -33,7 +33,7 @@ describe('User Details Reducer', () => {
       }
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       isFetching: false,
       user: Map({
         username: 'test'
@@ -50,7 +50,7 @@ describe('User Details Reducer', () => {
       }
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       isFetching: false,
       fetchError: fromJS(action.error)
     }));
@@ -62,7 +62,7 @@ describe('User Details Reducer', () => {
       authError: true
     };
 
-    expect(UserDetailsReducer(Map(), action))
+    expect(userDetailsReducer(Map(), action))
       .to.eql(INITIAL_USER_DETAILS_STATE);
   });
 
@@ -75,7 +75,7 @@ describe('User Details Reducer', () => {
       }
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       isFetching: true,
       updatedUser: fromJS(action.updatedUser)
     }));
@@ -90,7 +90,7 @@ describe('User Details Reducer', () => {
       }
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       isFetching: false,
       isShowingUpdate: false,
       updatedUser: fromJS(action.user),
@@ -104,14 +104,14 @@ describe('User Details Reducer', () => {
       error: 'Meh'
     };
 
-    expect(UserDetailsReducer(Map(), action)).to.eql(Map({
+    expect(userDetailsReducer(Map(), action)).to.eql(Map({
       isFetching: false,
       userUpdateError: 'Meh'
     }));
   });
 
   it('should handle LOGOUT_REQUEST', () => {
-    expect(UserDetailsReducer(Map(), {type: actionTypes.LOGOUT_REQUEST}))
+    expect(userDetailsReducer(Map(), { type: actionTypes.LOGOUT_REQUEST }))
       .to.eql(INITIAL_USER_DETAILS_STATE);
   });
 
@@ -123,7 +123,7 @@ describe('User Details Reducer', () => {
       type: actionTypes.TOGGLE_SHOW_USER_UPDATE_VIEW
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       isShowingUpdate: true,
       userUpdateError: null,
       validations: Map({
@@ -141,7 +141,7 @@ describe('User Details Reducer', () => {
       }
     };
 
-    expect(UserDetailsReducer(Map(), action)).to.eql(Map({
+    expect(userDetailsReducer(Map(), action)).to.eql(Map({
       updatedUser: fromJS(action.updatedUser)
     }));
   });
@@ -160,7 +160,7 @@ describe('User Details Reducer', () => {
       field: 'email'
     };
 
-    expect(UserDetailsReducer(state, action)).to.eql(Map({
+    expect(userDetailsReducer(state, action)).to.eql(Map({
       updatedUser: Map({
         email: null
       }),

@@ -1,12 +1,8 @@
-(function () {
-  'use strict';
+const rolesController = require('../../controllers').rolesController;
 
-  var rolesController = require('../../controllers').rolesController;
-
-  module.exports = function (app) {
-    /**
-     * List all roles in the system..
-     */
-    app.get('/api/roles', rolesController.list);
-  };
-})();
+module.exports = (app) => {
+  /**
+   * List all roles in the system..
+   */
+  app.get('/api/roles', rolesController.list);
+};

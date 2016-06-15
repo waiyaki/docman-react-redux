@@ -4,9 +4,8 @@
     "node": true,
     "mocha": true
   },
-  "extends": "standard",
+  "extends": "airbnb",
   "plugins": [
-    "standard",
     "react"
   ],
   "rules": {
@@ -17,6 +16,27 @@
     "no-console": [
       "error"
     ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "no-underscore-dangle": [
+      "error",
+      { "allow": ["_id", "__Rewire__", "__ResetDependency__"] }
+    ],
+    "jsx-quotes": [
+      "error",
+      "prefer-single"
+    ],
+    "new-cap": [
+      "error",
+      { "capIsNewExceptions": ["Map", "List"] }
+    ],
+    "no-shadow": [
+      "error",
+      { "allow": ["done", "err"] }
+    ],
+    "no-unused-expressions": ["off"],
     "react/display-name": 0,
     "react/forbid-prop-types": 1,
     "react/jsx-boolean-value": 1,
@@ -30,7 +50,7 @@
     "react/jsx-no-literals": 0,
     "react/jsx-no-undef": 1,
     "react/jsx-pascal-case": 1,
-    "react/jsx-sort-prop-types": 1,
+    "react/sort-prop-types": 1,
     "react/jsx-sort-props": 1,
     "react/jsx-uses-react": 1,
     "react/jsx-uses-vars": 1,

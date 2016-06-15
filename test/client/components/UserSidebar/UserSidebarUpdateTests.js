@@ -1,6 +1,6 @@
 import React from 'react';
-import {shallowWithContext} from '../utils';
-import {expect} from 'chai';
+import { shallowWithContext } from '../utils';
+import { expect } from 'chai';
 import sinon from 'sinon';
 
 import UserSideBarUpdate from '../../../../client/src/components/UserSidebar/UserProfileUpdate';
@@ -66,7 +66,7 @@ describe('UserSideBarUpdate', () => {
     const handleFieldUpdate = sinon.spy();
     const wrapper = shallowWithContext(<UserSideBarUpdate {...props} />);
     wrapper.setProps({
-      handleFieldUpdate: handleFieldUpdate
+      handleFieldUpdate
     });
     const textField = wrapper.find('TextField').last();
     textField.simulate('change');
@@ -99,7 +99,7 @@ describe('UserSideBarUpdate', () => {
     const handleProfileUpdate = sinon.spy();
     const wrapper = shallowWithContext(<UserSideBarUpdate {...props} />);
     wrapper.setProps({
-      handleProfileUpdate: handleProfileUpdate,
+      handleProfileUpdate,
       userDetails: {
         updatedUser: {},
         user: {
@@ -121,7 +121,7 @@ describe('UserSideBarUpdate', () => {
     const handleToggleShowUpdate = sinon.spy();
     const wrapper = shallowWithContext(<UserSideBarUpdate {...props} />);
     wrapper.setProps({
-      handleToggleShowUpdate: handleToggleShowUpdate,
+      handleToggleShowUpdate,
       userDetails: {
         updatedUser: {},
         user: {

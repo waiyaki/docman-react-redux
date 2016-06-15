@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 import CircularProgress from 'material-ui/CircularProgress';
 
@@ -7,40 +7,40 @@ import UserSideBarContainer from '../../containers/UserSideBar/UserSideBarContai
 import UserSidebarLoading from '../UserSidebar/UserSidebarLoading';
 import DocumentsContainer from '../../containers/Documents/DocumentsContainer';
 
-const ProfilePage = (props) => {
-  return (
-    <div className='main-application__body'>
-      <MainAppNavBarContainer />
-      <div className='main-application__content margin-gt-md'>
-        <div className='row'>
-          <div className='col-xs-12 col-sm-4 col-lg-3'>
+const ProfilePage = (props) => (
+  <div className='main-application__body'>
+    <MainAppNavBarContainer />
+    <div className='main-application__content margin-gt-md'>
+      <div className='row'>
+        <div className='col-xs-12 col-sm-4 col-lg-3'>
+          {props.selectedUser.profile.isFetchingProfile
+          ?
+            <UserSidebarLoading />
+          :
+            <UserSideBarContainer
+              selectedUser={props.selectedUser.profile.user}
+            />
+          }
+        </div>
+        <div className='col-xs-12 col-sm-8 col-lg-9'>
+          <div className='profile-header' zDepth={0}>
             {props.selectedUser.profile.isFetchingProfile
-              ? <UserSidebarLoading />
-              : <UserSideBarContainer
-                  selectedUser={props.selectedUser.profile.user}
-                />
+              ? <CircularProgress size={0.5} />
+            : `${props.selectedUser.profile.user
+                  ? props.selectedUser.profile.user.username
+                  : props.selectedUser.username
+                }'s Documents`
             }
           </div>
-          <div className='col-xs-12 col-sm-8 col-lg-9'>
-            <div className='profile-header' zDepth={0}>
-              {props.selectedUser.profile.isFetchingProfile
-                ? <CircularProgress size={0.5} />
-              : `${props.selectedUser.profile.user
-                    ? props.selectedUser.profile.user.username
-                    : props.selectedUser.username
-                  }'s Documents`
-              }
-            </div>
-            <DocumentsContainer
-              selectedUser={props.selectedUser.profile.user}
-              selectedUserDocuments={props.selectedUser.docs}
-            />
-          </div>
+          <DocumentsContainer
+            selectedUser={props.selectedUser.profile.user}
+            selectedUserDocuments={props.selectedUser.docs}
+          />
         </div>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 ProfilePage.propTypes = {
   selectedUser: PropTypes.shape({

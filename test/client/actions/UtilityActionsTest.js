@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import * as utilActions from '../../../client/src/actions/UtilityActions';
 import * as actionTypes from '../../../client/src/constants';

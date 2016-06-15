@@ -4,7 +4,7 @@
  * showing toast messages.
  */
 
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 
 import * as actionTypes from '../constants';
 

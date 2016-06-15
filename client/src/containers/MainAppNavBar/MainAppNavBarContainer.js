@@ -1,16 +1,16 @@
-import React, {PropTypes} from 'react';
-import {connect} from 'react-redux';
-import {Map} from 'immutable';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { Map } from 'immutable';
 
 import MainAppNavBar from '../../components/MainAppNavBar/MainAppNavBar';
 import NavigationDrawer from '../../components/MainAppNavBar/NavigationDrawer';
 
-import {logoutUser} from '../../actions/AuthActions';
-import {loadUserDetails} from '../../actions/UserDetailsActions';
-import {changeDocumentsFilter} from '../../actions/DocumentsActions';
+import { logoutUser } from '../../actions/AuthActions';
+import { loadUserDetails } from '../../actions/UserDetailsActions';
+import { changeDocumentsFilter } from '../../actions/DocumentsActions';
 
 class MainAppNavBarContainer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -23,15 +23,15 @@ class MainAppNavBarContainer extends React.Component {
     this.updateUserDetailsIfNeeded = this.updateUserDetailsIfNeeded.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.updateUserDetailsIfNeeded(this.props);
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.updateUserDetailsIfNeeded(nextProps);
   }
 
-  updateUserDetailsIfNeeded (props) {
+  updateUserDetailsIfNeeded(props) {
     // Fetch user details if we're authenticated and have no user details.
     // This happens when the user is coming back to the application and is
     // using a cached token.
@@ -41,21 +41,21 @@ class MainAppNavBarContainer extends React.Component {
     }
   }
 
-  handleLogout (event) {
+  handleLogout() {
     this.props.dispatch(logoutUser());
   }
 
-  handleFilterChange (event, value) {
+  handleFilterChange(event, value) {
     this.props.dispatch(changeDocumentsFilter(value));
   }
 
-  handleToggleDrawer () {
+  handleToggleDrawer() {
     this.setState({
       isDrawerOpen: !this.state.isDrawerOpen
     });
   }
 
-  render () {
+  render() {
     return (
       <span>
         <MainAppNavBar
@@ -79,28 +79,30 @@ class MainAppNavBarContainer extends React.Component {
 }
 
 MainAppNavBarContainer.propTypes = {
-  auth: function (props, propName, componentName) {
+  auth: (props, propName, componentName) => {
     if (!props[propName] instanceof Map) {
       return new Error(
         `Invalid prop ${propName} supplied to ${componentName}.` +
         'Expected `Immutable.Map`'
       );
     }
+    return undefined;
   },
   dispatch: PropTypes.func.isRequired,
-  userDetails: function (props, propName, componentName) {
+  userDetails: (props, propName, componentName) => {
     if (!props[propName] instanceof Map) {
       return new Error(
         `Invalid prop ${propName} supplied to ${componentName}.` +
         'Expected `Immutable.Map`'
       );
     }
+    return undefined;
   },
   visibleFilter: PropTypes.string.isRequired
 };
 
-function mapStateToProps (state) {
-  const {dispatch} = state;
+function mapStateToProps(state) {
+  const { dispatch } = state;
   const auth = state.get('auth');
   const userDetails = state.get('userDetails');
   const visibleFilter = state
@@ -111,6 +113,6 @@ function mapStateToProps (state) {
     userDetails,
     visibleFilter
   };
-};
+}
 
 export default connect(mapStateToProps)(MainAppNavBarContainer);

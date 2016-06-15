@@ -1,4 +1,4 @@
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 import Validator from 'validator';
 
 /**
@@ -21,15 +21,15 @@ export default function (state = Map(), action) {
   // the view we're currently validating.
   // We'll use the action.target for this.
   switch (action.type) {
-    case 'username':
-      let username = state.getIn([action.target, 'username']);
+    case 'username': {
+      const username = state.getIn([action.target, 'username']);
       if (!username) {
         newState = state.mergeDeep(Map({
           validations: Map({
             username: 'This field is required.'
           })
         }));
-      } else if (!Validator.isLength(username, {min: 3, max: 20})) {
+      } else if (!Validator.isLength(username, { min: 3, max: 20 })) {
         newState = state.mergeDeep(Map({
           validations: Map({
             username: 'Username should be between 3 and 20 characters.'
@@ -43,9 +43,10 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+    }
 
-    case 'email':
-      let email = state.getIn([action.target, 'email']);
+    case 'email': {
+      const email = state.getIn([action.target, 'email']);
       if (!email) {
         newState = state.mergeDeep(Map({
           validations: Map({
@@ -66,6 +67,7 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+    }
 
     /**
      * Validate password input.
@@ -73,7 +75,7 @@ export default function (state = Map(), action) {
      * The password is required for authentication functionality but it's
      * not required when updating a user's details.
      */
-    case 'password':
+    case 'password': {
       const password = state.getIn([action.target, 'password']);
       const password2 = state.getIn([action.target, 'confirmPassword']);
       if (!password && action.currentView === 'auth') {
@@ -82,13 +84,14 @@ export default function (state = Map(), action) {
             password: 'This field is required.'
           })
         }));
-      } else if (password && !Validator.isLength(password, {min: 6})) {
+      } else if (password && !Validator.isLength(password, { min: 6 })) {
         newState = state.mergeDeep(Map({
           validations: Map({
             password: 'Password should be 6 or more characters long.'
           })
         }));
-      } else if (password && password.length >= 6 && !password2 && action.currentView === 'userDetails') {
+      } else if (password && password.length >= 6 &&
+          !password2 && action.currentView === 'userDetails') {
         newState = state.mergeDeep(Map({
           validations: Map({
             confirmPassword: 'Please confirm your password',
@@ -113,6 +116,7 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+    }
 
     /**
      * Validate password confirmation input.
@@ -122,8 +126,8 @@ export default function (state = Map(), action) {
      * updating the password as well. Password update necessitates the
      * validation of the confirmPassword field.
      */
-    case 'confirmPassword':
-      let confirmPassword = state.getIn([action.target, 'confirmPassword']);
+    case 'confirmPassword': {
+      const confirmPassword = state.getIn([action.target, 'confirmPassword']);
       if (!confirmPassword && action.currentView === 'auth') {
         newState = state.mergeDeep(Map({
           validations: Map({
@@ -151,9 +155,10 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+    }
 
-    case 'title':
-      let title = state.getIn([action.target, 'title']);
+    case 'title': {
+      const title = state.getIn([action.target, 'title']);
       if (!title) {
         newState = state.mergeDeep(Map({
           validations: Map({
@@ -174,9 +179,10 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+    }
 
-    case 'content':
-      let content = state.getIn([action.target, 'content']);
+    case 'content': {
+      const content = state.getIn([action.target, 'content']);
       if (!content) {
         newState = state.mergeDeep(Map({
           validations: Map({
@@ -197,6 +203,10 @@ export default function (state = Map(), action) {
         }));
       }
       break;
+    }
+
+    default:
+      return newState;
   }
 
   /**
@@ -257,4 +267,4 @@ export default function (state = Map(), action) {
   }));
 
   return newState;
-};
+}

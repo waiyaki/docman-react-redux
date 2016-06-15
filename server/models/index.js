@@ -1,15 +1,7 @@
-(function () {
-  'use strict';
+const User = require('./users');
+const Role = require('./roles');
+const Document = require('./documents');
 
-  var User = require('./users');
-  var Role = require('./roles');
-  var Document = require('./documents');
+Role.initialize(); // Create default roles.
 
-  Role.initialize(); // Create default roles.
-
-  module.exports = {
-    Role: Role,
-    User: User,
-    Document: Document
-  };
-})();
+module.exports = { User, Role, Document };

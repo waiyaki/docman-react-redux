@@ -1,6 +1,6 @@
 import React from 'react';
-import {shallowWithContext} from '../utils';
-import {expect} from 'chai';
+import { shallowWithContext } from '../utils';
+import { expect } from 'chai';
 import sinon from 'sinon';
 
 import Document from '../../../../client/src/components/Documents/Document';
@@ -30,7 +30,13 @@ describe('Document', () => {
   it('renders a document', () => {
     const wrapper = shallowWithContext(<Document {...props} />);
     expect(wrapper.childAt(0).childAt(1).props().title).to.eql('Test');
-    expect(wrapper.childAt(0).childAt(2).childAt(0).text()).to.eql('test');
+    expect(
+      wrapper
+        .childAt(0)
+        .childAt(2)
+        .childAt(0)
+        .text()
+      ).to.eql('test');
   });
 
   it('allows document editing', () => {
@@ -38,7 +44,7 @@ describe('Document', () => {
     const wrapper = shallowWithContext(<Document {...props} />);
     wrapper.setProps({
       shouldWeAllowEditDocument: true,
-      onUpdateThisDocument: onUpdateThisDocument
+      onUpdateThisDocument
     });
     const IconMenu = wrapper.childAt(0).childAt(0).childAt(0);
     expect(IconMenu.is('IconMenu')).to.be.true;
@@ -52,7 +58,7 @@ describe('Document', () => {
     const wrapper = shallowWithContext(<Document {...props} />);
     wrapper.setProps({
       shouldWeAllowEditDocument: true,
-      onDeleteDocument: onDeleteDocument
+      onDeleteDocument
     });
     const IconMenu = wrapper.childAt(0).childAt(0).childAt(0);
     expect(IconMenu.is('IconMenu')).to.be.true;
@@ -73,7 +79,12 @@ describe('Document', () => {
         }
       }
     });
-    expect(wrapper.childAt(0).childAt(0).childAt(0).is('CircularProgress'))
-      .to.be.true;
+    expect(
+      wrapper
+        .childAt(0)
+        .childAt(0)
+        .childAt(0)
+        .is('CircularProgress')
+      ).to.be.true;
   });
 });

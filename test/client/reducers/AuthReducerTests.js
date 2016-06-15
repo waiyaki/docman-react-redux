@@ -1,15 +1,15 @@
-import {Map, fromJS} from 'immutable';
-import {expect} from 'chai';
+import { Map, fromJS } from 'immutable';
+import { expect } from 'chai';
 
 import * as actionTypes from '../../../client/src/constants';
 
-import AuthReducer, {
+import authReducer, {
   INITIAL_AUTH_STATE
 } from '../../../client/src/reducers/AuthReducer';
 
 describe('Auth Reducer', () => {
   it('returns the initial state', () => {
-    expect(AuthReducer(undefined, {})).to.eql(INITIAL_AUTH_STATE);
+    expect(authReducer(undefined, {})).to.eql(INITIAL_AUTH_STATE);
   });
 
   it('handles LOGIN_REQUEST', () => {
@@ -21,7 +21,7 @@ describe('Auth Reducer', () => {
       }
     };
 
-    expect(AuthReducer(Map(), action)).to.eql(Map({
+    expect(authReducer(Map(), action)).to.eql(Map({
       isFetching: true,
       credentials: fromJS(action.credentials)
     }));
@@ -35,7 +35,7 @@ describe('Auth Reducer', () => {
         password: 'secret'
       }
     };
-    expect(AuthReducer(Map(), action)).to.eql(Map({
+    expect(authReducer(Map(), action)).to.eql(Map({
       isFetching: true,
       credentials: fromJS(action.credentials)
     }));
@@ -49,7 +49,7 @@ describe('Auth Reducer', () => {
       }
     };
 
-    expect(AuthReducer(INITIAL_AUTH_STATE, action))
+    expect(authReducer(INITIAL_AUTH_STATE, action))
       .to.eql(INITIAL_AUTH_STATE.merge(Map({
         isAuthenticated: true,
         user: Map({
@@ -66,7 +66,7 @@ describe('Auth Reducer', () => {
       }
     };
 
-    expect(AuthReducer(INITIAL_AUTH_STATE, action))
+    expect(authReducer(INITIAL_AUTH_STATE, action))
       .to.eql(INITIAL_AUTH_STATE.merge(Map({
         isAuthenticated: true,
         user: Map({
@@ -81,7 +81,7 @@ describe('Auth Reducer', () => {
       error: 'Invalid credentials'
     };
 
-    expect(AuthReducer(Map(), action)).to.eql(Map({
+    expect(authReducer(Map(), action)).to.eql(Map({
       isAuthenticated: false,
       isFetching: false,
       error: 'Invalid credentials',
@@ -95,7 +95,7 @@ describe('Auth Reducer', () => {
       error: 'Invalid credentials'
     };
 
-    expect(AuthReducer(Map(), action)).to.eql(Map({
+    expect(authReducer(Map(), action)).to.eql(Map({
       isAuthenticated: false,
       isFetching: false,
       error: 'Invalid credentials',
@@ -104,7 +104,7 @@ describe('Auth Reducer', () => {
   });
 
   it('handles LOGOUT_REQUEST', () => {
-    expect(AuthReducer(undefined, {type: actionTypes.LOGOUT_REQUEST}))
+    expect(authReducer(undefined, { type: actionTypes.LOGOUT_REQUEST }))
     .to.eql(INITIAL_AUTH_STATE.merge({
       isAuthenticated: false
     }));
@@ -118,7 +118,7 @@ describe('Auth Reducer', () => {
       }
     };
 
-    expect(AuthReducer(Map(), action)).to.eql(Map({
+    expect(authReducer(Map(), action)).to.eql(Map({
       credentials: Map({
         username: 'test'
       })
@@ -139,7 +139,7 @@ describe('Auth Reducer', () => {
       field: 'username'
     };
 
-    expect(AuthReducer(state, action)).to.eql(Map({
+    expect(authReducer(state, action)).to.eql(Map({
       credentials: Map({
         username: null
       }),
@@ -158,7 +158,7 @@ describe('Auth Reducer', () => {
       type: actionTypes.TOGGLE_LOGIN_VIEW
     };
 
-    expect(AuthReducer(state, action)).to.eql(Map({
+    expect(authReducer(state, action)).to.eql(Map({
       isShowingLogin: true,
       error: null,
       validations: Map({
@@ -175,7 +175,7 @@ describe('Auth Reducer', () => {
       }
     };
 
-    expect(AuthReducer(Map(), action)).to.eql(Map({
+    expect(authReducer(Map(), action)).to.eql(Map({
       user: action.user
     }));
   });

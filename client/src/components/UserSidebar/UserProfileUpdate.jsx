@@ -1,9 +1,9 @@
 import md5 from 'blueimp-md5';
 import classNames from 'classnames';
 
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
-import {Card, CardActions, CardHeader, CardText, CardTitle} from 'material-ui/Card';
+import { Card, CardActions, CardHeader, CardText, CardTitle } from 'material-ui/Card';
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -15,26 +15,24 @@ const UserSideBarUpdate = (props) => {
   const userGravatar =
     `https://www.gravatar.com/avatar/${user ? md5(user.email) : ''}?d=identicon`;
 
-  let hideComponent = (item) => {
-    return classNames({
-      hidden: props.userDetails.validations[item]
-    });
-  };
+  const hideComponent = (item) => classNames({
+    hidden: props.userDetails.validations[item]
+  });
 
   return (
     <div className='sidebar'>
       <Card className='sidebar-card' zDepth={3}>
         <CardHeader
-          avatar={userGravatar + '&s=40'}
+          avatar={`${userGravatar}&s=40`}
           subtitle={user && user.role ? user.role.title : ''}
           title={user.name
-            ? `${user.name.firstName + ' ' + user.name.lastName}`
+            ? `${user.name.firstName} ${user.name.lastName}`
             : user.username
           }
         />
         <CardTitle
           subtitle={user ? user.email : ''}
-          title={`${user ? user.username + ' - ' : ''}Profile Update`}
+          title={`${user ? user.username + ' - ' : ''}Profile Update`} // eslint-disable-line
         />
         <CardText className='center'>
           <div>
@@ -133,27 +131,29 @@ const UserSideBarUpdate = (props) => {
           </div>
         </CardText>
         {props.userDetails.isFetching
-          ? <div className='center'><CircularProgress size={0.5}/></div>
-          : <CardActions className='center'>
-              {props.errors
-                ? props.errors.map(item => (
-                  <p key={item}>
-                    <ValidationError error={item} />
-                  </p>
-                ))
-                : null
-              }
-              <RaisedButton
-                disabled={!props.userDetails.validations.isValid}
-                label='Update'
-                onClick={props.handleProfileUpdate}
-                primary
-              />
-              <RaisedButton
-                label='Cancel'
-                onClick={props.handleToggleShowUpdate}
-              />
-            </CardActions>
+        ?
+          <div className='center'><CircularProgress size={0.5} /></div>
+        :
+          <CardActions className='center'>
+            {props.errors
+              ? props.errors.map(item => (
+                <p key={item}>
+                  <ValidationError error={item} />
+                </p>
+              ))
+              : null
+            }
+            <RaisedButton
+              disabled={!props.userDetails.validations.isValid}
+              label='Update'
+              onClick={props.handleProfileUpdate}
+              primary
+            />
+            <RaisedButton
+              label='Cancel'
+              onClick={props.handleToggleShowUpdate}
+            />
+          </CardActions>
         }
       </Card>
     </div>

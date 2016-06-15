@@ -1,17 +1,17 @@
-import {Map} from 'immutable';
+import { Map } from 'immutable';
 
-import React, {PropTypes} from 'react';
-import {connect} from 'react-redux';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import {
   toggleShowUserUpdateView, userDetailsFieldUpdate, updateUserDetails
 } from '../../actions/UserDetailsActions';
-import {validateUserDetailsField} from '../../actions/ValidationActions';
+import { validateUserDetailsField } from '../../actions/ValidationActions';
 import UserSideBar from '../../components/UserSidebar/UserSidebar';
 import UserSideBarUpdate from '../../components/UserSidebar/UserProfileUpdate';
 
 class UserSideBarContainer extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.onFieldUpdate = this.onFieldUpdate.bind(this);
@@ -19,7 +19,7 @@ class UserSideBarContainer extends React.Component {
     this.onToggleShowUpdateView = this.onToggleShowUpdateView.bind(this);
   }
 
-  onFieldUpdate (event) {
+  onFieldUpdate(event) {
     event.preventDefault();
     let updatedUser = this.props.userDetails.get('updatedUser');
     updatedUser = updatedUser.set(event.target.name, event.target.value);
@@ -27,7 +27,7 @@ class UserSideBarContainer extends React.Component {
     this.props.dispatch(validateUserDetailsField(event.target.name));
   }
 
-  onSubmit () {
+  onSubmit() {
     this.props.dispatch(
       updateUserDetails(this.props.userDetails.get('updatedUser').toJS()));
   }
@@ -35,36 +35,38 @@ class UserSideBarContainer extends React.Component {
   /**
    * Toggle between showing the user details view and update user details view.
    */
-  onToggleShowUpdateView () {
+  onToggleShowUpdateView() {
     this.props.dispatch(toggleShowUserUpdateView());
   }
 
-  render () {
+  render() {
     // Render the sidebar with the user we got as props from the mounting
     // component, else use the user we've requested for from the state.
     return (
       this.props.userDetails.get('isShowingUpdate') && !this.props.selectedUser
-        ? <UserSideBarUpdate
-            handleFieldUpdate={this.onFieldUpdate}
-            handleProfileUpdate={this.onSubmit}
-            handleToggleShowUpdate={this.onToggleShowUpdateView}
-            userDetails={this.props.userDetails.toJS()}
-          />
-        : <UserSideBar
-            handleToggleShowUpdate={this.onToggleShowUpdateView}
-            isOwnProfile={this.props.selectedUser
+      ?
+        <UserSideBarUpdate
+          handleFieldUpdate={this.onFieldUpdate}
+          handleProfileUpdate={this.onSubmit}
+          handleToggleShowUpdate={this.onToggleShowUpdateView}
+          userDetails={this.props.userDetails.toJS()}
+        />
+      :
+        <UserSideBar
+          handleToggleShowUpdate={this.onToggleShowUpdateView}
+          isOwnProfile={this.props.selectedUser
               ? this.props.selectedUser.username === this.props.userDetails
                   .getIn(['user', 'username'])
               : true
             }
-            userDetails={this.props.selectedUser
-              ? {user: this.props.selectedUser}
+          userDetails={this.props.selectedUser
+              ? { user: this.props.selectedUser }
               : this.props.userDetails.toJS()
             }
-          />
+        />
     );
   }
-};
+}
 
 UserSideBarContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
@@ -75,18 +77,19 @@ UserSideBarContainer.propTypes = {
       title: PropTypes.string
     })
   }),
-  userDetails: function (props, propName, componentName) {
+  userDetails: (props, propName, componentName) => {
     if (!props[propName] instanceof Map) {
       return new Error(
         `Invalid prop ${propName} supplied to ${componentName}.` +
         'Expected `Immutable.Map`'
       );
     }
+    return undefined;
   }
 };
 
-function mapStateToProps (state) {
-  const {dispatch} = state;
+function mapStateToProps(state) {
+  const { dispatch } = state;
   const userDetails = state.get('userDetails');
 
   return {

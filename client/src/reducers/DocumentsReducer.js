@@ -1,7 +1,7 @@
-import {List, Map, fromJS} from 'immutable';
+import { List, Map, fromJS } from 'immutable';
 
 import * as actionTypes from '../constants';
-import FieldsValidationReducer from './FieldsValidationReducer';
+import fieldsValidationReducer from './FieldsValidationReducer';
 
 export const INITIAL_DOCUMENTS_STATE = Map({
   documents: List(),
@@ -86,10 +86,10 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
       if (action.own) {
         const optimisticDocIndex = state
           .get('documents')
-          .findIndex((doc) => {
-            return doc.get('_id') === state.getIn(
-              ['documentCrudOptions', 'documentContent', '_id']);
-          });
+          .findIndex(
+            (doc) => doc.get('_id') === state.getIn(
+              ['documentCrudOptions', 'documentContent', '_id'])
+          );
         return state.merge(Map({
           documents: state.get('documents')
             .splice(optimisticDocIndex, 1, fromJS(action.documentContent)),
@@ -149,8 +149,8 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * Filter out the document to update and replace it
      * with the updated document.
      */
-    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
-      let documents = state.get('documents');
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS: {
+      const documents = state.get('documents');
       return state.merge(Map({
         documents: documents.map((doc) => {
           if (doc.get('_id') === action.document._id) {
@@ -160,6 +160,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         }),
         documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
       }));
+    }
 
     // TODO: If we add optimistic update, remember to roll that back here. 😰
     case actionTypes.DOCUMENT_UPDATE_FAILURE:
@@ -184,7 +185,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * If we have access to the document but didn't have it in state, insert it
      * as the first document.
      */
-    case actionTypes.DOCUMENT_ROLE_UPDATE:
+    case actionTypes.DOCUMENT_ROLE_UPDATE: {
       const cachedDocIndex = state
         .get('documents')
         .findIndex((doc) => doc.get('_id') === action.document._id);
@@ -210,12 +211,13 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         }));
       }
       return state;
+    }
 
     /**
      * Set the document that we're updating as well as
      * show or hide the create/update document modal.
      */
-    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE: {
       // Hide or show the document create/update modal.
       const newState = state.mergeDeepIn(['documentCrudOptions'], Map({
         documentContent: fromJS(action.document),
@@ -241,6 +243,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
         );
       }
       return newState;
+    }
 
     /**
      * Perform a document deletion.
@@ -248,13 +251,13 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * Make an optimistic deletion, but cache the deleted document together
      * with it's index so we can roll back if the server errors.
      */
-    case actionTypes.DELETE_DOCUMENT_REQUEST:
+    case actionTypes.DELETE_DOCUMENT_REQUEST: {
       let deletedDocument;
       return state.merge(Map({
         documents: state.get('documents').filter((doc, index) => {
           if (doc.get('_id') === action.documentId) {
             deletedDocument = Map({
-              index: index,
+              index,
               item: doc
             });
             return false;
@@ -262,9 +265,10 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
           return true;
         }),
         documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
-          deletedDocument: deletedDocument
+          deletedDocument
         }))
       }));
+    }
 
     /**
      * Remove the cached deleted document if the deletion was successful
@@ -288,8 +292,8 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * Roll back the optimistic update we made when requesting for a document
      * deletion and insert that document back into the documents list.
      */
-    case actionTypes.DELETE_DOCUMENT_FAILURE:
-      let delDocument = state.getIn(
+    case actionTypes.DELETE_DOCUMENT_FAILURE: {
+      const delDocument = state.getIn(
         ['documentCrudOptions', 'deletedDocument']).toJS();
 
       return state.merge(Map({
@@ -301,6 +305,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
           crudError: fromJS(action.error)
         }))
       }));
+    }
 
     /**
      * Validate the fields entered by the user when they're creating a new
@@ -309,7 +314,7 @@ export default function (state = INITIAL_DOCUMENTS_STATE, action) {
      * that we're validating new document fields.
      */
     case actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS:
-      return state.mergeDeepIn(['documentCrudOptions'], FieldsValidationReducer(
+      return state.mergeDeepIn(['documentCrudOptions'], fieldsValidationReducer(
         state.get('documentCrudOptions'), {
           type: action.field,
           target: 'documentContent',

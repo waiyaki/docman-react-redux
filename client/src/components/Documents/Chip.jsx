@@ -1,4 +1,4 @@
-import React, {PropTypes} from 'react';
+import React, { PropTypes } from 'react';
 
 const chipStyles = {
   display: 'inline-block',
@@ -11,13 +11,11 @@ const chipStyles = {
   borderRadius: '3rem'
 };
 
-const Chip = (props) => {
-  return (
-    <div style={chipStyles}>
-      {props.content}
-    </div>
-  );
-};
+const Chip = (props) => (
+  <div style={chipStyles}>
+    {props.content}
+  </div>
+);
 
 Chip.propTypes = {
   content: PropTypes.string.isRequired

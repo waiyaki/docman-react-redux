@@ -1,44 +1,31 @@
 import React from 'react';
-import {connect} from 'react-redux';
-import {Map} from 'immutable';
+import { connect } from 'react-redux';
+import { Map } from 'immutable';
 
 import Home from '../../components/Home/Home.jsx';
 
-class HomeContainer extends React.Component {
-  render () {
-    return (
-      <Home userDetails={this.props.userDetails.toJS()}/>
-    );
-  }
-}
+const HomeContainer = (props) => (
+  <Home userDetails={props.userDetails.toJS()} />
+);
 
 HomeContainer.propTypes = {
-  auth: function (props, propName, componentName) {
+  userDetails: (props, propName, componentName) => {
     if (!props[propName] instanceof Map) {
       return new Error(
         `Invalid prop ${propName} supplied to ${componentName}.` +
         'Expected `Immutable.Map`'
       );
     }
-  },
-  userDetails: function (props, propName, componentName) {
-    if (!props[propName] instanceof Map) {
-      return new Error(
-        `Invalid prop ${propName} supplied to ${componentName}.` +
-        'Expected `Immutable.Map`'
-      );
-    }
+    return undefined;
   }
 };
 
-function mapStateToProps (state) {
-  const auth = state.get('auth');
+function mapStateToProps(state) {
   const userDetails = state.get('userDetails');
 
   return {
-    auth,
     userDetails
   };
-};
+}
 
 export default connect(mapStateToProps)(HomeContainer);

@@ -80,7 +80,7 @@ describe('RolesActions', () => {
 
       const expectedActions = [
         { type: actionTypes.FETCH_ROLES_REQUEST },
-        { type: actionTypes.FETCH_ROLES_SUCCESS, roles: roles }
+        { type: actionTypes.FETCH_ROLES_SUCCESS, roles }
       ];
 
       const store = mockStore({ roles: [] });
@@ -134,14 +134,14 @@ describe('RolesActions', () => {
     // `getState` will return the state in the store.
     const getState = () => fromJS({
       roles: {
-        roles: roles
+        roles
       }
     });
 
     it("doesn't hit the API if there are roles already in the state", () => {
       const expectedActions = {
         type: actionTypes.FETCH_ROLES_SUCCESS,
-        roles: roles
+        roles
       };
 
       // Notice we're not even mocking Axios
@@ -159,7 +159,7 @@ describe('RolesActions', () => {
 
       const expectedActions = [
         { type: actionTypes.FETCH_ROLES_REQUEST },
-        { type: actionTypes.FETCH_ROLES_SUCCESS, roles: roles }
+        { type: actionTypes.FETCH_ROLES_SUCCESS, roles }
       ];
       // Notice we're not even mocking Axios
       const store = mockStore(getState);

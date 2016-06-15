@@ -1,19 +1,17 @@
-(function () {
-  'use strict';
+let io = require('socket.io');
 
-  module.exports = function (server) {
-    var io = require('socket.io')(server, {path: '/docman/rtc'});
+module.exports = (server) => {
+  io = io(server, { path: '/docman/rtc' });
 
-    io.on('connection', function (socket) {
-      socket.on('role:join', function (role) {
-        socket.join(role);
-      });
-
-      socket.on('role:leave', function (role) {
-        socket.leave(role);
-      });
+  io.on('connection', (socket) => {
+    socket.on('role:join', (role) => {
+      socket.join(role);
     });
 
-    return io;
-  };
-})();
+    socket.on('role:leave', (role) => {
+      socket.leave(role);
+    });
+  });
+
+  return io;
+};
