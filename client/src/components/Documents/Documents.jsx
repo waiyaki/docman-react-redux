@@ -20,43 +20,47 @@ const noDocsFoundStyles = {
 
 const Documents = (props) => (
   <div className='row'>
-    {props.documents && props.documents.length
-    ?
-      props.documents.map((doc) => (
-        <Document
-          document={doc}
-          documentCrudOptions={props.documentCrudOptions}
-          expandedDocId={props.expandedDocId}
-          key={doc._id}
-          onDeleteDocument={props.onDeleteDocument}
-          onExpandChange={props.onExpandChange}
-          onUpdateThisDocument={props.onUpdateThisDocument}
-          shouldWeAllowEditDocument={props.shouldWeAllowEditDocument(doc)}
-        />
-      ))
-    :
-      <div className='col-xs-12'>
-        <div className='box' style={noDocsFoundStyles.box}>
-          {props.appliedFilter === 'all'
-          ?
-            <span style={noDocsFoundStyles.containerSpan}>
-              No Documents Found.
-            </span>
-          :
-            <span style={noDocsFoundStyles.containerSpan}>
-              {
-                `No Documents Matching Role '${props.appliedFilter}' Were Found.`
+    <div className='col-xs-12'>
+      <div className='box masonry'>
+        {props.documents && props.documents.length
+        ?
+          props.documents.map((doc) => (
+            <Document
+              document={doc}
+              documentCrudOptions={props.documentCrudOptions}
+              expandedDocId={props.expandedDocId}
+              key={doc._id}
+              onDeleteDocument={props.onDeleteDocument}
+              onExpandChange={props.onExpandChange}
+              onUpdateThisDocument={props.onUpdateThisDocument}
+              shouldWeAllowEditDocument={props.shouldWeAllowEditDocument(doc)}
+            />
+          ))
+        :
+          <div className='col-xs-12'>
+            <div className='box' style={noDocsFoundStyles.box}>
+              {props.appliedFilter === 'all'
+              ?
+                <span style={noDocsFoundStyles.containerSpan}>
+                  No Documents Found.
+                </span>
+              :
+                <span style={noDocsFoundStyles.containerSpan}>
+                  {
+                    `No Documents Matching Role '${props.appliedFilter}' Were Found.`
+                  }
+                </span>
               }
-            </span>
-          }
-        </div>
+            </div>
+          </div>
+        }
+        <CreateDocumentContainer />
+        <ConfirmDeleteDocument
+          confirmDeleteDocument={props.confirmDeleteDocument}
+          isShowingConfirmDialog={props.isShowingConfirmDialog}
+        />
       </div>
-    }
-    <CreateDocumentContainer />
-    <ConfirmDeleteDocument
-      confirmDeleteDocument={props.confirmDeleteDocument}
-      isShowingConfirmDialog={props.isShowingConfirmDialog}
-    />
+    </div>
   </div>
 );
 

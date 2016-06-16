@@ -29,14 +29,8 @@ describe('Document', () => {
 
   it('renders a document', () => {
     const wrapper = shallowWithContext(<Document {...props} />);
-    expect(wrapper.childAt(0).childAt(1).props().title).to.eql('Test');
-    expect(
-      wrapper
-        .childAt(0)
-        .childAt(2)
-        .childAt(0)
-        .text()
-      ).to.eql('test');
+    expect(wrapper.childAt(1).props().title).to.eql('Test');
+    expect(wrapper.childAt(2).childAt(0).text()).to.eql('test');
   });
 
   it('allows document editing', () => {
@@ -46,7 +40,7 @@ describe('Document', () => {
       shouldWeAllowEditDocument: true,
       onUpdateThisDocument
     });
-    const IconMenu = wrapper.childAt(0).childAt(0).childAt(0);
+    const IconMenu = wrapper.childAt(0).childAt(0);
     expect(IconMenu.is('IconMenu')).to.be.true;
     expect(IconMenu.childAt(0).props().primaryText).to.equal('Edit Document');
     IconMenu.childAt(0).simulate('touchTap');
@@ -60,7 +54,7 @@ describe('Document', () => {
       shouldWeAllowEditDocument: true,
       onDeleteDocument
     });
-    const IconMenu = wrapper.childAt(0).childAt(0).childAt(0);
+    const IconMenu = wrapper.childAt(0).childAt(0);
     expect(IconMenu.is('IconMenu')).to.be.true;
     expect(IconMenu.childAt(1).props().primaryText).to.equal('Delete Document');
     IconMenu.childAt(1).simulate('touchTap');
@@ -81,7 +75,6 @@ describe('Document', () => {
     });
     expect(
       wrapper
-        .childAt(0)
         .childAt(0)
         .childAt(0)
         .is('CircularProgress')

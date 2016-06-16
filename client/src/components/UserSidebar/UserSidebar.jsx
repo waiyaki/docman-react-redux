@@ -17,7 +17,7 @@ const UserSidebar = (props) => {
 
   return (
     <div className='sidebar'>
-      <Card className='sidebar-card' zDepth={0}>
+      <Card className='sidebar-card'>
         <CardHeader
           avatar={`${userGravatar}&s=40`}
           subtitle={user && user.role ? user.role.title : ''}

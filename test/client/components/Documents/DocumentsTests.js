@@ -50,7 +50,13 @@ describe('Documents', () => {
     wrapper.setProps({
       documents: []
     });
-    expect(wrapper.childAt(0).text()).to.eql('No Documents Found.');
+    expect(
+      wrapper
+        .childAt(0)
+        .childAt(0)
+        .childAt(0)
+        .text()
+    ).to.eql('No Documents Found.');
   });
 
   it('shows a message when the selected filter has no documents', () => {
@@ -59,7 +65,12 @@ describe('Documents', () => {
       documents: [],
       appliedFilter: 'admin'
     });
-    expect(wrapper.childAt(0).text())
-      .to.eql("No Documents Matching Role 'admin' Were Found.");
+    expect(
+      wrapper
+        .childAt(0)
+        .childAt(0)
+        .childAt(0)
+        .text()
+    ).to.eql("No Documents Matching Role 'admin' Were Found.");
   });
 });

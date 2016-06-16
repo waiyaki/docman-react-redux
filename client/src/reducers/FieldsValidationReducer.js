@@ -206,7 +206,7 @@ export default function (state = Map(), action) {
     }
 
     default:
-      return newState;
+      break;
   }
 
   /**

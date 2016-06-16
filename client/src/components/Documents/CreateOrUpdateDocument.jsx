@@ -15,7 +15,8 @@ import ValidationError from '../Auth/ValidationError';
 const createButtonStyles = {
   position: 'fixed',
   right: '24px',
-  bottom: '24px'
+  bottom: '24px',
+  zIndex: 1100
 };
 
 const CreateOrUpdateDocument = (props) => {
