@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "prestart": "npm run build",
+    "postinstall": "npm run build",
     "build": "npm run webpack:prod",
     "start": "NODE_ENV=production node bin/www",
     "start:dev": "NODE_ENV=development nodemon bin/www",

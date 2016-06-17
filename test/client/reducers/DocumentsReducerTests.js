@@ -299,9 +299,100 @@ describe('Documents Reducer', () => {
     }));
   });
 
-  it.skip('handles DOCUMENT_ROLE_UPDATE', () => {
-    // TODO: Write tests for every variation of role updates.
+  describe('handles DOCUMENT_ROLE_UPDATE', () => {
+    const documents = [{
+      _id: 1,
+      title: 'test 1',
+      role: {
+        title: 'public'
+      }
+    }, {
+      _id: 2,
+      title: 'test 2',
+      role: {
+        title: 'public'
+      }
+    }, {
+      _id: 3,
+      title: 'test 3',
+      role: {
+        title: 'public'
+      }
+    }];
+
+    const state = Map({
+      documents: fromJS(documents)
+    });
+
+    it('on a document with role we can still access', () => {
+      const action = {
+        type: actionTypes.DOCUMENT_ROLE_UPDATE,
+        allowAccess: true,
+        document: {
+          _id: 3,
+          title: 'test 3 updated',
+          role: {
+            title: 'admin'
+          }
+        }
+      };
+
+      const expectedDocuments = [
+        ...documents.slice(0, 2),
+        {
+          _id: 3,
+          title: 'test 3 updated',
+          role: {
+            title: 'admin'
+          }
+        }
+      ];
+      expect(documentsReducer(state, action)).to.eql(Map({
+        documents: fromJS(expectedDocuments),
+        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      }));
+    });
+
+    it('on a document we already have but can no longer access', () => {
+      const action = {
+        type: actionTypes.DOCUMENT_ROLE_UPDATE,
+        allowAccess: false,
+        document: {
+          _id: 3
+        }
+      };
+
+      const expectedDocuments = documents.slice(0, 2);
+      expect(documentsReducer(state, action)).to.eql(Map({
+        documents: fromJS(expectedDocuments),
+        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      }));
+    });
+
+    it('on a document we can access but do not already have in state', () => {
+      const action = {
+        type: actionTypes.DOCUMENT_ROLE_UPDATE,
+        allowAccess: true,
+        document: {
+          _id: 4,
+          title: 'test 4 updated',
+          role: {
+            title: 'public'
+          }
+        }
+      };
+
+      const expectedDocuments = [
+        action.document,
+        ...documents
+      ];
+      expect(documentsReducer(state, action)).to.eql(Map({
+        documents: fromJS(expectedDocuments),
+        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      }));
+    });
   });
+
 
   it('handles TOGGLE_SHOW_DOCUMENT_UPDATE', () => {
     const state = Map({
