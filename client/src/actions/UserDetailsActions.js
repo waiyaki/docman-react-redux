@@ -5,6 +5,7 @@ import { logoutUser } from './AuthActions';
 import { showSnackBarMessage } from './UtilityActions';
 import { subscribeToUpdates, registerSockets } from './SocketsActions';
 import { getAuthToken, parseUserFromToken } from '../utils';
+import { fetchDocumentsFromServer } from './DocumentsActions';
 
 export function requestFetchUserDetails() {
   return {
@@ -97,6 +98,13 @@ export function updateUserDetails(updatedUserObject, authToken = getAuthToken())
         headers: { 'x-access-token': authToken }
       })
       .then((updatedUser) => {
+        // If this user's role changed, fetch documents again from server
+        // to ensure we don't have documents in state that we should no longer
+        // have access to.
+        const user = updatedUser.data;
+        if (user.role && user.role.title !== auth.user.role.title) {
+          dispatch(fetchDocumentsFromServer());
+        }
         dispatch(userDetailsUpdateSuccess(updatedUser));
         dispatch(showSnackBarMessage('Successfully updated profile.'));
       })
@@ -201,5 +209,59 @@ export function fetchAnotherUsersProfile(username, authToken = getAuthToken()) {
         dispatch(fetchAnotherUsersProfileFailure(error));
         dispatch(showSnackBarMessage(`Error fetching ${username}'s profile`));
       });
+  };
+}
+
+export function updateAnotherUsersProfileRequest(updatedUser) {
+  return {
+    type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_REQUEST,
+    updatedUser
+  };
+}
+
+export function updateAnotherUsersProfileSuccess(updatedUser) {
+  return {
+    type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_SUCCESS,
+    user: updatedUser.data
+  };
+}
+
+export function updateAnotherUsersProfileFailure(error) {
+  return {
+    type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_FAILURE,
+    error: error.data || { message: error.message }
+  };
+}
+
+export function updateAnotherUsersProfile(
+  updatedUserObject, authToken = getAuthToken()
+) {
+  return (dispatch, getState) => {
+    dispatch(updateAnotherUsersProfileRequest(updatedUserObject));
+
+    const selectedUser = getState().get('selectedUser').toJS();
+    return Axios
+      .put(`/api/users/${selectedUser.profile.user._id}`, updatedUserObject, {
+        headers: { 'x-access-token': authToken }
+      })
+      .then((updatedUser) => {
+        dispatch(updateAnotherUsersProfileSuccess(updatedUser));
+        dispatch(showSnackBarMessage(
+          `${selectedUser.profile.user.username}'s' profile update successful.`
+        ));
+      })
+      .catch((error) => {
+        dispatch(updateAnotherUsersProfileFailure(error));
+        dispatch(showSnackBarMessage(
+          `Error updating ${selectedUser.profile.user.username}'s profile`
+        ));
+      });
+  };
+}
+
+export function anotherUserDetailsFieldUpdate(updatedUser) {
+  return {
+    type: actionTypes.ANOTHER_USER_DETAILS_FIELD_UPDATE,
+    updatedUser
   };
 }

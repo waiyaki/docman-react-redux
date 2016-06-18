@@ -26,7 +26,7 @@ const UserSidebar = (props) => {
             : user.username
           }
         >
-          {props.isOwnProfile
+          {props.isOwnProfileOrAdmin
           ?
             <IconMenu
               anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -70,7 +70,7 @@ const UserSidebar = (props) => {
 
 UserSidebar.propTypes = {
   handleToggleShowUpdate: PropTypes.func.isRequired,
-  isOwnProfile: PropTypes.bool,
+  isOwnProfileOrAdmin: PropTypes.bool,
   userDetails: PropTypes.shape({
     user: PropTypes.shape({
       email: PropTypes.string.isRequired,

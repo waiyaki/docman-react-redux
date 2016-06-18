@@ -205,6 +205,9 @@ export default function (state = Map(), action) {
       break;
     }
 
+    case 'role':
+      break;
+
     default:
       break;
   }
@@ -252,7 +255,8 @@ export default function (state = Map(), action) {
       newState.getIn([action.target, 'username']) ||
       newState.getIn([action.target, 'password']) ||
       newState.getIn([action.target, 'firstName']) ||
-      newState.getIn([action.target, 'lastName']));
+      newState.getIn([action.target, 'lastName']) ||
+      newState.getIn([action.target, 'role']));
   } else if (action.currentView === 'documentContent') {
     isValid = newState.getIn([action.target], 'title') &&
       !newState.getIn(['validations', 'title']) &&

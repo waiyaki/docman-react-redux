@@ -7,11 +7,14 @@ import { Card, CardActions, CardHeader, CardText, CardTitle } from 'material-ui/
 import CircularProgress from 'material-ui/CircularProgress';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 import ValidationError from '../Auth/ValidationError';
 
 const UserSideBarUpdate = (props) => {
   const user = props.userDetails.user;
+  const updatedUser = props.userDetails.updatedUser;
   const userGravatar =
     `https://www.gravatar.com/avatar/${user ? md5(user.email) : ''}?d=identicon`;
 
@@ -19,6 +22,7 @@ const UserSideBarUpdate = (props) => {
     hidden: props.userDetails.validations[item]
   });
 
+  const roles = ['admin', 'user'];
   return (
     <div className='sidebar'>
       <Card className='sidebar-card' zDepth={3}>
@@ -99,6 +103,29 @@ const UserSideBarUpdate = (props) => {
               />
             </span>
           </div>
+          {props.isAdmin
+          ?
+            <SelectField
+              floatingLabelText='Role'
+              name='role'
+              onChange={props.handleRoleFieldUpdate}
+              style={{ textAlign: 'left' }}
+              value={updatedUser.role
+                ? updatedUser.role.title || updatedUser.role
+                : user.role.title
+              }
+            >
+              {roles.map((role) => (
+                <MenuItem
+                  key={role}
+                  label={role}
+                  primaryText={role}
+                  value={role}
+                />
+              ))}
+            </SelectField>
+          : null
+          }
           <div>
             <TextField
               floatingLabelText='Password'
@@ -164,7 +191,9 @@ UserSideBarUpdate.propTypes = {
   errors: PropTypes.arrayOf(PropTypes.object),
   handleFieldUpdate: PropTypes.func.isRequired,
   handleProfileUpdate: PropTypes.func.isRequired,
+  handleRoleFieldUpdate: PropTypes.func.isRequired,
   handleToggleShowUpdate: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   userDetails: PropTypes.shape({
     isFetching: PropTypes.bool.isRequired,
     updatedUser: PropTypes.object,

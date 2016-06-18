@@ -12,17 +12,17 @@ const ProfilePage = (props) => (
     <MainAppNavBarContainer />
     <div className='main-application__content margin-gt-md'>
       <div className='row' style={{ padding: '0 0.5em 0 0.8em' }}>
-        {props.selectedUser.profile.isFetchingProfile
+        {props.selectedUser.profile.isFetching
         ?
           <UserSidebarLoading />
         :
           <UserSideBarContainer
-            selectedUser={props.selectedUser.profile.user}
+            selectedUser={props.selectedUser.profile}
           />
         }
         <div className='col-xs-12 col-sm-offset-4 col-sm-8 col-lg-offset-3 col-lg-9'>
           <div className='profile-header' zDepth={0}>
-            {props.selectedUser.profile.isFetchingProfile
+            {props.selectedUser.profile.isFetching
               ? <CircularProgress size={0.5} />
             : `${props.selectedUser.profile.user
                   ? props.selectedUser.profile.user.username
@@ -47,7 +47,7 @@ ProfilePage.propTypes = {
       documents: PropTypes.arrayOf(PropTypes.object)
     }),
     profile: PropTypes.shape({
-      isFetchingProfile: PropTypes.bool.isRequired,
+      isFetching: PropTypes.bool.isRequired,
       user: PropTypes.shape({
         email: PropTypes.string,
         role: PropTypes.shape({
