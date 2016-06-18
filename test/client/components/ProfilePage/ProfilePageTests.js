@@ -28,7 +28,7 @@ describe('Profile Page', () => {
     wrapper.setProps({
       selectedUser: {
         profile: {
-          isFetchingProfile: true
+          isFetching: true
         }
       }
     });

@@ -89,6 +89,11 @@ export default function (state = INITIAL_USER_DETAILS_STATE, action) {
         currentView: 'userDetails'
       }));
 
+    case actionTypes.ANOTHER_USER_PROFILE_UPDATE_SUCCESS:
+      return state.merge(Map({
+        isShowingUpdate: !state.get('isShowingUpdate')
+      }));
+
     default:
       return state;
   }

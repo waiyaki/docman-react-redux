@@ -270,12 +270,17 @@ describe('UserDetailsActions', () => {
           updated: true
         });
         mockAxios
-          .onPut('/api/users/testID123')
+          .onPut(/api\/users\/.*/)
           .reply(200, updatedUser);
+        mockAxios
+          .onGet('/api/documents')
+          .reply(200, []);
 
         const expectedActions = [{
           type: actionTypes.USER_DETAILS_UPDATE_REQUEST,
           updatedUser
+        }, {
+          type: actionTypes.FETCH_DOCUMENTS_REQUEST
         }, {
           type: actionTypes.USER_DETAILS_UPDATE_SUCCESS,
           user: updatedUser
@@ -284,7 +289,16 @@ describe('UserDetailsActions', () => {
           message: 'Successfully updated profile.'
         }];
 
-        const store = mockStore(getState);
+        const store = mockStore(() => Map({
+          auth: Map({
+            user: {
+              _id: 123,
+              role: Map({
+                title: 'user'
+              })
+            }
+          })
+        }));
         return store.dispatch(userActions.updateUserDetails(updatedUser))
           .then(() => {
             expect(store.getActions()).to.eql(expectedActions);

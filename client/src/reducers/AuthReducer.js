@@ -90,6 +90,16 @@ export default function (state = INITIAL_AUTH_STATE, action) {
         user: action.user // BUG: This should be fromJS(action.user)
       }));
 
+    case actionTypes.USER_DETAILS_UPDATE_SUCCESS: {
+      const user = state.get('user');
+      if (user._id === action.user._id) {
+        return state.mergeDeep(Map({
+          user: action.user // Propagated BUG: Should be fromJS(action.user)
+        }));
+      }
+      return state;
+    }
+
     default:
       return state;
   }
