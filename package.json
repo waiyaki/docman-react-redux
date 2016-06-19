@@ -15,10 +15,11 @@
     "coverage": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "webpack": "./node_modules/.bin/webpack --progress -w",
     "webpack:dev": "./node_modules/.bin/webpack-dev-server --devtool eval --progress --colors --hot --inline --content-base build",
-    "webpack:prod": "export NODE_ENV=production && ./node_modules/.bin/webpack --progress -p"
+    "webpack:prod": "export NODE_ENV=production && ./node_modules/.bin/webpack -p"
   },
   "dependencies": {
     "axios": "^0.11.1",
+    "babel-polyfill": "^6.9.1",
     "bcrypt-nodejs": "0.0.3",
     "blueimp-md5": "^2.3.0",
     "body-parser": "~1.13.2",
