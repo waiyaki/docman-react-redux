@@ -11,7 +11,7 @@ const Home = (props) => (
     <div className='main-application__content margin-gt-md'>
       <div
         className='row'
-        style={{ padding: '0 0.5em 0 0.8em' }}
+        style={{ padding: '0 0 0 1em' }}
       >
         {props.userDetails.user
           ? <UserSideBarContainer />

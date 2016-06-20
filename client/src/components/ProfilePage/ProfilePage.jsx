@@ -11,7 +11,7 @@ const ProfilePage = (props) => (
   <div className='main-application__body'>
     <MainAppNavBarContainer />
     <div className='main-application__content margin-gt-md'>
-      <div className='row' style={{ padding: '0 0.5em 0 0.8em' }}>
+      <div className='row' style={{ padding: '0 0 0 1em' }}>
         {props.selectedUser.profile.isFetching
         ?
           <UserSidebarLoading />
