@@ -276,7 +276,7 @@ describe('DocumentsActions', () => {
   });
 
   it('creates a VALIDATE_NEW_DOCUMENT_CONTENTS action', () => {
-    const field = 'username';
+    const field = 'title';
     const expectedAction = [{
       type: actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS,
       field

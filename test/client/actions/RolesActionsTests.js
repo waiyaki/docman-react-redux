@@ -107,7 +107,7 @@ describe('RolesActions', () => {
       const expectedActions = [{
         type: 'FETCH_ROLES_REQUEST'
       }, {
-        type: 'FETCH_DOCUMENTS_FAILURE',
+        type: 'FETCH_ROLES_FAILURE',
         error: {
           message: 'Test failure'
         }

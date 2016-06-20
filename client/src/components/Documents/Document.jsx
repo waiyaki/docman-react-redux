@@ -1,5 +1,4 @@
 import md5 from 'blueimp-md5';
-import classNames from 'classnames';
 
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
@@ -25,125 +24,109 @@ const Document = (props) => {
 
   const updatedAt = new Date(props.document.updatedAt);
 
-  // Dynamically determine what classes to apply to the document view in order
-  // to assure reponsiveness while accounting for content length.
-  const cardClasses = (doc, expandedDocId) => {
-    const lgClass = doc.content.length > 250 && expandedDocId === doc._id
-      ? '12' : '6';
-
-    return classNames({
-      'col-xs-12': true,
-      'col-sm-12': true,
-      'col-md-12': true,
-      [`col-lg-${lgClass}`]: true
-    });
-  };
-
   // Determine whether we are updating this document and show a spinner
   const updatingSelf = (doc) => props.documentCrudOptions.isFetching &&
     props.documentCrudOptions.isUpdatingDocument &&
     props.documentCrudOptions.documentContent._id === doc._id;
 
   return (
-    <div className={cardClasses(props.document, props.expandedDocId)}>
-      <Card
-        expanded={props.expandedDocId === props.document._id}
-        style={{ marginBottom: '0.5em' }}
-        zDepth={props.expandedDocId === props.document._id ? 3 : 1}
-      >
-        <CardHeader
-          avatar={`${ownerGravatar}&s=40`}
-          style={{ paddingBottom: '0.5em' }}
-          subtitle={owner && owner.role ? owner.role.title : ''}
-          title={
-            <Link
-              className='username-link'
-              to={{
-                pathname: `/@${owner.username}`,
-                state: { username: owner.username, _id: owner._id }
-              }}
-            >
-              {owner.name
-                ? `${owner.name.firstName} ${owner.name.lastName}`
-                : owner.username
-              }
-            </Link>
-          }
-        >
-          {props.shouldWeAllowEditDocument // eslint-disable-line
-            ? updatingSelf(props.document)
-              ? <CircularProgress
-                size={0.5}
-                style={{
-                  position: 'absolute',
-                  right: '4px'
-                }}
-              />
-              : <IconMenu
-                anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-                iconButtonElement={
-                  <IconButton><MoreVertIcon /></IconButton>
-                }
-                style={{
-                  position: 'absolute',
-                  right: '4px'
-                }}
-                targetOrigin={{ horizontal: 'right', vertical: 'top' }}
-              >
-                <MenuItem
-                  onTouchTap={() => props.onUpdateThisDocument(props.document)}
-                  primaryText='Edit Document'
-                />
-                <MenuItem
-                  onTouchTap={() => props.onDeleteDocument(props.document._id)}
-                  primaryText='Delete Document'
-                />
-              </IconMenu>
-            : null
-          }
-        </CardHeader>
-        <CardTitle
-          style={{ paddingTop: '0.5em' }}
-          subtitle={
-            <span>
-              {updatedAt.toDateString()}, {updatedAt.toLocaleTimeString()} <br />
-              <Chip content={props.document.role.title} />
-            </span>
-          }
-          title={props.document.title.length > 64 &&
-              props.expandedDocId !== props.document._id
-            ? `${props.document.title.slice(0, 64)}...`
-            : props.document.title
-          }
-        />
-        {(props.document.content.length > 250 ||
-          props.document.title.length > 64) &&
-          props.expandedDocId !== props.document._id
-        ?
-          <CardText>
-            <span>{props.document.content.slice(0, 250)}</span><br />
-            <IconButton
-              onClick={() => props.onExpandChange(props.document._id)}
-              tooltip='View More'
-            >
-              <MoreHorizIcon />
-            </IconButton>
-          </CardText>
-        :
-          <CardText>
-            {props.document.content}
-          </CardText>
-        }
-        <CardText expandable>
-          <IconButton
-            onClick={() => props.onExpandChange()}
-            tooltip='View Less'
+    <Card
+      className='document-card'
+      expanded={props.expandedDocId === props.document._id}
+      zDepth={props.expandedDocId === props.document._id ? 3 : 1}
+    >
+      <CardHeader
+        avatar={`${ownerGravatar}&s=40`}
+        style={{ paddingBottom: '0.5em' }}
+        subtitle={owner && owner.role ? owner.role.title : ''}
+        title={
+          <Link
+            className='username-link'
+            to={{
+              pathname: `/@${owner.username}`,
+              state: { username: owner.username, _id: owner._id }
+            }}
           >
-            <ExpandLess />
+            {owner.name
+              ? `${owner.name.firstName} ${owner.name.lastName}`
+              : owner.username
+            }
+          </Link>
+        }
+      >
+        {props.shouldWeAllowEditDocument // eslint-disable-line
+          ? updatingSelf(props.document)
+            ? <CircularProgress
+              size={0.5}
+              style={{
+                position: 'absolute',
+                right: '4px'
+              }}
+            />
+            : <IconMenu
+              anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+              iconButtonElement={
+                <IconButton><MoreVertIcon /></IconButton>
+              }
+              style={{
+                position: 'absolute',
+                right: '4px'
+              }}
+              targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+            >
+              <MenuItem
+                onTouchTap={() => props.onUpdateThisDocument(props.document)}
+                primaryText='Edit Document'
+              />
+              <MenuItem
+                onTouchTap={() => props.onDeleteDocument(props.document._id)}
+                primaryText='Delete Document'
+              />
+            </IconMenu>
+          : null
+        }
+      </CardHeader>
+      <CardTitle
+        style={{ paddingTop: '0.5em' }}
+        subtitle={
+          <span>
+            {updatedAt.toDateString()}, {updatedAt.toLocaleTimeString()} <br />
+            <Chip content={props.document.role.title} />
+          </span>
+        }
+        title={props.document.title.length > 64 &&
+            props.expandedDocId !== props.document._id
+          ? `${props.document.title.slice(0, 64)}...`
+          : props.document.title
+        }
+      />
+      {(props.document.content.length > 250 ||
+        props.document.title.length > 64) &&
+        props.expandedDocId !== props.document._id
+      ?
+        <CardText>
+          <span>{props.document.content.slice(0, 250)}</span><br />
+          <IconButton
+            onClick={() => props.onExpandChange(props.document._id)}
+            tooltip='View More'
+          >
+            <MoreHorizIcon />
           </IconButton>
         </CardText>
-      </Card>
-    </div>
+      :
+        <CardText>
+          {props.document.content}
+        </CardText>
+      }
+      <CardText expandable>
+        <IconButton
+          onClick={() => props.onExpandChange()}
+          tooltip='View Less'
+        >
+          <ExpandLess />
+        </IconButton>
+      </CardText>
+    </Card>
   );
 };
 

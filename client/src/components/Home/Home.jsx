@@ -9,14 +9,15 @@ const Home = (props) => (
   <div className='main-application__body'>
     <MainAppNavBarContainer />
     <div className='main-application__content margin-gt-md'>
-      <div className='row'>
-        <div className='col-sm-4 col-lg-3 hide-sm-xs'>
-          {props.userDetails.user
-            ? <UserSideBarContainer />
-            : <UserSidebarLoading />
-          }
-        </div>
-        <div className='col-xs-12 col-sm-8 col-lg-9'>
+      <div
+        className='row'
+        style={{ padding: '0 0 0 1em' }}
+      >
+        {props.userDetails.user
+          ? <UserSideBarContainer />
+          : <UserSidebarLoading />
+        }
+        <div className='col-xs-12 col-sm-offset-4 col-sm-8 col-lg-offset-3 col-lg-9'>
           <DocumentsContainer />
         </div>
       </div>

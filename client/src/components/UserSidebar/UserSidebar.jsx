@@ -17,7 +17,7 @@ const UserSidebar = (props) => {
 
   return (
     <div className='sidebar'>
-      <Card className='sidebar-card' zDepth={0}>
+      <Card className='sidebar-card'>
         <CardHeader
           avatar={`${userGravatar}&s=40`}
           subtitle={user && user.role ? user.role.title : ''}
@@ -26,7 +26,7 @@ const UserSidebar = (props) => {
             : user.username
           }
         >
-          {props.isOwnProfile
+          {props.isOwnProfileOrAdmin
           ?
             <IconMenu
               anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -70,7 +70,7 @@ const UserSidebar = (props) => {
 
 UserSidebar.propTypes = {
   handleToggleShowUpdate: PropTypes.func.isRequired,
-  isOwnProfile: PropTypes.bool,
+  isOwnProfileOrAdmin: PropTypes.bool,
   userDetails: PropTypes.shape({
     user: PropTypes.shape({
       email: PropTypes.string.isRequired,

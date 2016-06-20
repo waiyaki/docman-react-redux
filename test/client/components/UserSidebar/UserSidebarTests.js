@@ -27,7 +27,7 @@ describe('UserSidebar', () => {
   it('renders an edit button when showing own profile', () => {
     const wrapper = shallowWithContext(<UserSidebar {...props} />);
     wrapper.setProps({
-      isOwnProfile: true
+      isOwnProfileOrAdmin: true
     });
     const IconMenu = wrapper.find('IconMenu');
     expect(IconMenu).to.have.length(1);
@@ -39,7 +39,7 @@ describe('UserSidebar', () => {
     const handleToggleShowUpdate = sinon.spy();
     const wrapper = shallowWithContext(<UserSidebar {...props} />);
     wrapper.setProps({
-      isOwnProfile: true,
+      isOwnProfileOrAdmin: true,
       handleToggleShowUpdate
     });
     const MenuItem = wrapper.find('MenuItem');

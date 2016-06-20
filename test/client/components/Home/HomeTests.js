@@ -24,7 +24,6 @@ describe('Home', () => {
         .childAt(1)
         .childAt(0)
         .childAt(0)
-        .childAt(0)
         .is('Connect(UserSideBarContainer)'
       )
     ).to.be.true;

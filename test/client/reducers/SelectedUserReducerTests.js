@@ -36,7 +36,7 @@ describe('Selected User Reducer', () => {
 
     expect(selectedUserReducer(state, action)).to.eql(Map({
       profile: Map({
-        isFetchingProfile: false,
+        isFetching: false,
         user: Map({
           username: 'test'
         })
@@ -57,7 +57,7 @@ describe('Selected User Reducer', () => {
 
     expect(selectedUserReducer(state, action)).to.eql(Map({
       profile: Map({
-        isFetchingProfile: false,
+        isFetching: false,
         profileFetchError: Map({
           message: 'Uh oh'
         })
@@ -116,5 +116,157 @@ describe('Selected User Reducer', () => {
         })
       })
     }));
+  });
+
+  it('should handle USER_DETAILS_UPDATE_SUCCESS', () => {
+    const state = Map({
+      profile: Map({
+        user: Map({
+          _id: 1
+        })
+      })
+    });
+
+    const action = {
+      type: actionTypes.USER_DETAILS_UPDATE_SUCCESS,
+      user: {
+        _id: 1,
+        username: 'test'
+      }
+    };
+    expect(selectedUserReducer(state, action)).to.eql(Map({
+      profile: Map({
+        user: Map({
+          _id: 1,
+          username: 'test'
+        })
+      })
+    }));
+  });
+
+  it('should handle ANOTHER_USER_PROFILE_UPDATE_REQUEST', () => {
+    const state = Map({
+      profile: Map()
+    });
+    const action = {
+      type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_REQUEST,
+      updatedUser: {
+        username: 'test'
+      }
+    };
+
+    const nextState = Map({
+      profile: Map({
+        isFetching: true,
+        updatedUser: Map({
+          username: 'test'
+        })
+      })
+    });
+
+    expect(selectedUserReducer(state, action)).to.eql(nextState);
+  });
+
+  it('should handle ANOTHER_USER_PROFILE_UPDATE_SUCCESS', () => {
+    const state = Map({
+      profile: Map()
+    });
+
+    const action = {
+      type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_SUCCESS,
+      user: {
+        username: 'test'
+      }
+    };
+
+    const nextState = Map({
+      profile: Map({
+        isFetching: false,
+        user: Map({
+          username: 'test'
+        }),
+        updatedUser: Map({
+          username: 'test'
+        })
+      })
+    });
+
+    expect(selectedUserReducer(state, action)).to.eql(nextState);
+  });
+
+  it('should handle ANOTHER_USER_PROFILE_UPDATE_FAILURE', () => {
+    const state = Map({
+      profile: Map()
+    });
+
+    const action = {
+      type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_FAILURE,
+      error: {
+        message: 'that failed.'
+      }
+    };
+
+    const nextState = Map({
+      profile: Map({
+        isFetching: false,
+        profileFetchError: Map({
+          message: 'that failed.'
+        })
+      })
+    });
+
+    expect(selectedUserReducer(state, action)).to.eql(nextState);
+  });
+
+  it('should handle ANOTHER_USER_DETAILS_FIELD_UPDATE', () => {
+    const state = Map({
+      profile: Map()
+    });
+
+    const action = {
+      type: actionTypes.ANOTHER_USER_DETAILS_FIELD_UPDATE,
+      updatedUser: {
+        username: 'test'
+      }
+    };
+
+    const nextState = Map({
+      profile: Map({
+        updatedUser: Map({
+          username: 'test'
+        })
+      })
+    });
+
+    expect(selectedUserReducer(state, action)).to.eql(nextState);
+  });
+
+  it('should handle VALIDATE_ANOTHER_USER_DETAILS_FIELD', () => {
+    const state = Map({
+      profile: Map({
+        updatedUser: Map({
+          username: null
+        })
+      })
+    });
+
+    const action = {
+      type: actionTypes.VALIDATE_ANOTHER_USER_DETAILS_FIELD,
+      field: 'username'
+    };
+
+    const nextState = Map({
+      profile: Map({
+        updatedUser: Map({
+          username: null
+        }),
+        validations: Map({
+          isValid: false,
+          username: 'This field is required.'
+        })
+      })
+    });
+
+    expect(selectedUserReducer(state, action)).to.eql(nextState);
   });
 });

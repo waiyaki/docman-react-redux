@@ -15,7 +15,8 @@ import ValidationError from '../Auth/ValidationError';
 const createButtonStyles = {
   position: 'fixed',
   right: '24px',
-  bottom: '24px'
+  bottom: '24px',
+  zIndex: 1100
 };
 
 const CreateOrUpdateDocument = (props) => {
@@ -52,12 +53,14 @@ const CreateOrUpdateDocument = (props) => {
       <Dialog
         actions={actions}
         autoScrollBodyContent
+        contentStyle={{ minWidth: '60%' }}
         modal
         open={props.isShowingCreateModal}
         title={props.isUpdatingDocument
           ? 'Update Document'
           : 'Create a new document'
         }
+        titleStyle={{ textAlign: 'center' }}
       >
         <div>
           <TextField
