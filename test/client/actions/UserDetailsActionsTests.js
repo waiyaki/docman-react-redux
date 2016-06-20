@@ -539,4 +539,82 @@ describe('UserDetailsActions', () => {
           });
     });
   });
+
+  describe('.updateAnotherUsersProfile()', () => {
+    const updatedUser = {
+      username: 'test updated',
+      _id: 1
+    };
+
+    const getState = () => Map({
+      selectedUser: Map({
+        profile: Map({
+          user: Map({
+            _id: 1,
+            username: 'test'
+          })
+        })
+      })
+    });
+
+    afterEach(() => {
+      mockAxios.reset();
+    });
+
+    it('creates ANOTHER_USER_PROFILE_UPDATE_REQUEST, ' +
+      'ANOTHER_USER_PROFILE_UPDATE_SUCCESS and SHOW_SNACKBAR_MESSAGE ' +
+      'on success', () => {
+      mockAxios
+        .onPut(/api\/users\/.*/)
+        .reply(200, updatedUser);
+
+      const expectedActions = [{
+        type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_REQUEST,
+        updatedUser
+      }, {
+        type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_SUCCESS,
+        user: updatedUser
+      }, {
+        type: actionTypes.SHOW_SNACKBAR_MESSAGE,
+        message: "test's profile update successful."
+      }];
+
+      const store = mockStore(getState);
+      return store
+        .dispatch(userActions.updateAnotherUsersProfile(updatedUser))
+        .then(() => {
+          expect(store.getActions()).to.eql(expectedActions);
+        });
+    });
+
+    it('creates ANOTHER_USER_PROFILE_UPDATE_REQUEST, ' +
+      'ANOTHER_USER_PROFILE_UPDATE_FAILURE and SHOW_SNACKBAR_MESSAGE ' +
+      'on success', () => {
+      const error = {
+        message: 'That failed.'
+      };
+
+      mockAxios
+        .onPut(/api\/users\/.*/)
+        .reply(400, error);
+
+      const expectedActions = [{
+        type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_REQUEST,
+        updatedUser
+      }, {
+        type: actionTypes.ANOTHER_USER_PROFILE_UPDATE_FAILURE,
+        error
+      }, {
+        type: actionTypes.SHOW_SNACKBAR_MESSAGE,
+        message: "Error updating test's profile"
+      }];
+
+      const store = mockStore(getState);
+      return store
+        .dispatch(userActions.updateAnotherUsersProfile(updatedUser))
+        .then(() => {
+          expect(store.getActions()).to.eql(expectedActions);
+        });
+    });
+  });
 });

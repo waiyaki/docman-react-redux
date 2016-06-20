@@ -247,7 +247,7 @@ export function updateAnotherUsersProfile(
       .then((updatedUser) => {
         dispatch(updateAnotherUsersProfileSuccess(updatedUser));
         dispatch(showSnackBarMessage(
-          `${selectedUser.profile.user.username}'s' profile update successful.`
+          `${selectedUser.profile.user.username}'s profile update successful.`
         ));
       })
       .catch((error) => {
