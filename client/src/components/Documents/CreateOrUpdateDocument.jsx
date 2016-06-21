@@ -109,14 +109,17 @@ const CreateOrUpdateDocument = (props) => {
             onChange={props.onRoleFieldUpdate}
             value={props.documentContent.role || 'public'}
           >
-            {props.roles.map((role) => (
-              <MenuItem
-                key={role._id}
-                label={role.title}
-                primaryText={role.title}
-                value={role.title}
-              />
-            ))}
+            {props.roles
+              .filter(role => role.title !== 'admin')
+              .map((role) => (
+                <MenuItem
+                  key={role._id}
+                  label={role.title}
+                  primaryText={role.title}
+                  value={role.title}
+                />
+              ))
+            }
           </SelectField>
         </div>
       </Dialog>

@@ -28,7 +28,10 @@ const UserSideBarUpdate = (props) => {
       <Card className='sidebar-card' zDepth={3}>
         <CardHeader
           avatar={`${userGravatar}&s=40`}
-          subtitle={user && user.role ? user.role.title : ''}
+          subtitle={user && user.role && user.role.title === 'admin'
+            ? user.role.title
+            : `@${user.username}`
+          }
           title={user.name
             ? `${user.name.firstName} ${user.name.lastName}`
             : user.username

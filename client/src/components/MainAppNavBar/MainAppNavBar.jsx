@@ -10,7 +10,7 @@ import MenuIcon from 'material-ui/svg-icons/navigation/menu';
 import ContentFilter from 'material-ui/svg-icons/content/filter-list';
 
 const NavBar = (props) => {
-  const FILTERS = ['all'].concat(['user', 'public', 'admin', 'private'].sort());
+  const FILTERS = ['all'].concat(['user', 'public', 'private'].sort());
   return (
     <div className='main-application__navbar'>
       <AppBar
