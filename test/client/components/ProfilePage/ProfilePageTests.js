@@ -8,7 +8,8 @@ describe('Profile Page', () => {
   const props = {
     selectedUser: {
       profile: {
-        user: {}
+        user: {},
+        fetchError: {}
       }
     }
   };
@@ -28,7 +29,8 @@ describe('Profile Page', () => {
     wrapper.setProps({
       selectedUser: {
         profile: {
-          isFetching: true
+          isFetching: true,
+          fetchError: {}
         }
       }
     });

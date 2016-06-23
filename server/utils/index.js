@@ -237,11 +237,17 @@ function emitSocketEvent(SocketIO, doc, eventType, force) {
 /**
  * Cast some string value to MongoDB ObjectId
  *
- * The `01234567890123` ensures MongoDB won't error out as it tries to cast
+ * The `123456789012` ensures MongoDB won't error out as it tries to cast
  * `value` into an ObjectId while the value is less than 12 characters.
  */
 function castToObjectID(value) {
-  return new ObjectId(value.length >= 12 ? value : '012345678901');
+  let _id;
+  try {
+    _id = new ObjectId(value);
+  } catch (error) {
+    _id = new ObjectId('123456789012');
+  }
+  return _id;
 }
 
 module.exports = {

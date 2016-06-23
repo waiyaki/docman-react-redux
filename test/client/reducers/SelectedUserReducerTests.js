@@ -58,7 +58,7 @@ describe('Selected User Reducer', () => {
     expect(selectedUserReducer(state, action)).to.eql(Map({
       profile: Map({
         isFetching: false,
-        profileFetchError: Map({
+        fetchError: Map({
           message: 'Uh oh'
         })
       })

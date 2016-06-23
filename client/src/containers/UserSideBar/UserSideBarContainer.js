@@ -74,7 +74,8 @@ class UserSideBarContainer extends React.Component {
   }
 
   isAdmin() {
-    return this.props.auth.get('user').role.title === 'admin';
+    const auth = this.props.auth;
+    return auth.get('user').role && auth.get('user').role.title === 'admin';
   }
 
   /**
