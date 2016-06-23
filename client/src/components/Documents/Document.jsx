@@ -38,7 +38,10 @@ const Document = (props) => {
       <CardHeader
         avatar={`${ownerGravatar}&s=40`}
         style={{ paddingBottom: '0.5em' }}
-        subtitle={owner && owner.role ? owner.role.title : ''}
+        subtitle={owner && owner.role && owner.role.title === 'admin'
+          ? owner.role.title
+          : `@${owner.username}`
+        }
         title={
           <Link
             className='username-link'
