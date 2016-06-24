@@ -50,16 +50,7 @@ const UserSidebar = (props) => {
           : null
           }
         </CardHeader>
-        <CardMedia
-          overlay={
-            <CardTitle
-              subtitle={user.name
-                ? `${user.name.firstName} ${user.name.lastName}`
-                : user.username
-              }
-            />
-          }
-        >
+        <CardMedia>
           <img role='presentation' src={`${userGravatar}&s=300`} />
         </CardMedia>
         <CardTitle
