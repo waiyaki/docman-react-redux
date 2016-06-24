@@ -63,6 +63,7 @@ describe('UserDetailsActions', () => {
     const expectedAction = [{
       type: actionTypes.FETCH_USER_DETAILS_ERROR,
       authError: false,
+      notFound: false,
       error
     }];
 
@@ -78,6 +79,7 @@ describe('UserDetailsActions', () => {
     const expectedAction = [{
       type: actionTypes.FETCH_USER_DETAILS_ERROR,
       authError: true,
+      notFound: false,
       error
     }];
 
@@ -95,6 +97,7 @@ describe('UserDetailsActions', () => {
     const expectedAction = [{
       type: actionTypes.FETCH_USER_DETAILS_ERROR,
       authError: false,
+      notFound: false,
       error: error.data
     }];
 
@@ -179,6 +182,7 @@ describe('UserDetailsActions', () => {
         }, {
           type: actionTypes.FETCH_USER_DETAILS_ERROR,
           authError: true,
+          notFound: false,
           error: error.data
         }, {
           type: actionTypes.LOGOUT_REQUEST
@@ -207,6 +211,7 @@ describe('UserDetailsActions', () => {
       }, {
         type: actionTypes.FETCH_USER_DETAILS_ERROR,
         authError: false,
+        notFound: false,
         error: error.data
       }];
 
@@ -470,7 +475,8 @@ describe('UserDetailsActions', () => {
 
   it('create a FETCH_ANOTHER_USERS_PROFILE_FAILURE action', () => {
     const error = {
-      message: 'Something went wrong.'
+      message: 'Something went wrong.',
+      notFound: false
     };
     const expectedAction = [{
       type: actionTypes.FETCH_ANOTHER_USERS_PROFILE_FAILURE,
@@ -513,7 +519,8 @@ describe('UserDetailsActions', () => {
 
     it('creates user profile request, failure and snackbar actions', () => {
       const error = {
-        message: 'Something failed.'
+        message: 'Something failed.',
+        notFound: false
       };
 
       mockAxios

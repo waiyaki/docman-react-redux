@@ -188,6 +188,35 @@ div.document-card {
 div.document-card:hover {
   transform: scale(1.02);
 }
+/*
+div.not-found {
+  padding-top: 10%;
+}*/
+
+h1.not-found-heading {
+  font-size: 2.6em;
+}
+
+div.not-found h3 {
+  font-size: 1.6em;
+}
+
+div.not-found p {
+  font-size: 1.2em;
+}
+
+h1.not-found-404 {
+  font-size: 3em;
+}
+
+h1.not-found-heading,
+div.not-found h3,
+div.not-found p,
+h1.not-found-404 {
+  margin-bottom: 0.8em;
+  word-wrap: break-word;
+  line-height: 1.2em;
+}
 
 @media (max-width: 767px) {
   .hide-sm-xs {

@@ -11,7 +11,7 @@ export const INITIAL_SELECTED_USER_STATE = Map({
   }),
   profile: Map({
     isFetching: true,
-    profileFetchError: Map(),
+    fetchError: Map(),
     user: Map(),
     updatedUser: Map(),
     validations: Map()
@@ -33,9 +33,9 @@ export default function (state = INITIAL_SELECTED_USER_STATE, action) {
       }));
 
     case actionTypes.FETCH_ANOTHER_USERS_PROFILE_FAILURE:
-      return state.mergeIn(['profile'], Map({
+      return state.mergeDeepIn(['profile'], Map({
         isFetching: false,
-        profileFetchError: fromJS(action.error)
+        fetchError: fromJS(action.error)
       }));
 
     case actionTypes.USER_DOCUMENTS_FETCH_REQUEST:

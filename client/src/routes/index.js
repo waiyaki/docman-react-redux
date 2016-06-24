@@ -7,6 +7,7 @@ import MainContainer from '../containers/Main/MainContainer';
 import HomeContainer from '../containers/Home/HomeContainer';
 import ProfilePageContainer from '../containers/ProfilePage/ProfilePageContainer';
 import requireAuthentication from '../containers/Auth/RequireAuthentication';
+import NotFoundPage from '../components/NotFound/NotFoundPage';
 
 const store = configureStore();
 
@@ -19,6 +20,7 @@ const routes = (
           component={requireAuthentication(ProfilePageContainer)}
           path='/:username'
         />
+        <Route component={NotFoundPage} path='*' />
       </Route>
     </Router>
   </Provider>

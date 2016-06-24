@@ -20,11 +20,16 @@ export function fetchUserDetailsSuccess(user) {
   };
 }
 
-export function fetchUserDetailsError(error, authError = false) {
+export function fetchUserDetailsError(
+  error,
+  authError = false,
+  notFound = false
+) {
   return {
     type: actionTypes.FETCH_USER_DETAILS_ERROR,
     error: error.data || { message: error.message },
-    authError
+    authError,
+    notFound
   };
 }
 
@@ -61,6 +66,8 @@ export function loadUserDetails(authToken = getAuthToken()) {
         if (error.status === 401) {
           dispatch(fetchUserDetailsError(error, true));
           dispatch(logoutUser(false));
+        } else if (error.status === 404) {
+          dispatch(fetchUserDetailsError(error, false, true));
         } else {
           dispatch(fetchUserDetailsError(error));
         }
@@ -163,9 +170,11 @@ export function fetchUserDocuments(usernameOrId, authToken = getAuthToken()) {
       })
       .catch((error) => {
         dispatch(userDocumentsFetchFailure(error));
-        dispatch(showSnackBarMessage(
-          `Error getting ${usernameOrId}'s documents.`
-        ));
+        if (error.status !== 404) {
+          dispatch(showSnackBarMessage(
+            `Error getting ${usernameOrId}'s documents.`
+          ));
+        }
       });
   };
 }
@@ -187,10 +196,13 @@ export function fetchAnotherUsersProfileSuccess(profileData) {
   };
 }
 
-export function fetchAnotherUsersProfileFailure(error) {
+export function fetchAnotherUsersProfileFailure(error, notFound = false) {
   return {
     type: actionTypes.FETCH_ANOTHER_USERS_PROFILE_FAILURE,
-    error: error.data || { message: error.message }
+    error: {
+      message: error.data ? error.data.message : error.message,
+      notFound
+    }
   };
 }
 
@@ -206,8 +218,13 @@ export function fetchAnotherUsersProfile(username, authToken = getAuthToken()) {
         dispatch(fetchAnotherUsersProfileSuccess(userProfileData));
       })
       .catch((error) => {
-        dispatch(fetchAnotherUsersProfileFailure(error));
-        dispatch(showSnackBarMessage(`Error fetching ${username}'s profile`));
+        if (error.status === 404) {
+          dispatch(fetchAnotherUsersProfileFailure(error, true));
+          dispatch(showSnackBarMessage(`Uh oh! We didn't find ${username}`));
+        } else {
+          dispatch(fetchAnotherUsersProfileFailure(error));
+          dispatch(showSnackBarMessage(`Error fetching ${username}'s profile`));
+        }
       });
   };
 }

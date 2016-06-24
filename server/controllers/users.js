@@ -95,6 +95,12 @@ function retrieve(req, res) {
       if (err) {
         return resolveError(err, res);
       }
+
+      if (!user) {
+        return res.status(404).send({
+          message: 'User Not Found'
+        });
+      }
       return res.status(200).send(user);
     });
 }
