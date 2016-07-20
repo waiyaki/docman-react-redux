@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import { expect } from 'chai';
-import { Map } from 'immutable';
+import { Map, fromJS } from 'immutable';
 
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
@@ -279,9 +279,18 @@ describe('DocumentsActions', () => {
     const field = 'title';
     const expectedAction = [{
       type: actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS,
+      documentCrudOptions: {},
       field
     }];
-    const store = mockStore();
+
+    const getState = () => Map({
+      docs: Map({
+        documents: Map({
+          documentCrudOptions: Map()
+        })
+      })
+    });
+    const store = mockStore(getState);
     store.dispatch(documentActions.validateDocumentContents(field));
     expect(store.getActions()).to.eql(expectedAction);
   });
@@ -396,6 +405,12 @@ describe('DocumentsActions', () => {
       }
     };
 
+    const getState = () => Map({
+      docs: Map({
+        documents: fromJS([documentContent])
+      })
+    });
+
     afterEach(() => {
       mockAxios.reset();
     });
@@ -409,13 +424,16 @@ describe('DocumentsActions', () => {
 
         const expectedActions = [{
           type: actionTypes.DELETE_DOCUMENT_REQUEST,
-          documentId: documentContent._id
+          deletedDocument: {
+            item: documentContent,
+            index: 0
+          }
         }, {
           type: actionTypes.SHOW_SNACKBAR_MESSAGE,
           message: 'Document deleted successfully.'
         }];
 
-        const store = mockStore();
+        const store = mockStore(getState);
         return store
           .dispatch(documentActions.deleteDocument(documentContent._id))
           .then(() => {
@@ -437,16 +455,23 @@ describe('DocumentsActions', () => {
 
         const expectedActions = [{
           type: actionTypes.DELETE_DOCUMENT_REQUEST,
-          documentId: documentContent._id
+          deletedDocument: {
+            item: documentContent,
+            index: 0
+          }
         }, {
           type: actionTypes.DELETE_DOCUMENT_FAILURE,
+          deletedDocument: {
+            item: documentContent,
+            index: 0
+          },
           error
         }, {
           type: actionTypes.SHOW_SNACKBAR_MESSAGE,
           message: 'An error occurred while deleting document.'
         }];
 
-        const store = mockStore();
+        const store = mockStore(getState);
         return store
           .dispatch(documentActions.deleteDocument(documentContent._id))
           .then(() => {

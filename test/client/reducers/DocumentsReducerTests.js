@@ -13,22 +13,21 @@ describe('Documents Reducer', () => {
   });
 
   it('handles FETCH_DOCUMENTS_REQUEST', () => {
-    expect(documentsReducer(Map(), { type: actionTypes.FETCH_DOCUMENTS_REQUEST }))
-      .to.eql(Map({
-        isFetching: true
-      }));
+    expect(documentsReducer(Map(), {
+      type: actionTypes.FETCH_DOCUMENTS_REQUEST
+    })).to.have.property('isFetching', true);
   });
 
   it('handles FETCH_DOCUMENTS_SUCCESS', () => {
     const action = {
       type: actionTypes.FETCH_DOCUMENTS_SUCCESS,
-      documents: 'Dummy docs'.split()
+      documents: 'Dummy docs'.split(' ')
     };
 
-    expect(documentsReducer(Map(), action)).to.eql(Map({
-      isFetching: false,
-      documents: List('Dummy docs'.split())
-    }));
+    const nextState = documentsReducer(Map(), action);
+    expect(nextState).to.have.property('isFetching', false);
+    expect(nextState).to.have.property('documents')
+      .that.equals(List(['Dummy', 'docs']));
   });
 
   it('handles FETCH_DOCUMENTS_FAILURE', () => {
@@ -37,10 +36,9 @@ describe('Documents Reducer', () => {
       error: 'Nyet'
     };
 
-    expect(documentsReducer(Map(), action)).to.eql(Map({
-      isFetching: false,
-      documentsFetchError: 'Nyet'
-    }));
+    const nextState = documentsReducer(Map(), action);
+    expect(nextState).to.have.property('isFetching', false);
+    expect(nextState).to.have.property('documentsFetchError', 'Nyet');
   });
 
   it('handles EXPAND_DOCUMENT', () => {
@@ -54,11 +52,10 @@ describe('Documents Reducer', () => {
       docId: 123
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentViewOptions: Map({
+    expect(documentsReducer(state, action))
+      .to.have.property('documentViewOptions', Map({
         expandedDocId: 123
-      })
-    }));
+      }));
   });
 
   it('handles CREATE_DOCUMENT_REQUEST', () => {
@@ -73,15 +70,20 @@ describe('Documents Reducer', () => {
         content: 'content'
       }
     };
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documents: fromJS(
-        [action.documentContent].concat(['these', 'documents'])
-      ),
-      documentCrudOptions: Map({
-        documentContent: fromJS(action.documentContent),
-        isFetching: true
-      })
-    }));
+
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documents')
+      .that.equals(
+        List(fromJS([action.documentContent]).concat(state.get('documents')))
+      );
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('documentContent')
+      .that.equals(fromJS(action.documentContent));
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isFetching', true);
   });
 
   it('handles CREATE_DOCUMENT_SUCCESS for other peoples documents', () => {
@@ -102,13 +104,13 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documents: fromJS([action.documentContent].concat([{
+    expect(documentsReducer(state, action))
+      .to.have.property('documents')
+      .that.equals(fromJS([action.documentContent]).concat(fromJS([{
         title: 'This should not change'
       }, {
         title: 'This should not.'
-      }]))
-    }));
+      }])));
   });
 
   it('handles CREATE_DOCUMENT_SUCCESS for own documents', () => {
@@ -121,12 +123,14 @@ describe('Documents Reducer', () => {
         title: 'This should not change.'
       }, {
         _id: '3',
-        title: 'This should change.'
+        title: 'This should change.',
+        optimistic: true
       }]),
       documentCrudOptions: Map({
         documentContent: Map({
           _id: '3',
-          title: 'This should change.'
+          title: 'This should change.',
+          optimistic: true
         })
       })
     });
@@ -141,7 +145,9 @@ describe('Documents Reducer', () => {
       own: true
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
+    const nextState = documentsReducer(state, action);
+    expect(nextState).to.eql(Map({
+      isFetching: false,
       documents: fromJS([{
         _id: '1',
         title: 'This should not change.'
@@ -153,14 +159,17 @@ describe('Documents Reducer', () => {
         title: 'This did change!',
         content: 'Yay!'
       }]),
-      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions'),
+      documentsFetchError: null,
+      documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' })
     }));
   });
 
   it('handles CREATE_DOCUMENT_FAILURE', () => {
     const state = Map({
       documents: fromJS([{
-        title: 'This should go'
+        title: 'This should go',
+        optimistic: true
       }, {
         title: 'This should not.'
       }]),
@@ -174,14 +183,20 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documents: fromJS([{ title: 'This should not.' }]),
-      documentCrudOptions: Map({
-        isFetching: false,
-        isShowingCreateModal: true,
-        crudError: fromJS(action.error)
-      })
-    }));
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documents')
+      .that.equals(fromJS([{ title: 'This should not.' }]));
+
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isFetching', false);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isShowingCreateModal', true);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('crudError', fromJS(action.error));
   });
 
   it('handles UPDATE_NEW_DOCUMENT_CONTENTS', () => {
@@ -199,11 +214,9 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentCrudOptions: Map({
-        documentContent: fromJS(action.documentContent)
-      })
-    }));
+    expect(documentsReducer(state, action))
+      .to.have.property('documentCrudOptions')
+      .with.property('documentContent', fromJS(action.documentContent));
   });
 
   it('handles TOGGLE_CREATE_MODAL', () => {
@@ -215,11 +228,10 @@ describe('Documents Reducer', () => {
     const action = {
       type: actionTypes.TOGGLE_CREATE_MODAL
     };
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentCrudOptions: Map({
-        isShowingCreateModal: true
-      })
-    }));
+
+    expect(documentsReducer(state, action))
+      .to.have.property('documentCrudOptions')
+      .with.property('isShowingCreateModal', true);
   });
 
   it('handles DOCUMENT_UPDATE_REQUEST', () => {
@@ -232,15 +244,17 @@ describe('Documents Reducer', () => {
         title: 'test'
       }
     };
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentCrudOptions: Map({
-        documentContent: Map({
-          title: 'test'
-        }),
-        isFetching: true,
-        isShowingCreateModal: false
-      })
-    }));
+
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isFetching', true);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isShowingCreateModal', false);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('documentContent', fromJS(action.document));
   });
 
   it('handles DOCUMENT_UPDATE_SUCCESS', () => {
@@ -264,6 +278,7 @@ describe('Documents Reducer', () => {
     };
 
     expect(documentsReducer(state, action)).to.eql(Map({
+      isFetching: false,
       documents: fromJS([{
         _id: 1,
         title: 'This should remain unchanged.'
@@ -271,7 +286,9 @@ describe('Documents Reducer', () => {
         _id: 2,
         title: 'That changed.'
       }]),
-      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions'),
+      documentsFetchError: null,
+      documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' })
     }));
   });
 
@@ -288,15 +305,19 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentCrudOptions: Map({
-        documentContent: Map(),
-        isFetching: false,
-        isShowingCreateModal: true,
-        isUpdatingDocument: true,
-        crudError: fromJS(action.error)
-      })
-    }));
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isFetching', false);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isShowingCreateModal', true);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isUpdatingDocument', true);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('crudError', fromJS(action.error));
   });
 
   describe('handles DOCUMENT_ROLE_UPDATE', () => {
@@ -349,6 +370,9 @@ describe('Documents Reducer', () => {
       ];
       expect(documentsReducer(state, action)).to.eql(Map({
         documents: fromJS(expectedDocuments),
+        documentsFetchError: null,
+        documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' }),
+        isFetching: false,
         documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
       }));
     });
@@ -365,6 +389,9 @@ describe('Documents Reducer', () => {
       const expectedDocuments = documents.slice(0, 2);
       expect(documentsReducer(state, action)).to.eql(Map({
         documents: fromJS(expectedDocuments),
+        documentsFetchError: null,
+        documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' }),
+        isFetching: false,
         documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
       }));
     });
@@ -388,6 +415,9 @@ describe('Documents Reducer', () => {
       ];
       expect(documentsReducer(state, action)).to.eql(Map({
         documents: fromJS(expectedDocuments),
+        documentsFetchError: null,
+        documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' }),
+        isFetching: false,
         documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
       }));
     });
@@ -413,20 +443,20 @@ describe('Documents Reducer', () => {
       }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentCrudOptions: Map({
-        documentContent: Map({
-          title: '',
-          content: '',
-          role: ''
-        }),
-        isShowingCreateModal: false,
-        isUpdatingDocument: false,
-        validations: Map({
-          isValid: false
-        })
-      })
-    }));
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isShowingCreateModal', false);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('isUpdatingDocument', false);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('documentContent', Map({
+        title: '',
+        content: '',
+        role: ''
+      }));
   });
 
   it('handles DELETE_DOCUMENT_REQUEST', () => {
@@ -443,24 +473,33 @@ describe('Documents Reducer', () => {
 
     const action = {
       type: actionTypes.DELETE_DOCUMENT_REQUEST,
-      documentId: 2
+      deletedDocument: {
+        index: 1,
+        item: fromJS({
+          _id: 2,
+          title: 'This should not.'
+        })
+      }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documents: fromJS([{
+    const nextState = documentsReducer(state, action);
+
+    expect(nextState)
+      .to.have.property('documents')
+      .that.equals(fromJS([{
         _id: 1,
         title: 'This should remain unchanged.'
-      }]),
-      documentCrudOptions: Map({
-        deletedDocument: Map({
-          index: 1,
-          item: fromJS({
-            _id: 2,
-            title: 'This should not.'
-          })
+      }]));
+
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('deletedDocument', Map({
+        index: 1,
+        item: fromJS({
+          _id: 2,
+          title: 'This should not.'
         })
-      })
-    }));
+      }));
   });
 
   it('handles DELETE_DOCUMENT_SUCCESS', () => {
@@ -480,7 +519,11 @@ describe('Documents Reducer', () => {
     };
 
     expect(documentsReducer(state, action)).to.eql(Map({
-      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions'),
+      documentsFetchError: null,
+      documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' }),
+      isFetching: false,
+      documents: List()
     }));
   });
 
@@ -506,7 +549,10 @@ describe('Documents Reducer', () => {
         _id: 2,
         title: 'This should not.'
       }]),
-      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
+      documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions'),
+      documentsFetchError: null,
+      documentViewOptions: Map({ expandedDocId: '', visibleFilter: 'all' }),
+      isFetching: false
     }));
   });
 
@@ -526,24 +572,36 @@ describe('Documents Reducer', () => {
         })
       })
     });
+
     const action = {
       type: actionTypes.DELETE_DOCUMENT_FAILURE,
-      error: 'Network Error'
+      error: 'Network Error',
+      deletedDocument: {
+        index: 1,
+        item: {
+          _id: 2,
+          title: 'This should not.'
+        }
+      }
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documents: fromJS([{
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('deletedDocument', Map());
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('crudError', fromJS(action.error));
+
+    expect(nextState)
+      .to.have.property('documents')
+      .that.equals(fromJS([{
         _id: 1,
         title: 'This should remain unchanged.'
       }, {
         _id: 2,
         title: 'This should not.'
-      }]),
-      documentCrudOptions: Map({
-        deletedDocument: Map(),
-        crudError: fromJS(action.error)
-      })
-    }));
+      }]));
   });
 
   it('handles VALIDATE_NEW_DOCUMENT_CONTENTS', () => {
@@ -557,17 +615,18 @@ describe('Documents Reducer', () => {
       field: 'title'
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentContent: Map({
+    const nextState = documentsReducer(state, action);
+    expect(nextState)
+      .to.have.property('documentContent', Map({
         title: null
-      }),
-      documentCrudOptions: Map({
-        validations: Map({
-          title: 'This field is required',
-          isValid: false
-        })
-      })
-    }));
+      }));
+
+    expect(nextState)
+      .to.have.property('documentCrudOptions')
+      .with.property('validations', Map({
+        title: 'This field is required',
+        isValid: false
+      }));
   });
 
   it('handles CHANGE_DOCUMENTS_FILTER', () => {
@@ -581,11 +640,10 @@ describe('Documents Reducer', () => {
       filter: 'private'
     };
 
-    expect(documentsReducer(state, action)).to.eql(Map({
-      documentViewOptions: Map({
+    expect(documentsReducer(state, action))
+      .to.have.property('documentViewOptions', Map({
         visibleFilter: 'private'
-      })
-    }));
+      }));
   });
 
   it('handles LOGOUT_REQUEST', () => {

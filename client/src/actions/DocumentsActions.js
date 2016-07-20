@@ -67,7 +67,10 @@ export function expandDocument(docId) {
 export function createDocumentRequest(documentContent) {
   return {
     type: actionTypes.CREATE_DOCUMENT_REQUEST,
-    documentContent
+    documentContent: {
+      ...documentContent,
+      optimistic: true
+    }
   };
 }
 
@@ -156,9 +159,16 @@ export function updateNewDocumentContents(documentContent) {
 }
 
 export function validateDocumentContents(field) {
-  return {
-    type: actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS,
-    field
+  return (dispatch, getState) => {
+    const documentCrudOptions = getState()
+      .getIn(['docs', 'documents', 'documentCrudOptions'])
+      .toJS();
+
+    return dispatch({
+      type: actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS,
+      field,
+      documentCrudOptions
+    });
   };
 }
 
@@ -247,6 +257,16 @@ export function toggleDocumentUpdate(doc) {
       documentObject = getState()
         .getIn(['docs', 'documentCrudOptions', 'documentContent'])
         .toJS();
+
+      documentObject = {
+        ...documentObject,
+        isUpdatingDocument: false // No doc passed, had to construct one. Flag this as a non-update.
+      };
+    } else {
+      documentObject = {
+        ...documentObject,
+        isUpdatingDocument: true
+      };
     }
 
     // Decompose the role to just it's title.
@@ -261,10 +281,10 @@ export function toggleDocumentUpdate(doc) {
   };
 }
 
-export function documentDeleteRequest(documentId) {
+export function documentDeleteRequest(deletedDocument) {
   return {
     type: actionTypes.DELETE_DOCUMENT_REQUEST,
-    documentId
+    deletedDocument
   };
 }
 
@@ -275,16 +295,28 @@ export function documentDeleteSuccess(docId) {
   };
 }
 
-export function deleteDocumentFailure(error) {
+export function deleteDocumentFailure(error, deletedDocument) {
   return {
     type: actionTypes.DELETE_DOCUMENT_FAILURE,
-    error: error.data || { message: error.message }
+    error: error.data || { message: error.message },
+    deletedDocument
   };
 }
 
 export function deleteDocument(docId, authToken = getAuthToken()) {
-  return (dispatch) => {
-    dispatch(documentDeleteRequest(docId));
+  return (dispatch, getState) => {
+    let deletedDocument;
+    getState().getIn(['docs', 'documents']).map((doc, index) => {
+      if (doc.get('_id') === docId) {
+        deletedDocument = {
+          index,
+          item: doc.toJS()
+        };
+      }
+
+      return doc;
+    });
+    dispatch(documentDeleteRequest(deletedDocument));
 
     return Axios
       .delete(`/api/documents/${docId}`, {
@@ -294,7 +326,7 @@ export function deleteDocument(docId, authToken = getAuthToken()) {
         dispatch(showSnackBarMessage('Document deleted successfully.'));
       })
       .catch((error) => {
-        dispatch(deleteDocumentFailure(error));
+        dispatch(deleteDocumentFailure(error, deletedDocument));
         dispatch(showSnackBarMessage(
           'An error occurred while deleting document.'));
       });
