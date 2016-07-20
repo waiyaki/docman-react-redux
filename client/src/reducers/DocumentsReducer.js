@@ -1,4 +1,5 @@
 import { List, Map, fromJS } from 'immutable';
+import { combineReducers } from 'redux-immutable';
 
 import * as actionTypes from '../constants';
 import fieldsValidationReducer from './FieldsValidationReducer';
@@ -28,314 +29,377 @@ export const INITIAL_DOCUMENTS_STATE = Map({
   })
 });
 
+
 /**
- * Handle state changes related to documents.
+ * Set a newly created document into the state.
  *
- * Performs some operation on the current state based on the specified action
- * and returns a new documents state.
+ * This newly created document replaces the document we'd earlier used
+ * when performing the optimistic update, if we're the ones that created it.
+ * Otherwise, we insert it at the beginning of our documents list in the
+ * state.
  */
-export default function (state = INITIAL_DOCUMENTS_STATE, action) {
+function replaceOwnDocumentOrInsert(state, action) {
+  if (action.own) {
+    return state.map(doc => {
+      if (doc.get('optimistic')) {
+        return fromJS(action.documentContent);
+      }
+      return doc;
+    });
+  }
+
+  return fromJS([action.documentContent]).concat(state);
+}
+
+/**
+ * Handle document's state update accordingly if the role of a particular
+ * document changed.
+ *
+ * If we no longer have access to this doc, remove it from state.
+ *
+ * If we still have access to the document, replace the copy we have with
+ * the new copy that has the updated role permissions.
+ *
+ * If we have access to the document but didn't have it in state, insert it
+ * as the first document.
+ */
+function documentRoleUpdate(state, action) {
+  const cachedDocIndex = state.findIndex(doc =>
+    doc.get('_id') === action.document._id
+  );
+
+  if (!action.allowAccess && ~cachedDocIndex) {
+    return state
+      .slice(0, cachedDocIndex)
+      .concat(state.slice(cachedDocIndex + 1));
+  } else if (action.allowAccess && ~cachedDocIndex) {
+    return state
+      .slice(0, cachedDocIndex)
+      .concat(fromJS([action.document]), state.slice(cachedDocIndex + 1));
+  } else if (action.allowAccess && cachedDocIndex === -1) {
+    return fromJS([action.document]).concat(state);
+  }
+
+  return state;
+}
+
+function updateDocument(state, action) {
+  return state.map(doc => {
+    if (doc.get('_id') === action.document._id) {
+      return fromJS(action.document);
+    }
+    return doc;
+  });
+}
+
+function documents(state = List(), action) {
+  switch (action.type) {
+    case actionTypes.FETCH_DOCUMENTS_SUCCESS:
+      return fromJS(action.documents);
+
+    case actionTypes.CREATE_DOCUMENT_REQUEST:
+      return fromJS([action.documentContent]).concat(state);
+
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+      return replaceOwnDocumentOrInsert(state, action);
+
+    case actionTypes.CREATE_DOCUMENT_FAILURE:
+      return state.filter(doc => !doc.get('optimistic'));
+
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+      return updateDocument(state, action);
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      return documentRoleUpdate(state, action);
+
+    case actionTypes.DELETE_DOCUMENT_REQUEST:
+      return state
+        .slice(0, action.deletedDocument.index)
+        .concat(state.slice(action.deletedDocument.index + 1));
+
+    case actionTypes.DELETE_DOCUMENT_SUCCESS:
+      if (action.docId) { // If receiving a websocket action
+        return state.filter(doc => doc.get('_id') !== action.docId);
+      }
+      break;
+
+    case actionTypes.DELETE_DOCUMENT_FAILURE:
+      /**
+       * Deleting failed, reinsert the deleted document back
+       * into state.
+       */
+      return state
+        .slice(0, action.deletedDocument.index)
+        .concat(
+          fromJS([action.deletedDocument.item]),
+          state.slice(action.deletedDocument.index + 1)
+        );
+
+    case actionTypes.LOGOUT_REQUEST:
+      return List();
+
+    default:
+      return state;
+  }
+
+  return state;
+}
+
+function isFetching(state = false, action) {
   switch (action.type) {
     case actionTypes.FETCH_DOCUMENTS_REQUEST:
-      return state.merge(Map({
-        isFetching: true
-      }));
+    case actionTypes.CREATE_DOCUMENT_REQUEST:
+    case actionTypes.DOCUMENT_UPDATE_REQUEST:
+      return true;
 
     case actionTypes.FETCH_DOCUMENTS_SUCCESS:
-      return state.merge(Map({
-        isFetching: false,
-        documents: fromJS(action.documents)
-      }));
-
     case actionTypes.FETCH_DOCUMENTS_FAILURE:
-      return state.merge(Map({
-        isFetching: false,
-        documentsFetchError: fromJS(action.error)
-      }));
-
-    case actionTypes.EXPAND_DOCUMENT:
-      return state.mergeDeepIn(
-        ['documentViewOptions', 'expandedDocId'], action.docId);
-
-    /**
-     * Make the state aware of that we're creating a new document.
-     *
-     * Also, perform an optimistic update with the document gotten from the
-     * action.
-     */
-    case actionTypes.CREATE_DOCUMENT_REQUEST:
-      return state.merge(Map({
-        documents: state
-          .get('documents')
-          .unshift(fromJS(action.documentContent)),
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep({
-          documentContent: fromJS(action.documentContent),
-          isFetching: true
-        })
-      }));
-
-    /**
-     * Set a newly created document into the state.
-     *
-     * This newly created document replaces the document we'd earlier used
-     * when performing the optimistic update, if we're the ones that created it.
-     * Otherwise, we insert it at the beginning of our documents list in the
-     * state.
-     */
     case actionTypes.CREATE_DOCUMENT_SUCCESS:
-      if (action.own) {
-        const optimisticDocIndex = state
-          .get('documents')
-          .findIndex(
-            (doc) => doc.get('_id') === state.getIn(
-              ['documentCrudOptions', 'documentContent', '_id'])
-          );
-        return state.merge(Map({
-          documents: state.get('documents')
-            .splice(optimisticDocIndex, 1, fromJS(action.documentContent)),
-          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
-        }));
-      }
-
-      return state.merge(Map({
-        documents: state
-          .get('documents')
-          .insert(0, fromJS(action.documentContent))
-      }));
-
-    /**
-     * If an error occurred while we're creating a document, let the state know
-     *
-     * In addition, remove the document we'd optimistically set in the state.
-     */
     case actionTypes.CREATE_DOCUMENT_FAILURE:
-      return state.merge(Map({
-        documents: state.get('documents').slice(1),
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
-          isFetching: false,
-          isShowingCreateModal: true,
-          crudError: fromJS(action.error)
-        }))
-      }));
-
-    case actionTypes.UPDATE_NEW_DOCUMENT_CONTENTS:
-      return state.mergeDeepIn(['documentCrudOptions'], {
-        documentContent: fromJS(action.documentContent)
-      });
-
-    case actionTypes.TOGGLE_CREATE_MODAL:
-      return state.mergeDeepIn(['documentCrudOptions'], {
-        isShowingCreateModal: !state.getIn(
-          ['documentCrudOptions', 'isShowingCreateModal'])
-      });
-
-    /**
-     * Update a document's details.
-     *
-     * TODO: Maybe add an optimistic update here 😕
-     */
-    case actionTypes.DOCUMENT_UPDATE_REQUEST:
-      return state.merge(Map({
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
-          documentContent: fromJS(action.document),
-          isFetching: true,
-          isShowingCreateModal: false
-        }))
-      }));
-
-    /**
-     * Handle a successful document update.
-     *
-     * Filter out the document to update and replace it
-     * with the updated document.
-     */
-    case actionTypes.DOCUMENT_UPDATE_SUCCESS: {
-      const documents = state.get('documents');
-      return state.merge(Map({
-        documents: documents.map((doc) => {
-          if (doc.get('_id') === action.document._id) {
-            return fromJS(action.document);
-          }
-          return doc;
-        }),
-        documentCrudOptions: INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
-      }));
-    }
-
-    // TODO: If we add optimistic update, remember to roll that back here. 😰
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
     case actionTypes.DOCUMENT_UPDATE_FAILURE:
-      return state.merge(Map({
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
-          isFetching: false,
-          isShowingCreateModal: true,
-          isUpdatingDocument: true,
-          crudError: fromJS(action.error)
-        }))
-      }));
+    case actionTypes.LOGOUT_REQUEST:
+      return false;
 
-    /**
-     * Handle document's state update accordingly if the role of a particular
-     * document changed.
-     *
-     * If we no longer have access to this doc, remove it from state.
-     *
-     * If we still have access to the document, replace the copy we have with
-     * the new copy that has the updated role permissions.
-     *
-     * If we have access to the document but didn't have it in state, insert it
-     * as the first document.
-     */
-    case actionTypes.DOCUMENT_ROLE_UPDATE: {
-      const cachedDocIndex = state
-        .get('documents')
-        .findIndex((doc) => doc.get('_id') === action.document._id);
-
-      if (!action.allowAccess && ~cachedDocIndex) {
-        return state.merge(Map({
-          documents: state.get('documents').splice(cachedDocIndex, 1),
-          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
-            'documentCrudOptions')
-        }));
-      } else if (action.allowAccess && ~cachedDocIndex) {
-        return state.merge(Map({
-          documents: state.get('documents')
-            .splice(cachedDocIndex, 1, fromJS(action.document)),
-          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
-            'documentCrudOptions')
-        }));
-      } else if (action.allowAccess && cachedDocIndex === -1) {
-        return state.merge(Map({
-          documents: state.get('documents').insert(0, fromJS(action.document)),
-          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
-            'documentCrudOptions')
-        }));
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return false;
       }
       return state;
-    }
-
-    /**
-     * Set the document that we're updating as well as
-     * show or hide the create/update document modal.
-     */
-    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE: {
-      // Hide or show the document create/update modal.
-      const newState = state.mergeDeepIn(['documentCrudOptions'], Map({
-        documentContent: fromJS(action.document),
-        isShowingCreateModal: !state.getIn(
-          ['documentCrudOptions', 'isShowingCreateModal']
-        ),
-        isUpdatingDocument: !state.getIn(
-          ['documentCrudOptions', 'isUpdatingDocument']
-        ),
-        validations: Map({
-          isValid: false
-        })
-      }));
-
-      // If we are not updating a document, clear out whatever contents we had
-      // cached in documentContent, so that if a user shows the modal again,
-      // it won't have stale content.
-      if (!newState.getIn(['documentCrudOptions', 'isUpdatingDocument'])) {
-        return newState.mergeDeepIn(
-          ['documentCrudOptions', 'documentContent'],
-          INITIAL_DOCUMENTS_STATE
-              .getIn(['documentCrudOptions', 'documentContent'])
-        );
-      }
-      return newState;
-    }
-
-    /**
-     * Perform a document deletion.
-     *
-     * Make an optimistic deletion, but cache the deleted document together
-     * with it's index so we can roll back if the server errors.
-     */
-    case actionTypes.DELETE_DOCUMENT_REQUEST: {
-      let deletedDocument;
-      return state.merge(Map({
-        documents: state.get('documents').filter((doc, index) => {
-          if (doc.get('_id') === action.documentId) {
-            deletedDocument = Map({
-              index,
-              item: doc
-            });
-            return false;
-          }
-          return true;
-        }),
-        documentCrudOptions: state.get('documentCrudOptions').mergeDeep(Map({
-          deletedDocument
-        }))
-      }));
-    }
-
-    /**
-     * Remove the cached deleted document if the deletion was successful
-     * server-side.
-     */
-    case actionTypes.DELETE_DOCUMENT_SUCCESS:
-      if (action.docId) { // docId would come from the websocket action.
-        return state.merge(Map({
-          documents: state.get('documents')
-            .filter(doc => doc.get('_id') !== action.docId),
-          documentCrudOptions: INITIAL_DOCUMENTS_STATE.get(
-            'documentCrudOptions')
-        }));
-      }
-      return state.mergeIn(
-        ['documentCrudOptions'],
-        INITIAL_DOCUMENTS_STATE.get('documentCrudOptions')
-      );
-
-    /**
-     * Roll back the optimistic update we made when requesting for a document
-     * deletion and insert that document back into the documents list.
-     */
-    case actionTypes.DELETE_DOCUMENT_FAILURE: {
-      const delDocument = state.getIn(
-        ['documentCrudOptions', 'deletedDocument']).toJS();
-
-      return state.merge(Map({
-        documents: state
-          .get('documents')
-          .insert(delDocument.index, fromJS(delDocument.item)),
-        documentCrudOptions: state.get('documentCrudOptions').merge(Map({
-          deletedDocument: Map(),
-          crudError: fromJS(action.error)
-        }))
-      }));
-    }
-
-    /**
-     * Validate the fields entered by the user when they're creating a new
-     * document.
-     * Modify the behaviour of the FieldsValidationReducer based on the fact
-     * that we're validating new document fields.
-     */
-    case actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS:
-      return state.mergeDeepIn(['documentCrudOptions'], fieldsValidationReducer(
-        state.get('documentCrudOptions'), {
-          type: action.field,
-          target: 'documentContent',
-          currentView: 'documentContent'
-        }
-      ));
-
-    case actionTypes.CHANGE_DOCUMENTS_FILTER:
-      return state.mergeDeep(Map({
-        documentViewOptions: Map({
-          visibleFilter: action.filter
-        })
-      }));
-
-    /**
-     * Reset state to original state when the user logs out.
-     */
-    case actionTypes.LOGOUT_REQUEST:
-      return INITIAL_DOCUMENTS_STATE;
 
     default:
       return state;
   }
 }
+
+function documentsFetchError(state = null, action) {
+  switch (action.type) {
+    case actionTypes.FETCH_DOCUMENTS_FAILURE:
+      return fromJS(action.error);
+
+    case actionTypes.LOGOUT_REQUEST:
+      return null;
+
+    default:
+      return state;
+  }
+}
+
+function documentViewOptions(state = Map({
+  expandedDocId: '',
+  visibleFilter: 'all'
+}), action) {
+  switch (action.type) {
+    case actionTypes.EXPAND_DOCUMENT:
+      return state.merge(Map({
+        expandedDocId: action.docId
+      }));
+
+    case actionTypes.CHANGE_DOCUMENTS_FILTER:
+      return state.merge(Map({
+        visibleFilter: action.filter
+      }));
+
+    case actionTypes.LOGOUT_REQUEST:
+      return Map({
+        expandedDocId: '',
+        visibleFilter: 'all'
+      });
+
+    default:
+      return state;
+  }
+}
+
+function deletedDocument(state = Map(), action) {
+  switch (action.type) {
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+    case actionTypes.DELETE_DOCUMENT_FAILURE:
+    case actionTypes.LOGOUT_REQUEST:
+      return Map();
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return Map();
+      }
+      return state;
+
+    case actionTypes.DELETE_DOCUMENT_REQUEST:
+      return fromJS(action.deletedDocument);
+
+    case actionTypes.DELETE_DOCUMENT_SUCCESS:
+      if (action.docId) { // If receiving a websocket action
+        return state;
+      }
+      return Map();
+
+    default:
+      return state;
+  }
+}
+
+function documentContent(state = Map({
+  title: '',
+  content: '',
+  role: ''
+}), action) {
+  const initialDocumentContent = Map({
+    title: '',
+    content: '',
+    role: ''
+  });
+
+  switch (action.type) {
+    case actionTypes.CREATE_DOCUMENT_REQUEST:
+    case actionTypes.UPDATE_NEW_DOCUMENT_CONTENTS:
+    case actionTypes.DOCUMENT_UPDATE_REQUEST:
+      return fromJS(action.documentContent || action.document);
+
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+    case actionTypes.LOGOUT_REQUEST:
+      return initialDocumentContent;
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return initialDocumentContent;
+      }
+      return state;
+
+    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+      if (action.isUpdatingDocument) {
+        return fromJS(action.document);
+      }
+      return initialDocumentContent;
+
+    default:
+      return state;
+  }
+}
+
+function isShowingCreateModal(state = false, action) {
+  switch (action.type) {
+    case actionTypes.DOCUMENT_UPDATE_REQUEST:
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+    case actionTypes.LOGOUT_REQUEST:
+      return false;
+
+    case actionTypes.CREATE_DOCUMENT_FAILURE:
+    case actionTypes.DOCUMENT_UPDATE_FAILURE:
+      return true;
+
+    case actionTypes.TOGGLE_CREATE_MODAL:
+    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+      return !state;
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return false;
+      }
+      return state;
+
+    default:
+      return state;
+  }
+}
+
+function isUpdatingDocument(state = false, action) {
+  switch (action.type) {
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+    case actionTypes.LOGOUT_REQUEST:
+      return false;
+
+    case actionTypes.DOCUMENT_UPDATE_FAILURE:
+      return true;
+
+    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+      return !state;
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return false;
+      }
+      return state;
+
+    default:
+      return state;
+  }
+}
+
+function crudError(state = null, action) {
+  switch (action.type) {
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+    case actionTypes.LOGOUT_REQUEST:
+      return null;
+
+    case actionTypes.CREATE_DOCUMENT_FAILURE:
+    case actionTypes.DOCUMENT_UPDATE_FAILURE:
+    case actionTypes.DELETE_DOCUMENT_FAILURE:
+      return fromJS(action.error);
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return null;
+      }
+      return state;
+
+    default:
+      return state;
+  }
+}
+
+function validations(state = Map({
+  isValid: false
+}), action) {
+  switch (action.type) {
+    case actionTypes.CREATE_DOCUMENT_SUCCESS:
+    case actionTypes.DOCUMENT_UPDATE_SUCCESS:
+    case actionTypes.TOGGLE_SHOW_DOCUMENT_UPDATE:
+    case actionTypes.LOGOUT_REQUEST:
+      return Map({
+        isValid: false
+      });
+
+    case actionTypes.DOCUMENT_ROLE_UPDATE:
+      if (action.own) {
+        return Map({
+          isValid: false
+        });
+      }
+      return state;
+
+    case actionTypes.VALIDATE_NEW_DOCUMENT_CONTENTS:
+      return state.mergeDeep(fieldsValidationReducer(
+        fromJS(action.documentCrudOptions), {
+          type: action.field,
+          target: 'documentContent',
+          currentView: 'documentContent'
+        }
+      ).get('validations'));
+
+    default:
+      return state;
+  }
+}
+
+const documentCrudOptions = combineReducers({
+  deletedDocument,
+  documentContent,
+  isFetching,
+  isShowingCreateModal,
+  isUpdatingDocument,
+  crudError,
+  validations
+});
+
+export default combineReducers({
+  documents,
+  isFetching,
+  documentsFetchError,
+  documentViewOptions,
+  documentCrudOptions
+});
