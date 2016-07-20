@@ -4,13 +4,30 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 
+const webpack = require('webpack');
+const webpackDevMiddleware = require('webpack-dev-middleware');
+const webpackHotMiddleware = require('webpack-hot-middleware');
+const webpackConfig = require('./webpack.config');
+
 const publicPath = path.resolve(__dirname, './client/dist');
 
 const env = process.env.NODE_ENV;
 if (env === 'testing' || env === 'development') {
   dotenv.load();
 }
+
 const app = express();
+
+// Configure webpack hot reloading
+if (env === 'development') {
+  const compiler = webpack(webpackConfig);
+  app.use(webpackDevMiddleware(compiler, {
+    noInfo: true,
+    publicPath: webpackConfig.output.publicPath
+  }));
+  app.use(webpackHotMiddleware(compiler));
+}
+
 
 // Connect to the db.
 require('./server/config/db');
