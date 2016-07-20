@@ -2,7 +2,11 @@ const webpack = require('webpack');
 
 const config = {
   devtool: 'eval-source-map',
-  entry: './client/index.jsx',
+  entry: [
+    'webpack-hot-middleware/client',
+    'react-hot-loader/patch',
+    './client/index.jsx'
+  ],
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -36,6 +40,12 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.DefinePlugin({
       'process.env': { NODE_ENV: JSON.stringify('production') }
     })
+  ];
+} else {
+  config.plugins = [
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.NoErrorsPlugin()
   ];
 }
 
